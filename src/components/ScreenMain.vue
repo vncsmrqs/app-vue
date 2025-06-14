@@ -92,7 +92,7 @@ const progressPercentage = computed(() => {
 
 const contentStyle = computed(() => {
   if (ignoreSwipe.value) {
-    return 0;
+    return {};
   }
   if (props.swipeContent) {
     return {
@@ -104,7 +104,7 @@ const contentStyle = computed(() => {
 
 const iconStyle = computed(() => {
   if (ignoreSwipe.value) {
-    return 0;
+    return {};
   }
   return {
     height: `${PULL_LOADING_HEIGHT}px`,
