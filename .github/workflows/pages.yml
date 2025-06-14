@@ -43,7 +43,7 @@ jobs:
           BASE_URL: https://vncsmrqs.github.io/app-vue/
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: './dist'
 
