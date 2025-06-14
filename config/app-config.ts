@@ -2,7 +2,7 @@ export const appConfig = {
   name: 'App Name',
   shortName: 'App Shortname',
   description: 'App Description',
-  themeColor: '#000000',
+  themeColor: '#FFFFFF',
   startBackgroundColor: '#FFFFFF',
   pwa: {
     autoUpdate: false,

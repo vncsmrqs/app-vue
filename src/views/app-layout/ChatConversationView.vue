@@ -2,10 +2,9 @@
 import ScreenMain from '@/components/ScreenMain.vue';
 import { onMounted, ref } from 'vue';
 import AppBar from '@/components/AppBar.vue';
-import { useRoute, useRouter } from '@/router';
+import { useRoute } from '@/router';
 import { onBeforeRouteUpdate } from 'vue-router';
 import { useAppLink } from '@/composables/use-app-link.ts';
-import { isMobileApp } from '@/utils/device.ts';
 
 // const props = defineProps<{ chatId: string }>();
 
