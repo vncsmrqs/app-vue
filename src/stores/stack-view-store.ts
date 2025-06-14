@@ -2,7 +2,7 @@ import { type AllowedComponentProps, computed, markRaw, ref, type VNodeProps } f
 import type { Component } from 'vue';
 import { defineStore } from 'pinia';
 import { type AsyncComponentLoader } from 'vue';
-import { STACK_VIEW_BASE_TRANSITION_MILLISECOND } from '../../config/stack-view-config.ts';
+import { STACK_VIEW_BASE_TRANSITION_MILLISECOND } from '@/config/stack-view-config.ts';
 import type { NavigationAction } from '@/composables/on-after-router-navigate.ts';
 import type { RouteLocationNormalizedGeneric } from 'vue-router';
 import { type HookFunction, createHook } from '@/utils/hooks.ts';

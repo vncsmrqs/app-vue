@@ -5,7 +5,7 @@ import { isMobileApp, isMobileBrowser } from '@/utils/device.ts';
 import {
   MIN_SWIPE_X_START,
   STACK_VIEW_BASE_TRANSITION_MILLISECOND,
-} from '@/../config/stack-view-config.ts';
+} from '@/config/stack-view-config.ts';
 
 const props = withDefaults(
   defineProps<{

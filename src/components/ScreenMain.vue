@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, inject, ref } from 'vue';
 import { useScroll, useSwipe } from '@vueuse/core';
-import { MIN_SWIPE_X_START } from '../../config/stack-view-config.ts';
+import { MIN_SWIPE_X_START } from '@/config/stack-view-config.ts';
 import ProgressCircle from '@/components/ProgressCircle.vue';
 
 const PULL_LOADING_HEIGHT = 60;

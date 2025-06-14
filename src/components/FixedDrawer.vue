@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DrawerStackView from '@/components/Stack/DrawerStackView.vue';
 import { onMounted, ref } from 'vue';
-import { STACK_VIEW_BASE_TRANSITION_MILLISECOND } from '../../config/stack-view-config.ts';
+import { STACK_VIEW_BASE_TRANSITION_MILLISECOND } from '@/config/stack-view-config.ts';
 import AppLink from '@/components/AppLink.vue';
 
 const render = ref(false);

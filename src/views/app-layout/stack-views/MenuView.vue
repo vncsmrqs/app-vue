@@ -11,7 +11,7 @@ import ShoppingOutlineIcon from 'vue-material-design-icons/ShoppingOutline.vue';
 import MapMarkerOutlineIcon from 'vue-material-design-icons/MapMarkerOutline.vue';
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
 import { useElementSize, useScroll, useSwipe } from '@vueuse/core';
-import { appConfig } from '../../../../config/app-config.ts';
+import { appConfig } from '@/config/app-config.ts';
 const show = ref(false);
 
 const props = defineProps<StackViewBaseProps>();

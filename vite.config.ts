@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue';
 import vueDevTools from 'vite-plugin-vue-devtools';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
-import { appConfig } from './config/app-config';
+import { appConfig } from './src/config/app-config';
 
 const globPatterns = ['**/*.{js,style,html,ico,png,svg,json,vue,txt,ttf,woff,woff2,css,jpg}'];
 

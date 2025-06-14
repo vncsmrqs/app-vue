@@ -2,7 +2,7 @@
 /// <reference types="vite-plugin-pwa/vue" />
 import { useRegisterSW } from 'virtual:pwa-register/vue';
 import { computed, ref, watch } from 'vue';
-import { appConfig } from '../../config/app-config.ts';
+import { appConfig } from '@/config/app-config.ts';
 
 const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW({
   immediate: appConfig.pwa.autoUpdate,

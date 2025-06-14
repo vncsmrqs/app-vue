@@ -5,7 +5,7 @@ import {
 } from 'vue-router';
 import { useRouter } from '@/router';
 import { PubSub } from '@/utils/pub-sub.ts';
-import { LOG_NAVIGATOR_ROUTER_NAVIGATION_EVENTS } from '../../config/app-config.ts';
+import { LOG_NAVIGATOR_ROUTER_NAVIGATION_EVENTS } from '@/config/app-config.ts';
 
 const router = useRouter();
 

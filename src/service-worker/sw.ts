@@ -8,7 +8,7 @@ import {
   precacheAndRoute,
 } from 'workbox-precaching';
 import './notification.sw.ts';
-import { appConfig } from '../../config/app-config.ts';
+import { appConfig } from '@/config/app-config.ts';
 import { NavigationRoute, registerRoute } from 'workbox-routing';
 
 declare let self: ServiceWorkerGlobalScope;

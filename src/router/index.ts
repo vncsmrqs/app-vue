@@ -10,7 +10,7 @@ import { logRouterErrors } from '@/router/log-router-errors.ts';
 import {
   LOG_NAVIGATOR_ROUTER_NAVIGATION_EVENTS,
   LOG_VIRTUAL_ROUTER_NAVIGATION_EVENTS,
-} from '../../config/app-config.ts';
+} from '@/config/app-config.ts';
 
 export const navigatorRouter = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
