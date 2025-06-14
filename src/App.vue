@@ -4,17 +4,18 @@ import RenderStackView from '@/components/Stack/RenderStackView.vue';
 import { onMounted } from 'vue';
 import { useAppStore } from '@/stores/app-store.ts';
 import { updateThemeColor } from '@/utils/common.ts';
+import UpdateApp from '@/components/UpdateApp.vue';
 
 const appStore = useAppStore();
 
 onMounted(async () => {
   await Notification.requestPermission();
 
-  updateThemeColor();
-
-  window
-    .matchMedia('(prefers-color-scheme: dark)')
-    .addEventListener('change', () => updateThemeColor());
+  // updateThemeColor();
+  //
+  // window
+  //   .matchMedia('(prefers-color-scheme: dark)')
+  //   .addEventListener('change', () => updateThemeColor());
 });
 </script>
 
@@ -26,6 +27,7 @@ onMounted(async () => {
     <div id="toast-target" class="absolute" style="z-index: 9993"></div>
   </teleport>
   <render-stack-view />
+  <update-app />
 </template>
 
 <style scoped></style>

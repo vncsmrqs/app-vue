@@ -44,18 +44,21 @@ watch(() => needRefresh.value, startTimer);
     <div
       class="w-full max-w-[600px] p-3 bg-white rounded-lg border border-gray-300 shadow-lg flex flex-col gap-2"
     >
-      <span class="font-bold uppercase"
-        >Uma atualização do app está disponível ({{ appConfig.version }})</span
-      >
+      <span class="font-bold uppercase">
+        Uma atualização do app está disponível ({{ appConfig.version }})
+      </span>
       <span>Atualizando automaticamente em {{ formattedRemainingTime }} segundos</span>
       <div class="flex gap-2 mt-2">
         <button
-          class="border border-gray-300 outline-none rounded py-2 px-4 bg-gray-200"
+          class="border border-gray-300 outline-none rounded py-2 px-4 bg-white"
           @click="updateNow"
         >
           Atualizar agora
         </button>
-        <button class="border border-gray-300 outline-none rounded py-2 px-4" @click="close">
+        <button
+          class="border border-gray-300 outline-none rounded py-2 px-4 bg-gray-200"
+          @click="close"
+        >
           Deixar para depois
         </button>
       </div>
