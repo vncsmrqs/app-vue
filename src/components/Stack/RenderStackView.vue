@@ -49,14 +49,14 @@ onAfterRouterNavigate(async (payload) => {
         routeFrom: from,
         mode: to.meta.mode || 'DRAWER',
       });
-
-      await stackViewStore.show(
-        toFullPath,
-        currentPosition,
-        action,
-        !isMobileBrowser() || action === 'PUSH',
-      );
     }
+
+    await stackViewStore.show(
+      toFullPath,
+      currentPosition,
+      action,
+      !isMobileBrowser() || action === 'PUSH',
+    );
   }
 });
 

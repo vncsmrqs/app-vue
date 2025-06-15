@@ -12,16 +12,6 @@ import {
   LOG_VIRTUAL_ROUTER_NAVIGATION_EVENTS,
 } from '@/config/app-config.ts';
 
-window.addEventListener(
-  'popstate',
-  (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    console.log(event);
-  },
-  { passive: false },
-);
-
 export const navigatorRouter = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
