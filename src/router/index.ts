@@ -160,6 +160,7 @@ export const navigatorRouter = createRouter({
               components: {
                 default: () => import('../views/app-layout/FavoriteListView.vue'),
               },
+              meta: { isRoot: true },
             },
             {
               path: '/menu',
