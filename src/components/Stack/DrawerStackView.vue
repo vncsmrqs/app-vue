@@ -40,7 +40,7 @@ const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
 });
 
 const isRealSwiping = computed(() => {
-  return coordsStart.x <= MIN_SWIPE_X_START;
+  return coordsStart.x <= MIN_SWIPE_X_START && isMobileApp();
 });
 
 const { width } = useElementSize(rootElement);
@@ -100,11 +100,15 @@ const containerTransform = computed(() => {
 });
 
 const swipeDistancePercent = computed(() => {
-  const percent = coordsEnd.x / width.value || 0;
-  if (percent > 100) {
-    return 100;
+  if (isRealSwiping.value) {
+    const percent = coordsEnd.x / width.value || 0;
+    if (percent > 100) {
+      return 100;
+    }
+    return percent < 0 ? 0 : percent;
   }
-  return percent < 0 ? 0 : percent;
+
+  return 0;
 });
 
 const remainingAnimationTime = computed(() => {
