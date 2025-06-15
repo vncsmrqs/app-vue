@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useElementSize, useSwipe } from '@vueuse/core';
-import { isMobileApp, isMobileBrowser } from '@/utils/device.ts';
+import { isIosApp, isMobileApp, isMobileBrowser } from '@/utils/device.ts';
 import {
   MIN_SWIPE_X_START,
   STACK_VIEW_BASE_TRANSITION_MILLISECOND,
@@ -32,7 +32,7 @@ const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
   passive: false,
   threshold: 10,
   onSwipeStart: (e) => {
-    if (coordsStart.x <= MIN_SWIPE_X_START) {
+    if (coordsStart.x <= MIN_SWIPE_X_START && isIosApp()) {
       e.preventDefault();
       return;
     }
@@ -47,7 +47,7 @@ const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
 });
 
 const isRealSwiping = computed(() => {
-  return coordsStart.x <= MIN_SWIPE_X_START && isMobileApp() && isSwiping.value;
+  return coordsStart.x <= MIN_SWIPE_X_START && isIosApp() && isSwiping.value;
 });
 
 const { width } = useElementSize(rootElement);

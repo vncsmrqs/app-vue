@@ -1,3 +1,3 @@
 export const STACK_VIEW_BASE_TRANSITION_MILLISECOND = 200;
 
-export const MIN_SWIPE_X_START = 40;
+export const MIN_SWIPE_X_START = 30;

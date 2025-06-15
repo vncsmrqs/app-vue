@@ -3,6 +3,7 @@ import AppBar from '@/components/AppBar.vue';
 import ScreenMain from '@/components/ScreenMain.vue';
 import EmptyScreen from '@/components/EmptyScreen.vue';
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
+import AppButton from '@/components/Buttons/AppButton.vue';
 
 const props = defineProps<StackViewBaseProps>();
 const emit = defineEmits<StackViewBaseEmitters>();
@@ -13,7 +14,7 @@ const emit = defineEmits<StackViewBaseEmitters>();
     <app-bar @back="emit('close')">
       Sacola
       <template #append>
-        <button>Limpar</button>
+        <app-button class="last:-mr-2">Limpar</app-button>
       </template>
     </app-bar>
     <screen-main :enabled="false">
