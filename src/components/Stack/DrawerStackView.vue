@@ -32,8 +32,8 @@ const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
   threshold: 10,
   onSwipeEnd: () => {
     if (isMobileApp()) {
-      if (coordsStart.x <= MIN_SWIPE_X_START && coordsEnd.x >= width.value / 4) {
-        close(animationTime.value);
+      if (coordsStart.x <= MIN_SWIPE_X_START && coordsEnd.x >= width.value * 0.4) {
+        close(remainingAnimationTime.value);
       }
     }
   },
@@ -96,17 +96,11 @@ const containerTransform = computed(() => {
 });
 
 const swipeDistancePercent = computed(() => {
-  if (isSwiping.value) {
-    const percent = coordsEnd.x / width.value || 0;
-
-    if (percent > 100) {
-      return 100;
-    }
-
-    return percent < 0 ? 0 : percent;
+  const percent = coordsEnd.x / width.value || 0;
+  if (percent > 100) {
+    return 100;
   }
-
-  return 0;
+  return percent < 0 ? 0 : percent;
 });
 
 const remainingAnimationTime = computed(() => {
@@ -133,7 +127,8 @@ const backdropOpacity = computed(() => {
 });
 
 const containerOpacity = computed(() => {
-  if (isMobileApp()) {
+  const CONTAINER_OPACITY_IS_ACTIVE = false;
+  if (isMobileApp() && CONTAINER_OPACITY_IS_ACTIVE) {
     if (isSwiping.value && coordsStart.x <= MIN_SWIPE_X_START) {
       return 1 - swipeDistancePercent.value * 0.25;
     }
@@ -150,10 +145,11 @@ provide('isInStackView', true);
   <Teleport to="#stack-view-target">
     <div
       ref="root-element"
-      class="drawer"
+      class="drawer touch-pan-x"
       :class="{
         opened: isVisible,
         closed: !isVisible,
+        'is-swiping': isSwiping,
       }"
       :tabindex="index"
     >
@@ -229,6 +225,12 @@ provide('isInStackView', true);
       opacity: 0;
     }
     transform: translateX(100%);
+  }
+}
+
+.is-swiping {
+  * {
+    @apply touch-pan-x;
   }
 }
 </style>
