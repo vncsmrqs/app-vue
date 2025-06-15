@@ -6,6 +6,9 @@ import { appConfig } from '@/config/app-config.ts';
 
 const { offlineReady, needRefresh, updateServiceWorker } = useRegisterSW({
   immediate: appConfig.pwa.autoUpdate,
+  onRegisteredSW: () => {
+    alert('Service worker registered!');
+  },
 });
 
 let interval: NodeJS.Timeout | undefined;
