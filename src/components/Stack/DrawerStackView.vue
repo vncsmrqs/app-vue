@@ -29,7 +29,7 @@ const close = async (animationTime: number) => {
 const rootElement = useTemplateRef('root-element');
 
 const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
-  threshold: 2,
+  threshold: 1,
   onSwipeEnd: () => {
     if (isMobileApp()) {
       if (isRealSwiping.value && coordsEnd.x >= width.value * 0.4) {
@@ -40,7 +40,7 @@ const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
 });
 
 const isRealSwiping = computed(() => {
-  return coordsStart.x <= MIN_SWIPE_X_START && isMobileApp();
+  return coordsStart.x <= MIN_SWIPE_X_START && isMobileApp() && isSwiping.value;
 });
 
 const { width } = useElementSize(rootElement);
@@ -88,7 +88,7 @@ watch(
 
 const containerTransform = computed(() => {
   if (isMobileApp()) {
-    if (isSwiping.value && isRealSwiping.value) {
+    if (isRealSwiping.value) {
       const x = lengthX.value * -1;
       if (x <= 0) {
         return `translateX(${0}px)`;
@@ -127,7 +127,7 @@ const animationTime = computed(() => {
 
 const backdropOpacity = computed(() => {
   if (isMobileApp()) {
-    if (isSwiping.value && isRealSwiping.value) {
+    if (isRealSwiping.value) {
       return 1 - swipeDistancePercent.value;
     }
   }
@@ -137,7 +137,7 @@ const backdropOpacity = computed(() => {
 const containerOpacity = computed(() => {
   const CONTAINER_OPACITY_IS_ACTIVE = false;
   if (isMobileApp() && CONTAINER_OPACITY_IS_ACTIVE) {
-    if (isSwiping.value && isRealSwiping.value) {
+    if (isRealSwiping.value) {
       return 1 - swipeDistancePercent.value * 0.25;
     }
   }
