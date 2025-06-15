@@ -29,14 +29,18 @@ const close = async (animationTime: number) => {
 const rootElement = useTemplateRef('root-element');
 
 const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
-  threshold: 10,
+  threshold: 2,
   onSwipeEnd: () => {
     if (isMobileApp()) {
-      if (coordsStart.x <= MIN_SWIPE_X_START && coordsEnd.x >= width.value * 0.4) {
+      if (isRealSwiping.value && coordsEnd.x >= width.value * 0.4) {
         close(remainingAnimationTime.value);
       }
     }
   },
+});
+
+const isRealSwiping = computed(() => {
+  return coordsStart.x <= MIN_SWIPE_X_START;
 });
 
 const { width } = useElementSize(rootElement);
@@ -84,7 +88,7 @@ watch(
 
 const containerTransform = computed(() => {
   if (isMobileApp()) {
-    if (isSwiping.value && coordsStart.x <= MIN_SWIPE_X_START) {
+    if (isSwiping.value && isRealSwiping.value) {
       const x = lengthX.value * -1;
       if (x <= 0) {
         return `translateX(${0}px)`;
@@ -119,7 +123,7 @@ const animationTime = computed(() => {
 
 const backdropOpacity = computed(() => {
   if (isMobileApp()) {
-    if (isSwiping.value && coordsStart.x <= MIN_SWIPE_X_START) {
+    if (isSwiping.value && isRealSwiping.value) {
       return 1 - swipeDistancePercent.value;
     }
   }
@@ -129,7 +133,7 @@ const backdropOpacity = computed(() => {
 const containerOpacity = computed(() => {
   const CONTAINER_OPACITY_IS_ACTIVE = false;
   if (isMobileApp() && CONTAINER_OPACITY_IS_ACTIVE) {
-    if (isSwiping.value && coordsStart.x <= MIN_SWIPE_X_START) {
+    if (isSwiping.value && isRealSwiping.value) {
       return 1 - swipeDistancePercent.value * 0.25;
     }
   }
@@ -149,7 +153,7 @@ provide('isInStackView', true);
       :class="{
         opened: isVisible,
         closed: !isVisible,
-        'is-swiping': isSwiping,
+        'is-swiping': !!isRealSwiping,
       }"
       :tabindex="index"
     >
@@ -225,12 +229,6 @@ provide('isInStackView', true);
       opacity: 0;
     }
     transform: translateX(100%);
-  }
-}
-
-.is-swiping {
-  * {
-    @apply touch-pan-x;
   }
 }
 </style>

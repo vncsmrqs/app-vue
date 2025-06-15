@@ -24,6 +24,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.is-swiping {
+  * {
+    touch-action: none !important;
+  }
+}
+
 .fade-in {
   animation: fadeIn 0.8s ease-in-out forwards;
 }
