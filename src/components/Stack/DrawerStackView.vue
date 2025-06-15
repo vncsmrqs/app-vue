@@ -33,7 +33,7 @@ const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
   onSwipeEnd: () => {
     if (isMobileApp()) {
       if (isRealSwiping.value && coordsEnd.x >= width.value * 0.4) {
-        close(remainingAnimationTime.value);
+        close(animationTime.value);
       }
     }
   },
@@ -114,7 +114,7 @@ const remainingAnimationTime = computed(() => {
 
 const animationTime = computed(() => {
   if (isMobileApp()) {
-    if (isSwiping.value) {
+    if (isRealSwiping.value) {
       return 0;
     }
   }
