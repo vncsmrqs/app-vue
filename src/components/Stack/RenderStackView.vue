@@ -70,48 +70,17 @@ watch(
   },
 );
 
-const closeStackView = async (
-  { routeFullPath, routePosition }: StackViewProps,
-  hideBeforeNavigate = true,
-  animationTime?: number,
-): Promise<void> => {
-  const stackView = stackViewStore.find(routeFullPath, routePosition);
+const hideStackViewBeforeNavigate = async (stackView: StackViewProps, animationTime?: number) => {
+  return await stackViewStore.hide(
+    stackView.routeFullPath,
+    stackView.routePosition,
+    'BACKWARD',
+    true,
+    animationTime,
+  );
+};
 
-  if (stackView) {
-    if (stackView.routeFrom.fullPath === stackView.routeFullPath || !stackView.routeFrom.name) {
-      const rootTo = stackView.routeTo.matched.find((route) => route.meta.isRoot);
-
-      if (hideBeforeNavigate) {
-        await stackViewStore.hide(
-          stackView.routeFullPath,
-          stackView.routePosition,
-          'BACKWARD',
-          true,
-          animationTime,
-        );
-      }
-
-      await navigate({
-        name: rootTo?.name || 'home',
-        replace: true,
-        params: stackView?.routeFrom.params,
-        query: stackView?.routeFrom.query,
-        hash: stackView?.routeFrom.hash,
-      });
-      return;
-    }
-
-    if (hideBeforeNavigate) {
-      await stackViewStore.hide(
-        stackView.routeFullPath,
-        stackView.routePosition,
-        'BACKWARD',
-        true,
-        animationTime,
-      );
-    }
-  }
-
+const navigateBack = async (stackView?: StackViewProps) => {
   if (isIosApp()) {
     await navigate({
       name: stackView?.routeFrom.name || 'home',
@@ -122,8 +91,44 @@ const closeStackView = async (
     });
     return;
   }
+  await router.back();
+};
 
-  router.back();
+const closeStackView = async (
+  { routeFullPath, routePosition }: StackViewProps,
+  hideBeforeNavigate = true,
+  animationTime?: number,
+): Promise<void> => {
+  const stackView = stackViewStore.find(routeFullPath, routePosition);
+
+  if (stackView) {
+    const isFirstNavigation =
+      stackView.routeFrom.fullPath === stackView.routeFullPath || !stackView.routeFrom.name;
+
+    if (isFirstNavigation) {
+      const rootTo = stackView.routeTo.matched.find((route) => route.meta.isRoot);
+
+      if (hideBeforeNavigate) {
+        await hideStackViewBeforeNavigate(stackView, animationTime);
+      }
+
+      await navigate({
+        name: rootTo?.name || 'home',
+        replace: true,
+        params: stackView?.routeFrom.params,
+        query: stackView?.routeFrom.query,
+        hash: stackView?.routeFrom.hash,
+      });
+
+      return;
+    }
+
+    if (hideBeforeNavigate) {
+      await hideStackViewBeforeNavigate(stackView, animationTime);
+    }
+  }
+
+  await navigateBack(stackView);
 };
 
 const defineComponent = (stackView: StackViewProps) => {
