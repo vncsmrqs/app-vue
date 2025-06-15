@@ -29,7 +29,7 @@ const close = async (animationTime: number) => {
 const rootElement = useTemplateRef('root-element');
 
 const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
-  threshold: 1,
+  threshold: 0,
   onSwipeEnd: () => {
     if (isMobileApp()) {
       if (isRealSwiping.value && coordsEnd.x >= width.value * 0.4) {
