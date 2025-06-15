@@ -8,7 +8,7 @@ export const appConfig = {
     autoUpdate: false,
     generateSW: false,
   },
-  version: '0.0.15',
+  version: '0.0.17',
 };
 
 export const LOG_NAVIGATOR_ROUTER_NAVIGATION_EVENTS = true;
