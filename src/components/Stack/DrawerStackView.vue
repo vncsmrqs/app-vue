@@ -29,7 +29,14 @@ const close = async (animationTime: number) => {
 const rootElement = useTemplateRef('root-element');
 
 const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
-  threshold: 0,
+  passive: false,
+  threshold: 10,
+  onSwipeStart: (e) => {
+    if (coordsStart.x <= MIN_SWIPE_X_START) {
+      e.preventDefault();
+      return;
+    }
+  },
   onSwipeEnd: () => {
     if (isMobileApp()) {
       if (isRealSwiping.value && coordsEnd.x >= width.value * 0.4) {
@@ -157,7 +164,7 @@ provide('isInStackView', true);
       :class="{
         opened: isVisible,
         closed: !isVisible,
-        'is-swiping': !!isRealSwiping,
+        'is-swiping': !!isSwiping,
       }"
       :tabindex="index"
     >
