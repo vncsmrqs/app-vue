@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useElementSize, useSwipe } from '@vueuse/core';
-import { isIosApp, isMobileApp, isMobileBrowser } from '@/utils/device.ts';
+import { isMobileBrowser } from '@/utils/device.ts';
 import {
   MIN_SWIPE_X_START,
   STACK_VIEW_BASE_TRANSITION_MILLISECOND,
+  STACK_VIEW_SWIPE_IS_ACTIVE,
+  CONTAINER_OPACITY_IS_ACTIVE,
 } from '@/config/stack-view-config.ts';
 
 const props = withDefaults(
@@ -32,13 +34,13 @@ const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
   passive: false,
   threshold: 10,
   onSwipeStart: (e) => {
-    if (coordsStart.x <= MIN_SWIPE_X_START && isIosApp()) {
+    if (coordsStart.x <= MIN_SWIPE_X_START && STACK_VIEW_SWIPE_IS_ACTIVE) {
       e.preventDefault();
       return;
     }
   },
   onSwipeEnd: () => {
-    if (isMobileApp()) {
+    if (STACK_VIEW_SWIPE_IS_ACTIVE) {
       if (isRealSwiping.value && coordsEnd.x >= width.value * 0.4) {
         close(animationTime.value);
       }
@@ -47,7 +49,7 @@ const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
 });
 
 const isRealSwiping = computed(() => {
-  return coordsStart.x <= MIN_SWIPE_X_START && isIosApp() && isSwiping.value;
+  return coordsStart.x <= MIN_SWIPE_X_START && STACK_VIEW_SWIPE_IS_ACTIVE && isSwiping.value;
 });
 
 const { width } = useElementSize(rootElement);
@@ -94,7 +96,7 @@ watch(
 );
 
 const containerTransform = computed(() => {
-  if (isMobileApp()) {
+  if (STACK_VIEW_SWIPE_IS_ACTIVE) {
     if (isRealSwiping.value) {
       const x = lengthX.value * -1;
       if (x <= 0) {
@@ -124,7 +126,7 @@ const remainingAnimationTime = computed(() => {
 });
 
 const animationTime = computed(() => {
-  if (isMobileApp()) {
+  if (STACK_VIEW_SWIPE_IS_ACTIVE) {
     if (isRealSwiping.value) {
       return 0;
     }
@@ -133,7 +135,7 @@ const animationTime = computed(() => {
 });
 
 const backdropOpacity = computed(() => {
-  if (isMobileApp()) {
+  if (STACK_VIEW_SWIPE_IS_ACTIVE) {
     if (isRealSwiping.value) {
       return 1 - swipeDistancePercent.value;
     }
@@ -142,8 +144,7 @@ const backdropOpacity = computed(() => {
 });
 
 const containerOpacity = computed(() => {
-  const CONTAINER_OPACITY_IS_ACTIVE = false;
-  if (isMobileApp() && CONTAINER_OPACITY_IS_ACTIVE) {
+  if (STACK_VIEW_SWIPE_IS_ACTIVE && CONTAINER_OPACITY_IS_ACTIVE) {
     if (isRealSwiping.value) {
       return 1 - swipeDistancePercent.value * 0.25;
     }
@@ -171,7 +172,7 @@ provide('isInStackView', true);
       <div
         class="drawer-backdrop"
         :class="{
-          'bg-black/50': isMobileApp(),
+          'bg-black/50': STACK_VIEW_SWIPE_IS_ACTIVE,
           'md:bg-black/50': true,
         }"
         :style="{ opacity: backdropOpacity }"
@@ -179,7 +180,7 @@ provide('isInStackView', true);
       ></div>
       <div
         class="drawer-container"
-        :class="{ 'animate-opacity': isMobileApp() }"
+        :class="{ 'animate-opacity': STACK_VIEW_SWIPE_IS_ACTIVE }"
         :style="{ transform: containerTransform, opacity: containerOpacity }"
       >
         <!--        <div v-if="isMobileApp()" class="z-20 absolute top-0 left-0 bg-red-500 flex flex-col">-->

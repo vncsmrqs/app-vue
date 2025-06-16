@@ -5,8 +5,9 @@ import DrawerStackView from '@/components/Stack/DrawerStackView.vue';
 import { type AsyncComponentLoader } from 'vue';
 import { onAfterRouterNavigate } from '@/composables/on-after-router-navigate.ts';
 import { useAppNavigation } from '@/composables/use-app-navigation.ts';
-import { isIosApp, isMobileApp, isMobileBrowser } from '@/utils/device.ts';
+import { isMobileBrowser } from '@/utils/device.ts';
 import { useRouter } from '@/router';
+import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
 
 const router = useRouter();
 const stackViewStore = useStackViewStore();
@@ -81,17 +82,17 @@ const hideStackViewBeforeNavigate = async (stackView: StackViewProps, animationT
 };
 
 const navigateBack = async (stackView?: StackViewProps) => {
-  if (isIosApp()) {
-    await navigate({
-      name: stackView?.routeFrom.name || 'home',
-      replace: true,
-      params: stackView?.routeFrom.params,
-      query: stackView?.routeFrom.query,
-      hash: stackView?.routeFrom.hash,
-    });
+  if (PUSH_HISTORY_STATE) {
+    await router.back();
     return;
   }
-  await router.back();
+  await navigate({
+    name: stackView?.routeFrom.name || 'home',
+    replace: true,
+    params: stackView?.routeFrom.params,
+    query: stackView?.routeFrom.query,
+    hash: stackView?.routeFrom.hash,
+  });
 };
 
 const closeStackView = async (
