@@ -33,11 +33,15 @@ const removeListener = virtualRouter.beforeEach(async () => {
 
   let count = 0;
 
-  window.history.pushState({ count: ++count }, '', `/`);
+  setTimeout(() => {
+    window.history.pushState({ count }, '', `/`);
+  }, 1);
 
   window.addEventListener('popstate', async () => {
     alert(`popstate::${++count}`);
-    window.history.pushState({ count }, '', `/`);
+    setTimeout(() => {
+      window.history.pushState({ count }, '', `/`);
+    }, 1);
     await navStack.pop();
   });
 
