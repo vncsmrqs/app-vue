@@ -31,6 +31,7 @@ export const syncNavigatorToVirtualRouter = ({ navigatorRouter, virtualRouter }:
     const currentVirtualRouteIsAlreadyIsRoot = virtualRouter.currentRoute.value.matched.some(
       (route) => route.meta.isRoot,
     );
+
     if (currentVirtualRouteIsAlreadyIsRoot) {
       return;
     }

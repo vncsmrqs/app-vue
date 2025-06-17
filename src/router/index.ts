@@ -11,9 +11,14 @@ import {
   LOG_NAVIGATOR_ROUTER_NAVIGATION_EVENTS,
   LOG_VIRTUAL_ROUTER_NAVIGATION_EVENTS,
 } from '@/config/app-config.ts';
+import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
+
+const history = PUSH_HISTORY_STATE
+  ? createWebHistory(import.meta.env.BASE_URL)
+  : createMemoryHistory(import.meta.env.BASE_URL);
 
 export const navigatorRouter = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history,
   routes: [
     {
       path: '/',

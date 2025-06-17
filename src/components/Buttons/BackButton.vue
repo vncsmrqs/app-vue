@@ -8,7 +8,12 @@ const emit = defineEmits(['click']);
 </script>
 
 <template>
-  <SquareIconButton @touchstart.prevent.stop @touchend.prevent.stop="emit('click')">
+  <SquareIconButton
+    @touchstart.prevent.stop
+    @touchmove.prevent.stop
+    @touchend.prevent.stop="emit('click')"
+    @click="emit('click')"
+  >
     <ArrowLeftIcon v-if="isMobile()" />
     <CloseIcon v-else />
   </SquareIconButton>
