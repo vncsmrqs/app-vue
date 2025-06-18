@@ -6,6 +6,7 @@ import {
 import { useRouter } from '@/router';
 import { PubSub } from '@/utils/pub-sub.ts';
 import { LOG_NAVIGATOR_ROUTER_NAVIGATION_EVENTS } from '@/config/app-config.ts';
+import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
 
 const router = useRouter();
 
@@ -100,6 +101,11 @@ router.afterEach((to, from, failure) => {
 
   defineCurrent();
 
+  // console.log({
+  //   lastPosition: lastPosition.value,
+  //   currentPosition: currentPosition.value,
+  // });
+
   const navigationAction = getNavigationAction(to, backwardRouteList);
 
   backwardRouteList = handleNavigationAction(from, navigationAction, backwardRouteList);
@@ -114,6 +120,10 @@ router.afterEach((to, from, failure) => {
   });
 
   defineLast();
+
+  if (!PUSH_HISTORY_STATE) {
+    window.history.replaceState({}, '', to.fullPath);
+  }
 
   if (LOG_NAVIGATOR_ROUTER_NAVIGATION_EVENTS) {
     console.log(`NAVIGATION METHOD::${navigationAction}`);

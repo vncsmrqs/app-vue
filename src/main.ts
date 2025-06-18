@@ -9,7 +9,6 @@ import { createPinia } from 'pinia';
 import App from './App.vue';
 import { virtualRouter, navigatorRouter, startRouterSync } from './router';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
-import { useNavStack } from '@/composables/use-nav-stack.ts';
 
 const app = createApp(App);
 
@@ -19,38 +18,21 @@ app.use(virtualRouter);
 
 const removeListener = virtualRouter.beforeEach(async () => {
   removeListener();
-  const stateId = window.history.state?.stateId;
+  const stateId = window.history.state?.stateId || uuid();
 
   if (PUSH_HISTORY_STATE) {
     await navigatorRouter.replace({
       path: window.location.pathname,
-      state: { stateId: stateId?.length ? stateId : uuid() },
+      state: { stateId: stateId },
     });
     return;
   }
 
-  const navStack = useNavStack();
+  const currentPosition = (navigatorRouter.options.history.state?.position as number) || 0;
 
-  let count = 0;
-
-  setTimeout(() => {
-    window.history.pushState({ count }, '', `/`);
-  }, 1);
-
-  window.addEventListener('popstate', async () => {
-    alert(`popstate::${++count}`);
-    setTimeout(() => {
-      window.history.pushState({ count }, '', `/`);
-    }, 1);
-    await navStack.pop();
-  });
-
-  const resolvedRoute = navigatorRouter.resolve(window.location.pathname);
-
-  await navStack.push({
-    name: resolvedRoute.name || 'home',
-    replace: false,
-    state: { stateId: stateId?.length ? stateId : uuid() },
+  await navigatorRouter.replace({
+    path: window.location.pathname,
+    state: { stateId, position: currentPosition },
   });
 });
 

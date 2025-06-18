@@ -19,7 +19,7 @@ import MenuIcon from 'vue-material-design-icons/Menu.vue';
             Início
           </span>
         </app-link>
-        <app-link :to="{ name: 'search' }" v-slot="{ isActive }" class="fon t-medium">
+        <app-link :to="{ name: 'search' }" v-slot="{ isActive }" class="font-medium">
           <span
             :class="{
               'text-blue-600': isActive,

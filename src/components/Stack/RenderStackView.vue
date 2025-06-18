@@ -8,7 +8,6 @@ import { useAppNavigation } from '@/composables/use-app-navigation.ts';
 import { isMobileBrowser } from '@/utils/device.ts';
 import { useRouter } from '@/router';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
-import { useNavStack } from '@/composables/use-nav-stack.ts';
 
 const router = useRouter();
 const stackViewStore = useStackViewStore();
@@ -82,22 +81,19 @@ const hideStackViewBeforeNavigate = async (stackView: StackViewProps, animationT
   );
 };
 
-const navStack = useNavStack();
-
 const navigateBack = async (stackView?: StackViewProps) => {
-  if (PUSH_HISTORY_STATE) {
-    await router.back();
+  if (PUSH_HISTORY_STATE || stackView?.routeFrom.name) {
+    router.back();
     return;
   }
 
-  await navStack.pop();
-  // await navigate({
-  //   name: stackView?.routeFrom.name || 'home',
-  //   replace: true,
-  //   params: stackView?.routeFrom.params,
-  //   query: stackView?.routeFrom.query,
-  //   hash: stackView?.routeFrom.hash,
-  // });
+  await navigate({
+    name: stackView?.routeFrom.name || 'home',
+    replace: true,
+    params: stackView?.routeFrom.params,
+    query: stackView?.routeFrom.query,
+    hash: stackView?.routeFrom.hash,
+  });
 };
 
 const closeStackView = async (

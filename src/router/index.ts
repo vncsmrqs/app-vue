@@ -17,6 +17,10 @@ const history = PUSH_HISTORY_STATE
   ? createWebHistory(import.meta.env.BASE_URL)
   : createMemoryHistory(import.meta.env.BASE_URL);
 
+// history.listen((to, from, data) => {
+//   console.log({ to, from, data, history });
+// });
+
 export const navigatorRouter = createRouter({
   history,
   routes: [
