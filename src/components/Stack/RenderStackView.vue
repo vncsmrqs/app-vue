@@ -19,7 +19,7 @@ onAfterRouterNavigate(async (payload) => {
 
   const routeTo = to.matched[to.matched.length - 1];
   const stackViewComponentTo = routeTo?.components?.default;
-  const isNavigatingToStackViewRoute = routeTo.meta.type === 'STACK';
+  const isNavigatingToStackViewRoute = routeTo.meta.type === 'STACK' && stackViewComponentTo;
 
   const toFullPath: string | null = to.fullPath;
 
@@ -39,7 +39,6 @@ onAfterRouterNavigate(async (payload) => {
 
   if (currentState.replaced) {
     await stackViewStore.remove(from.fullPath, lastPosition, 'REPLACE', !isMobileBrowser());
-    console.log(stackViewStore.stackViews);
   }
 
   if (isNavigatingToStackViewRoute) {

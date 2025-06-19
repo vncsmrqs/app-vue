@@ -1,14 +1,11 @@
 <script setup lang="ts">
 import AppLink from '@/components/AppLink.vue';
 import { v6 as uuid } from 'uuid';
-import { onMounted } from 'vue';
 import { useRoute } from '@/router';
 
 const route = useRoute();
 
 const { params } = route;
-
-onMounted(() => console.log('merchantId: ' + params.merchantId));
 </script>
 
 <template>

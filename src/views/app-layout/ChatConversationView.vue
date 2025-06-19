@@ -17,10 +17,8 @@ const back = () => {
 };
 
 onBeforeRouteUpdate(() => {
-  console.log(params);
   return true;
 });
-console.log(params);
 
 const enabledRefresh = ref(false);
 

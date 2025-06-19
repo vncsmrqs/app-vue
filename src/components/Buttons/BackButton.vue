@@ -13,6 +13,8 @@ const emit = defineEmits(['click']);
     @touchmove.prevent.stop
     @touchend.prevent.stop="emit('click')"
     @click="emit('click')"
+    type="transparent-secondary"
+    size="sm"
   >
     <ArrowLeftIcon v-if="isMobile()" />
     <CloseIcon v-else />

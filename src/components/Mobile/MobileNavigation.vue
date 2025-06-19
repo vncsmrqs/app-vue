@@ -9,7 +9,7 @@ import HomeIcon from 'vue-material-design-icons/Home.vue';
 import { useAuthStore } from '@/stores/auth-store';
 import MobileNavigationItem from '@/components/Mobile/MobileNavigationItem.vue';
 import AppLink from '@/components/AppLink.vue';
-import { isMobile, isMobileApp } from '@/utils/device.ts';
+import { isIosApp, isMobile } from '@/utils/device.ts';
 const authStore = useAuthStore();
 </script>
 
@@ -17,7 +17,7 @@ const authStore = useAuthStore();
   <nav
     v-if="isMobile()"
     class="w-full z-50 bg-white flex justify-around drop-shadow-2xl"
-    :class="{ 'pb-5': isMobileApp() }"
+    :class="{ 'pb-5': isIosApp() }"
   >
     <app-link :to="{ name: 'home' }" v-slot="{ isActive }">
       <MobileNavigationItem title="Início" :active="isActive">

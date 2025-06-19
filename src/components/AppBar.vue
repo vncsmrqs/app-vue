@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import ArrowLeftIcon from 'vue-material-design-icons/ArrowLeft.vue';
-import { isMobile } from '@/utils/device.ts';
-import CloseIcon from 'vue-material-design-icons/Close.vue';
 import BackButton from '@/components/Buttons/BackButton.vue';
 
 const props = withDefaults(
