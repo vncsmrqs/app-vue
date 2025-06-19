@@ -169,8 +169,14 @@ onMounted(() => {});
         <component
           :is="defineComponent(stackView)"
           v-bind="stackView.componentProps"
-          :before-close="stackView.onBeforeClose"
-          @close="(hideBeforeNavigate?: boolean) => closeStackView(stackView, hideBeforeNavigate)"
+          :stack-view="stackView"
+          @close="
+            async (hideBeforeNavigate?: boolean) => {
+              if (await stackView.canClose()) {
+                await closeStackView(stackView, hideBeforeNavigate);
+              }
+            }
+          "
         />
       </DrawerStackView>
     </template>

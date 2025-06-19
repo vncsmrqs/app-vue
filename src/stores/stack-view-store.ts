@@ -12,7 +12,7 @@ type ComponentProps<C extends Component> = C extends new (...args: unknown[]) =>
   : never;
 
 export type StackViewBaseProps = {
-  beforeClose: (hook: HookFunction<void[], boolean>) => () => void;
+  stackView: Readonly<StackViewProps>;
 };
 
 export type StackViewBaseEmitters = {

@@ -15,7 +15,7 @@ const router = useRouter();
 
 const canClose = ref(false);
 
-props.beforeClose(() => {
+props.stackView.onBeforeClose(() => {
   return canClose.value;
 });
 

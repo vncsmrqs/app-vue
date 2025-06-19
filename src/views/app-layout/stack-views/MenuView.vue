@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { onMounted, ref, useTemplateRef, watch } from 'vue';
 import BellOutlineIcon from 'vue-material-design-icons/BellOutline.vue';
 import MenuLink from '@/components/Menu/MenuLink.vue';
 import AppBar from '@/components/AppBar.vue';
@@ -19,6 +19,10 @@ const show = ref(false);
 const props = defineProps<StackViewBaseProps>();
 const emit = defineEmits<StackViewBaseEmitters>();
 
+props.stackView.onBeforeClose(() => {
+  return true;
+});
+
 onMounted(() => {
   setTimeout(() => {
     show.value = true;
@@ -30,9 +34,7 @@ onMounted(() => {});
 const rootElement = useTemplateRef<HTMLElement>('root-element');
 const stickyElement = useTemplateRef<HTMLElement>('sticky-element');
 
-const { y: scrollTop, isScrolling } = useScroll(rootElement, {
-  // throttle: 100,
-});
+const { y: scrollTop } = useScroll(rootElement);
 
 const { height } = useElementSize(stickyElement);
 
@@ -44,8 +46,9 @@ watch(
     if (scrollTop.value < 0) {
       return;
     }
+
+    // rolando para baixo
     if (value >= oldValue) {
-      // rolando para baixo
       const diff = value - oldValue;
       const a = translateY.value * -1 >= height.value ? height.value : translateY.value * -1 + diff;
       translateY.value = a * -1;
@@ -53,13 +56,12 @@ watch(
       return;
     }
 
+    // rolando para cima
     const diff = oldValue - value;
+
     if (diff > 0) {
       translateY.value = translateY.value >= 0 ? 0 : translateY.value + diff;
     }
-
-    // rolando para cima
-    return;
   },
 );
 </script>
@@ -69,13 +71,6 @@ watch(
     ref="root-element"
     class="w-full h-full flex-auto flex flex-col overflow-x-hidden overflow-y-auto relative"
   >
-    <!--    <div class="fixed top-0 z-50 bg-red-500">-->
-    <!--      <div>scrollTop: {{ scrollTop }}</div>-->
-    <!--      <div>isScrolling: {{ isScrolling }}</div>-->
-    <!--      <div>translateY: {{ translateY }}</div>-->
-    <!--      <div>height: {{ height }}</div>-->
-    <!--    </div>-->
-
     <div
       ref="sticky-element"
       class="sticky top-0 transform-gpu z-10"
