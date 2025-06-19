@@ -3,7 +3,7 @@ import ChevronDownIcon from 'vue-material-design-icons/ChevronDown.vue';
 import BellOutlineIcon from 'vue-material-design-icons/BellOutline.vue';
 import AppLink from '@/components/AppLink.vue';
 import { isMobile } from '@/utils/device.ts';
-import RoundedIconButton from '@/components/Buttons/RoundedIconButton.vue';
+import CircleIconButton from '@/components/Buttons/CircleIconButton.vue';
 import AppBar from '@/components/AppBar.vue';
 </script>
 
@@ -16,11 +16,13 @@ import AppBar from '@/components/AppBar.vue';
       <ChevronDownIcon />
     </app-link>
     <template #append>
-      <app-link :to="{ name: 'notifications' }" v-slot="{ navigate }">
-        <RoundedIconButton @click.prevent.stop="navigate">
-          <BellOutlineIcon />
-        </RoundedIconButton>
-      </app-link>
+      <div class="last:-mr-2">
+        <app-link :to="{ name: 'notifications' }" v-slot="{ navigate }">
+          <CircleIconButton type="transparent-secondary" size="sm" @click.prevent.stop="navigate">
+            <BellOutlineIcon />
+          </CircleIconButton>
+        </app-link>
+      </div>
     </template>
   </app-bar>
 </template>
