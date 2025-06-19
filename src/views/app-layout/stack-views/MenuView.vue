@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import BellOutlineIcon from 'vue-material-design-icons/BellOutline.vue';
-
 import MenuLink from '@/components/Menu/MenuLink.vue';
 import AppBar from '@/components/AppBar.vue';
 import TextBoxOutlineIcon from 'vue-material-design-icons/TextBoxOutline.vue';
@@ -12,6 +11,9 @@ import MapMarkerOutlineIcon from 'vue-material-design-icons/MapMarkerOutline.vue
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
 import { useElementSize, useScroll } from '@vueuse/core';
 import { appConfig } from '@/config/app-config.ts';
+import { v6 as uuid } from 'uuid';
+import MenuIcon from 'vue-material-design-icons/Menu.vue';
+
 const show = ref(false);
 
 const props = defineProps<StackViewBaseProps>();
@@ -84,6 +86,14 @@ watch(
     <div class="text-2xl font-medium px-5 pt-5">Menu</div>
     <ul class="divide-y divide-gray-200">
       <li>
+        <menu-link :to="{ name: 'menu', replace: true, query: { uuid: uuid() } }">
+          Menu
+          <template #icon>
+            <MenuIcon />
+          </template>
+        </menu-link>
+      </li>
+      <li>
         <menu-link :to="{ name: 'bag' }">
           Sacola
           <template #icon>
@@ -123,7 +133,7 @@ watch(
           </template>
         </menu-link>
       </li>
-      <li v-for="i in 10" :key="i">
+      <li>
         <menu-link :to="{ name: 'chat-list' }">
           Chats
           <template #icon>
@@ -132,7 +142,12 @@ watch(
         </menu-link>
       </li>
     </ul>
-    {{ appConfig.version }}
+    <div class="flex-1"></div>
+    <div
+      class="w-full h-14 sticky flex-none bottom-0 border-t border-gray-200 px-5 bg-white flex items-center"
+    >
+      VERSÃO DO APP: {{ appConfig.version }}
+    </div>
   </div>
 </template>
 

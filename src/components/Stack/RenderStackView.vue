@@ -14,11 +14,12 @@ const stackViewStore = useStackViewStore();
 const { navigate } = useAppNavigation();
 
 onAfterRouterNavigate(async (payload) => {
-  const { to, from, action, currentPosition, backwardRouteList } = payload;
+  const { to, from, action, currentPosition, lastPosition, backwardRouteList, currentState } =
+    payload;
 
   const routeTo = to.matched[to.matched.length - 1];
-  const stackViewComponentTo = routeTo?.components?.stackView;
-  const isNavigatingToStackViewRoute = !!stackViewComponentTo;
+  const stackViewComponentTo = routeTo?.components?.default;
+  const isNavigatingToStackViewRoute = routeTo.meta.type === 'STACK';
 
   const toFullPath: string | null = to.fullPath;
 
@@ -34,6 +35,11 @@ onAfterRouterNavigate(async (payload) => {
       action,
       !isMobileBrowser(),
     );
+  }
+
+  if (currentState.replaced) {
+    await stackViewStore.remove(from.fullPath, lastPosition, 'REPLACE', !isMobileBrowser());
+    console.log(stackViewStore.stackViews);
   }
 
   if (isNavigatingToStackViewRoute) {
@@ -56,7 +62,7 @@ onAfterRouterNavigate(async (payload) => {
       toFullPath,
       currentPosition,
       action,
-      !isMobileBrowser() || action === 'PUSH',
+      !isMobileBrowser() || ['PUSH', 'REPLACE'].includes(action),
     );
   }
 });
@@ -88,7 +94,7 @@ const navigateBack = async (stackView?: StackViewProps) => {
   }
 
   await navigate({
-    name: stackView?.routeFrom.name || 'home',
+    name: stackView?.routeFrom.name || 'app',
     replace: true,
     params: stackView?.routeFrom.params,
     query: stackView?.routeFrom.query,
@@ -108,14 +114,14 @@ const closeStackView = async (
       stackView.routeFrom.fullPath === stackView.routeFullPath || !stackView.routeFrom.name;
 
     if (isFirstNavigation) {
-      const rootTo = stackView.routeTo.matched.find((route) => route.meta.isRoot);
+      const rootTo = stackView.routeTo.matched.find((route) => route.meta.type === 'ROOT');
 
       if (hideBeforeNavigate) {
         await hideStackViewBeforeNavigate(stackView, animationTime);
       }
 
       await navigate({
-        name: rootTo?.name || 'home',
+        name: rootTo?.name || 'app',
         replace: true,
         params: stackView?.routeFrom.params,
         query: stackView?.routeFrom.query,

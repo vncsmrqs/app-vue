@@ -82,7 +82,7 @@ export const useStackViewStore = defineStore('stack-view', () => {
       canClose,
     };
 
-    if (['PUSH', 'FORWARD'].includes(payload.routeAction) || true) {
+    if (['PUSH', 'FORWARD', 'REPLACE'].includes(payload.routeAction) || true) {
       _stackViewList.value.push(stackView);
     } else {
       _stackViewList.value.unshift(stackView);

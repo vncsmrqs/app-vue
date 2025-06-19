@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, ref, toRaw } from 'vue';
+import { onMounted, onUnmounted, ref, toRaw, computed } from 'vue';
 import {
   type RouteLocationNormalizedGeneric,
   type RouteLocationNormalizedLoadedGeneric,
@@ -7,10 +7,11 @@ import { useRouter } from '@/router';
 import { PubSub } from '@/utils/pub-sub.ts';
 import { LOG_NAVIGATOR_ROUTER_NAVIGATION_EVENTS } from '@/config/app-config.ts';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
+import lodash from 'lodash';
 
 const router = useRouter();
 
-export type NavigationAction = 'PUSH' | 'BACKWARD' | 'FORWARD';
+export type NavigationAction = 'PUSH' | 'BACKWARD' | 'FORWARD' | 'REPLACE';
 
 type BackwardRoute = {
   position: number;
@@ -18,24 +19,40 @@ type BackwardRoute = {
   stateId?: string;
 };
 
+type NavigationCallbackPayload = {
+  to: RouteLocationNormalizedGeneric;
+  from: RouteLocationNormalizedLoadedGeneric;
+  action: NavigationAction;
+  backwardRouteList: BackwardRoute[];
+  currentPosition: number;
+  lastPosition: number;
+  currentState: HistoryState;
+  lastState: HistoryState;
+};
+
 const pubSub = new PubSub<{
-  onAfterRouterNavigate: {
-    to: RouteLocationNormalizedGeneric;
-    from: RouteLocationNormalizedLoadedGeneric;
-    action: NavigationAction;
-    currentPosition: number;
-    lastPosition: number;
-    backwardRouteList: BackwardRoute[];
-  };
+  onAfterRouterNavigate: NavigationCallbackPayload;
 }>();
 
 let backwardRouteList: BackwardRoute[] = [];
 
-const currentPosition = ref(0);
-const lastPosition = ref(0);
+type HistoryState = {
+  position: number;
+  replaced?: boolean;
+  stateId?: string;
+  back?: string;
+  current: string;
+  forward?: string;
+};
 
-const currentStateId = ref<string | undefined>();
-const lastStateId = ref<string | undefined>();
+const currentState = ref<HistoryState | null>(null);
+const lastState = ref<HistoryState | null>(null);
+
+const currentPosition = computed<number>(() => currentState.value?.position || 0);
+const lastPosition = computed<number>(() => lastState.value?.position || 0);
+
+const currentStateId = computed<string | undefined>(() => currentState.value?.stateId);
+const lastStateId = computed<string | undefined>(() => lastState.value?.stateId);
 
 const getNavigationAction = (
   to: RouteLocationNormalizedGeneric,
@@ -54,6 +71,10 @@ const getNavigationAction = (
     routeLeftBehind.stateId === currentStateId.value
   ) {
     return 'FORWARD';
+  }
+
+  if (currentState.value.replaced) {
+    return 'REPLACE';
   }
 
   return 'PUSH';
@@ -82,29 +103,25 @@ const handleNavigationAction = (
   return [];
 };
 
-const defineCurrent = () => {
-  currentPosition.value = ((router.options.history.state.position as number) || 0) + 1;
-  currentStateId.value = router.options.history.state.stateId as string;
+const defineCurrentState = () => {
+  currentState.value = {
+    ...router.options.history.state,
+    position: ((router.options.history.state.position as number) || 0) + 1,
+  };
 };
 
-const defineLast = () => {
-  lastPosition.value = currentPosition.value;
-  lastStateId.value = currentStateId.value;
+const defineLastState = () => {
+  lastState.value = lodash.cloneDeep(currentState.value);
 };
 
-defineCurrent();
+defineCurrentState();
 
 router.afterEach((to, from, failure) => {
   if (failure) {
     return;
   }
 
-  defineCurrent();
-
-  // console.log({
-  //   lastPosition: lastPosition.value,
-  //   currentPosition: currentPosition.value,
-  // });
+  defineCurrentState();
 
   const navigationAction = getNavigationAction(to, backwardRouteList);
 
@@ -117,9 +134,11 @@ router.afterEach((to, from, failure) => {
     action: navigationAction,
     currentPosition: currentPosition.value,
     lastPosition: lastPosition.value,
+    currentState: currentState.value,
+    lastState: lastState.value,
   });
 
-  defineLast();
+  defineLastState();
 
   if (!PUSH_HISTORY_STATE) {
     window.history.replaceState({}, '', to.fullPath);
@@ -129,15 +148,6 @@ router.afterEach((to, from, failure) => {
     console.log(`NAVIGATION METHOD::${navigationAction}`);
   }
 });
-
-type NavigationCallbackPayload = {
-  to: RouteLocationNormalizedGeneric;
-  from: RouteLocationNormalizedLoadedGeneric;
-  action: NavigationAction;
-  backwardRouteList: BackwardRoute[];
-  currentPosition: number;
-  lastPosition: number;
-};
 
 type NavigationCallback = (payload: NavigationCallbackPayload) => void;
 

@@ -11,9 +11,6 @@ export const isAuthenticatedMiddleware: NavigationGuard = async (
   if (!authStore.isAuthenticated) {
     next({
       name: 'login',
-      query: {
-        redirectTo: to.name === 'logout' ? '/' : to.fullPath,
-      },
     });
     return;
   }

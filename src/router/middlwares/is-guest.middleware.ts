@@ -10,7 +10,7 @@ export const isGuestMiddleware: NavigationGuard = async (
 
   if (authStore.isAuthenticated) {
     next({
-      name: 'home',
+      name: 'app',
     });
     return;
   }

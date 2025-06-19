@@ -8,7 +8,7 @@ export {};
 
 declare module 'vue-router' {
   export interface RouteMeta {
-    isRoot?: boolean;
+    type?: 'PAGE' | 'ROOT' | 'STACK';
     mode?: DrawerMode;
     middlewares?: NavigationGuard[];
     permissions?: PermissionEnum[];

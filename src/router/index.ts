@@ -1,4 +1,9 @@
-import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router';
+import {
+  createMemoryHistory,
+  createRouter,
+  createWebHistory,
+  type RouteRecordRaw,
+} from 'vue-router';
 
 import { h, markRaw, resolveComponent } from 'vue';
 import { isGuestMiddleware } from '@/router/middlwares/is-guest.middleware.ts';
@@ -12,217 +17,217 @@ import {
   LOG_VIRTUAL_ROUTER_NAVIGATION_EVENTS,
 } from '@/config/app-config.ts';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
+import { isAuthenticatedMiddleware } from '@/router/middlwares/is-authenticated.middleware.ts';
 
 const history = PUSH_HISTORY_STATE
   ? createWebHistory(import.meta.env.BASE_URL)
   : createMemoryHistory(import.meta.env.BASE_URL);
 
-// history.listen((to, from, data) => {
-//   console.log({ to, from, data, history });
-// });
+const routes: Readonly<RouteRecordRaw[]> = [
+  {
+    path: '/',
+    component: {
+      render() {
+        return h(resolveComponent('router-view'));
+      },
+    },
+    meta: {
+      middlewares: [loadSessionMiddleware],
+    },
+    children: [
+      {
+        path: '/',
+        name: 'index',
+        component: () => import('../views/InitialView.vue'),
+      },
+      {
+        path: '/app',
+        name: 'app-layout',
+        component: () => import('../views/app-layout/AppLayout.vue'),
+        meta: {
+          middlewares: [],
+        },
+        children: [
+          {
+            path: '',
+            name: 'app',
+            redirect: {
+              name: 'home',
+            },
+          },
+          {
+            path: 'home',
+            name: 'home',
+            component: () => import('../views/app-layout/HomeView.vue'),
+            props: true,
+            meta: {
+              type: 'ROOT',
+            },
+          },
+          {
+            path: 'search',
+            name: 'search',
+            component: () => import('../views/app-layout/SearchView.vue'),
+            props: true,
+            meta: {
+              type: 'ROOT',
+            },
+          },
+          {
+            path: 'orders',
+            name: 'orders',
+            component: () => import('../views/app-layout/OrderListView.vue'),
+            props: true,
+            meta: {
+              type: 'ROOT',
+            },
+          },
+          {
+            path: 'merchant/:merchantId',
+            name: 'merchant',
+            component: () => import('@/views/app-layout/MerchantView.vue'),
+            props: true,
+            meta: {
+              type: 'ROOT',
+            },
+            children: [
+              {
+                path: 'products/:productId',
+                name: 'merchant.product',
+                component: () =>
+                  import('@/views/app-layout/stack-views/merchant/DetailProductView.vue'),
+                meta: {
+                  type: 'STACK',
+                },
+                props: true,
+              },
+            ],
+          },
+          {
+            path: 'address-list',
+            name: 'address-list',
+            component: () => import('../views/app-layout/stack-views/AddressListView.vue'),
+            meta: {
+              type: 'STACK',
+            },
+            props: true,
+            children: [
+              {
+                path: 'add',
+                name: 'address-list.add',
+                component: () => import('../views/app-layout/stack-views/AddressListView.vue'),
+                meta: {
+                  type: 'STACK',
+                },
+              },
+            ],
+          },
+          {
+            path: '',
+            name: 'app.authenticated',
+            meta: {
+              middlewares: [isAuthenticatedMiddleware],
+            },
+            children: [
+              {
+                path: 'chats',
+                name: 'chat-list',
+                component: () => import('../views/app-layout/ChatListView.vue'),
+                props: true,
+                meta: {
+                  type: 'ROOT',
+                },
+                children: [
+                  {
+                    path: ':chatId',
+                    name: 'chat-list.conversation',
+                    meta: {
+                      type: 'ROOT',
+                    },
+                    props: true,
+                    component: () => import('../views/app-layout/ChatConversationView.vue'),
+                  },
+                ],
+              },
+              {
+                path: 'notifications',
+                name: 'notifications',
+                component: () => import('../views/app-layout/stack-views/NotificationsView.vue'),
+                meta: {
+                  type: 'STACK',
+                },
+              },
+              {
+                path: 'favorites',
+                name: 'favorites',
+                component: () => import('../views/app-layout/FavoriteListView.vue'),
+                meta: {
+                  type: 'ROOT',
+                },
+              },
+            ],
+          },
+          {
+            path: 'menu',
+            name: 'menu',
+            component: () => import('../views/app-layout/stack-views/MenuView.vue'),
+            meta: {
+              type: 'STACK',
+            },
+          },
+          {
+            path: 'bag',
+            name: 'bag',
+            component: () => import('../views/app-layout/stack-views/BagView.vue'),
+            meta: {
+              type: 'STACK',
+            },
+          },
+          {
+            path: 'fixed',
+            name: 'fixed',
+            component: () => import('../views/app-layout/stack-views/FixedView.vue'),
+            meta: {
+              type: 'STACK',
+            },
+          },
+        ],
+      },
+      {
+        path: '/',
+        name: 'guest',
+        meta: {
+          middlewares: [isGuestMiddleware],
+        },
+        children: [
+          {
+            path: '/entrar',
+            name: 'login',
+            component: () => import('../views/LoginView.vue'),
+          },
+        ],
+      },
+    ],
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: () => import('../views/NotFoundView.vue'),
+  },
+];
 
 export const navigatorRouter = createRouter({
   history,
-  routes: [
-    {
-      path: '/',
-      component: {
-        render() {
-          return h(resolveComponent('router-view'));
-        },
-      },
-      meta: {
-        middlewares: [loadSessionMiddleware],
-      },
-      children: [
-        {
-          path: '/',
-          name: 'index',
-          // components: {
-          //   default: () => import('../views/InitialView.vue'),
-          // },
-          redirect: { name: 'home' },
-        },
-        {
-          path: '/',
-          name: 'app-layout',
-          component: () => import('../views/app-layout/AppLayout.vue'),
-          children: [
-            {
-              path: '/home',
-              name: 'home',
-              components: {
-                default: () => import('../views/app-layout/HomeView.vue'),
-              },
-              props: true,
-              meta: {
-                isRoot: true,
-              },
-            },
-            {
-              path: '/search',
-              name: 'search',
-              components: {
-                default: () => import('../views/app-layout/SearchView.vue'),
-              },
-              props: true,
-              meta: {
-                isRoot: true,
-              },
-            },
-            {
-              path: '/orders',
-              name: 'orders',
-              components: {
-                default: () => import('../views/app-layout/OrderListView.vue'),
-              },
-              props: true,
-              meta: {
-                isRoot: true,
-              },
-            },
-            {
-              path: '/merchant/:merchantId',
-              name: 'merchant',
-              components: {
-                default: () => import('@/views/app-layout/MerchantView.vue'),
-              },
-              props: true,
-              meta: {
-                isRoot: true,
-                paramsToMap: ['merchantId'],
-              },
-              // beforeEnter: (to, from, next) => {
-              //   to.params = {
-              //     ...to.params,
-              //   };
-              //   return next();
-              // },
-              children: [
-                {
-                  path: 'products/:productId',
-                  name: 'merchant.product',
-                  components: {
-                    stackView: () =>
-                      import('@/views/app-layout/stack-views/merchant/DetailProductView.vue'),
-                  },
-                  props: {
-                    stackView: true,
-                  },
-                },
-              ],
-            },
-            {
-              path: '/address-list',
-              name: 'address-list',
-              components: {
-                stackView: () => import('../views/app-layout/stack-views/AddressListView.vue'),
-              },
-              props: true,
-              children: [
-                {
-                  path: 'add',
-                  name: 'address-list.add',
-                  components: {
-                    stackView: () => import('../views/app-layout/stack-views/AddressListView.vue'),
-                  },
-                },
-              ],
-            },
-            {
-              path: '/chats',
-              name: 'chat-list',
-              components: {
-                default: () => import('../views/app-layout/ChatListView.vue'),
-              },
-              props: true,
-              meta: {
-                isRoot: true,
-              },
-              children: [
-                {
-                  path: ':chatId',
-                  name: 'chat-list.conversation',
-                  meta: {
-                    isRoot: true,
-                  },
-                  props: true,
-                  components: {
-                    default: () => import('../views/app-layout/ChatConversationView.vue'),
-                  },
-                },
-              ],
-            },
-            {
-              path: '/favorites',
-              name: 'favorites',
-              components: {
-                default: () => import('../views/app-layout/FavoriteListView.vue'),
-              },
-              meta: { isRoot: true },
-            },
-            {
-              path: '/menu',
-              name: 'menu',
-              components: {
-                stackView: () => import('../views/app-layout/stack-views/MenuView.vue'),
-              },
-            },
-            {
-              path: '/notifications',
-              name: 'notifications',
-              components: {
-                stackView: () => import('../views/app-layout/stack-views/NotificationsView.vue'),
-              },
-            },
-            {
-              path: '/bag',
-              name: 'bag',
-              components: {
-                stackView: () => import('../views/app-layout/stack-views/BagView.vue'),
-              },
-            },
-            {
-              path: '/fixed',
-              name: 'fixed',
-              components: {
-                stackView: () => import('../views/app-layout/stack-views/FixedView.vue'),
-              },
-              meta: {
-                mode: 'MODAL',
-              },
-            },
-          ],
-        },
-        {
-          path: '/',
-          name: 'guest',
-          meta: {
-            middlewares: [isGuestMiddleware],
-          },
-          children: [
-            {
-              path: '/entrar',
-              name: 'login',
-              component: () => import('../views/LoginView.vue'),
-            },
-          ],
-        },
-      ],
-    },
-    {
-      path: '/:pathMatch(.*)*',
-      name: 'not-found',
-      component: () => import('../views/NotFoundView.vue'),
-    },
-  ],
+  routes,
 });
 
-const routes = markRaw(navigatorRouter.getRoutes().filter((route) => !route.components?.stackView));
+const nonStackViewRoutes = markRaw(
+  navigatorRouter.getRoutes().filter((route) => route.meta.type !== 'STACK'),
+);
 
 export const virtualRouter = createRouter({
   history: createMemoryHistory(import.meta.env.BASE_URL),
-  routes,
+  routes: nonStackViewRoutes,
 });
 
 export const useRoute = () => {

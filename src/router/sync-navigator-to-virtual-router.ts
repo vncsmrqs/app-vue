@@ -8,7 +8,7 @@ type Params = {
 
 export const syncNavigatorToVirtualRouter = ({ navigatorRouter, virtualRouter }: Params): void => {
   const stackRoutes = markRaw(
-    navigatorRouter.getRoutes().filter((route) => !!route.components?.stackView),
+    navigatorRouter.getRoutes().filter((route) => route.meta?.type === 'STACK'),
   );
 
   navigatorRouter.afterEach(async (to, _from, failure) => {
@@ -29,16 +29,14 @@ export const syncNavigatorToVirtualRouter = ({ navigatorRouter, virtualRouter }:
     }
 
     const currentVirtualRouteIsAlreadyIsRoot = virtualRouter.currentRoute.value.matched.some(
-      (route) => route.meta.isRoot,
+      (route) => route.meta.type === 'ROOT',
     );
 
     if (currentVirtualRouteIsAlreadyIsRoot) {
       return;
     }
 
-    const navigatorRouteRootTo = to.matched.find(
-      (route) => !route.components?.stackView && route.meta.isRoot,
-    );
+    const navigatorRouteRootTo = to.matched.find((route) => route.meta.type === 'ROOT');
 
     if (navigatorRouteRootTo) {
       await virtualRouter.replace({
@@ -51,7 +49,7 @@ export const syncNavigatorToVirtualRouter = ({ navigatorRouter, virtualRouter }:
     }
 
     await virtualRouter.replace({
-      name: 'home',
+      name: 'app',
     });
   });
 };

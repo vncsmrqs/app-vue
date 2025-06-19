@@ -157,7 +157,7 @@ export const useAppStore = defineStore('app', () => {
     navigationLoadingPercentage,
     width,
     height,
-    view: computed(() => (forceFullscreen.value ? 'fullscreen-view' : definedView.value)),
+    screen: computed(() => (forceFullscreen.value ? 'fullscreen-view' : definedView.value)),
     isResizing,
     showNavigationLoading,
     //Actions
