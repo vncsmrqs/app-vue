@@ -39,12 +39,12 @@ export const useFetchAuthenticatedUserService = (
       const response = await request.execute();
 
       data.value = response.data;
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (AppError.is(e)) {
         error.value = e;
         return;
       }
-      error.value = new GenericError(e.toString());
+      error.value = new GenericError(String(e));
       console.error(error.value);
     } finally {
       loading.value = false;

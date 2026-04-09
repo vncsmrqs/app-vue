@@ -1,5 +1,19 @@
 import { ErrorEnum } from '@/enums/error.enum';
 
+type AppErrorConstructor<T extends AppError> = new (...args: never[]) => T;
+
+export function isAppErrorOfType<T extends AppError>(
+  candidate: unknown,
+  errorCode: string,
+  ctor?: AppErrorConstructor<T>,
+): candidate is T {
+  if (!AppError.is(candidate)) return false;
+
+  if (ctor && !(candidate instanceof ctor)) return false;
+
+  return candidate.code === errorCode;
+}
+
 export class AppError extends Error {
   public readonly isAppError = true;
   constructor(
@@ -14,8 +28,11 @@ export class AppError extends Error {
     this.data = data;
   }
 
-  static is(candidate: any): candidate is AppError {
-    return candidate instanceof AppError || candidate?.isAppError;
+  static is(candidate: unknown): candidate is AppError {
+    return (
+      candidate instanceof AppError ||
+      (typeof candidate === 'object' && candidate !== null && 'isAppError' in candidate)
+    );
   }
 }
 
@@ -24,8 +41,8 @@ export class CanceledError extends AppError {
     super(ErrorEnum.CANCELED_ERROR, message, data);
   }
 
-  static is(candidate: any): candidate is CanceledError {
-    return candidate instanceof CanceledError || candidate?.code === ErrorEnum.CANCELED_ERROR;
+  static is(candidate: unknown): candidate is CanceledError {
+    return isAppErrorOfType(candidate, ErrorEnum.CANCELED_ERROR, CanceledError);
   }
 }
 
@@ -34,8 +51,8 @@ export class GenericError extends AppError {
     super(ErrorEnum.GENERIC_ERROR, message, data);
   }
 
-  static is(candidate: any): candidate is GenericError {
-    return candidate instanceof GenericError || candidate?.code === ErrorEnum.GENERIC_ERROR;
+  static is(candidate: unknown): candidate is GenericError {
+    return isAppErrorOfType(candidate, ErrorEnum.GENERIC_ERROR, GenericError);
   }
 }
 
@@ -44,31 +61,29 @@ export class NotFoundError extends AppError {
     super(ErrorEnum.NOT_FOUND_ERROR, message, data);
   }
 
-  static is(candidate: any): candidate is NotFoundError {
-    return candidate instanceof NotFoundError || candidate?.code === ErrorEnum.NOT_FOUND_ERROR;
+  static is(candidate: unknown): candidate is NotFoundError {
+    return AppError.is(candidate) && candidate.code === ErrorEnum.NOT_FOUND_ERROR;
+    return isAppErrorOfType(candidate, ErrorEnum.GENERIC_ERROR, GenericError);
   }
 }
 
 export class ServiceError extends AppError {
-  constructor(message: string | string[] = 'Service problem', data?: any) {
+  constructor(message: string | string[] = 'Service problem', data?: never) {
     super(ErrorEnum.SERVICE_ERROR, message, data);
   }
 
-  static is(candidate: any): candidate is ServiceError {
-    return candidate instanceof ServiceError || candidate?.code === ErrorEnum.SERVICE_ERROR;
+  static is(candidate: unknown): candidate is ServiceError {
+    return isAppErrorOfType(candidate, ErrorEnum.SERVICE_ERROR, ServiceError);
   }
 }
 
 export class AuthenticationError extends AppError {
-  constructor(message: string | string[] = 'Not authenticated', data?: any) {
+  constructor(message: string | string[] = 'Not authenticated', data?: never) {
     super(ErrorEnum.NOT_AUTHENTICATED_ERROR, message, data);
   }
 
-  static is(candidate: any): candidate is AuthenticationError {
-    return (
-      candidate instanceof AuthenticationError ||
-      candidate?.code === ErrorEnum.NOT_AUTHENTICATED_ERROR
-    );
+  static is(candidate: unknown): candidate is AuthenticationError {
+    return isAppErrorOfType(candidate, ErrorEnum.NOT_AUTHENTICATED_ERROR, AuthenticationError);
   }
 }
 
@@ -77,10 +92,8 @@ export class AuthorizationError extends AppError {
     super(ErrorEnum.NOT_AUTHORIZED_ERROR, message, data);
   }
 
-  static is(candidate: any): candidate is AuthorizationError {
-    return (
-      candidate instanceof AuthorizationError || candidate?.code === ErrorEnum.NOT_AUTHORIZED_ERROR
-    );
+  static is(candidate: unknown): candidate is AuthorizationError {
+    return isAppErrorOfType(candidate, ErrorEnum.NOT_AUTHORIZED_ERROR, AuthorizationError);
   }
 }
 
@@ -89,8 +102,8 @@ export class ValidationError extends AppError {
     super(ErrorEnum.VALIDATION_ERROR, message, data);
   }
 
-  static is(candidate: any): candidate is ValidationError {
-    return candidate instanceof ValidationError || candidate?.code === ErrorEnum.VALIDATION_ERROR;
+  static is(candidate: unknown): candidate is ValidationError {
+    return isAppErrorOfType(candidate, ErrorEnum.VALIDATION_ERROR, ValidationError);
   }
 }
 
@@ -99,7 +112,7 @@ export class ClientError extends AppError {
     super(ErrorEnum.CLIENT_ERROR, message, data);
   }
 
-  static is(candidate: any): candidate is ClientError {
-    return candidate instanceof ClientError || candidate?.code === ErrorEnum.CLIENT_ERROR;
+  static is(candidate: unknown): candidate is ClientError {
+    return isAppErrorOfType(candidate, ErrorEnum.CLIENT_ERROR, ClientError);
   }
 }

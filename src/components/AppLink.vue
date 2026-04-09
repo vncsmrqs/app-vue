@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { type RouteLocationNamedRaw } from 'vue-router';
 import { useAppLink } from '@/composables/use-app-link.ts';
-import { isMobile } from '@/utils/device.ts';
 
 const props = defineProps<{
   to: RouteLocationNamedRaw;

@@ -2,7 +2,7 @@
 import AppLink from '@/components/AppLink.vue';
 import { useRoute } from '@/router';
 
-const props = defineProps<{
+const _props = defineProps<{
   merchantId: string;
   productId: string;
 }>();

@@ -1,0 +1,32 @@
+<script setup lang="ts">
+import AppBar from '@/components/AppBar.vue';
+import ScreenMain from '@/components/ScreenMain.vue';
+import EmptyScreen from '@/components/EmptyScreen.vue';
+import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
+import AppButton from '@/components/Buttons/AppButton.vue';
+import ScreenFooter from '@/components/ScreenFooter.vue';
+import ArrowRightIcon from 'vue-material-design-icons/ArrowRight.vue';
+
+const _props = defineProps<StackViewBaseProps>();
+const emit = defineEmits<StackViewBaseEmitters>();
+</script>
+
+<template>
+  <div class="w-full h-full flex flex-col">
+    <app-bar @back="emit('close')"> Forma de pagamento </app-bar>
+    <screen-main :enabled="false">
+      <empty-screen
+        title="Você precisa selecionar items primeiro"
+        subtitle="Adicione items para realizar um pedido"
+      />
+    </screen-main>
+    <screen-footer>
+      <app-button type="primary" size="lg" class="w-full flex gap-2">
+        Continuar
+        <ArrowRightIcon />
+      </app-button>
+    </screen-footer>
+  </div>
+</template>
+
+<style scoped></style>

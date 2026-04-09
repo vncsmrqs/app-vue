@@ -1,7 +1,7 @@
 <script setup lang="ts">
-  const props = withDefaults(defineProps<{ color?: string }>(), {
-    color: 'currentColor',
-  });
+const props = withDefaults(defineProps<{ color?: string }>(), {
+  color: 'currentColor',
+});
 </script>
 
 <template>
@@ -45,9 +45,9 @@
 </template>
 
 <style scoped>
-  svg {
-    max-width: 50px;
-    max-height: 25px;
-    display: inline-block;
-  }
+svg {
+  max-width: 50px;
+  max-height: 25px;
+  display: inline-block;
+}
 </style>

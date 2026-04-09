@@ -2,7 +2,7 @@
 const props = withDefaults(
   defineProps<{
     type?: 'primary' | 'secondary' | 'transparent-secondary';
-    size?: 'sm' | 'md';
+    size?: 'sm' | 'md' | 'lg';
   }>(),
   {
     type: 'transparent-secondary',
@@ -20,6 +20,7 @@ const props = withDefaults(
       'text-black hover:bg-gray-200': props.type === 'transparent-secondary',
       'w-10 h-10 rounded-md': props.size === 'sm',
       'w-12 h-12 rounded-lg': props.size === 'md',
+      'w-14 h-14 rounded-xl': props.size === 'lg',
     }"
   >
     <slot />

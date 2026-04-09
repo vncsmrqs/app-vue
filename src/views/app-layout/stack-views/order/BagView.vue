@@ -4,8 +4,11 @@ import ScreenMain from '@/components/ScreenMain.vue';
 import EmptyScreen from '@/components/EmptyScreen.vue';
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
 import AppButton from '@/components/Buttons/AppButton.vue';
+import ScreenFooter from '@/components/ScreenFooter.vue';
+import ArrowRightIcon from 'vue-material-design-icons/ArrowRight.vue';
+import AppLink from '@/components/AppLink.vue';
 
-const props = defineProps<StackViewBaseProps>();
+const _props = defineProps<StackViewBaseProps>();
 const emit = defineEmits<StackViewBaseEmitters>();
 </script>
 
@@ -14,7 +17,7 @@ const emit = defineEmits<StackViewBaseEmitters>();
     <app-bar @back="emit('close')">
       Sacola
       <template #append>
-        <app-button class="last:-mr-2">Limpar</app-button>
+        <app-button type="transparent-secondary" size="sm" class="last:-mr-2">Limpar</app-button>
       </template>
     </app-bar>
     <screen-main :enabled="false">
@@ -23,6 +26,14 @@ const emit = defineEmits<StackViewBaseEmitters>();
         subtitle="Adicione items para realizar um pedido"
       />
     </screen-main>
+    <screen-footer>
+      <app-link :to="{ name: 'order.delivery-mode' }" class="w-full" v-slot="navigate">
+        <app-button type="primary" size="lg" class="w-full flex gap-2" @click="navigate">
+          Continuar
+          <ArrowRightIcon />
+        </app-button>
+      </app-link>
+    </screen-footer>
   </div>
 </template>
 

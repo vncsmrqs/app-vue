@@ -73,7 +73,7 @@ const getNavigationAction = (
     return 'FORWARD';
   }
 
-  if (currentState.value.replaced) {
+  if (currentState.value?.replaced) {
     return 'REPLACE';
   }
 
@@ -105,7 +105,11 @@ const handleNavigationAction = (
 
 const defineCurrentState = () => {
   currentState.value = {
-    ...router.options.history.state,
+    replaced: router.options.history.state.replaced,
+    stateId: router.options.history.state.stateId,
+    back: router.options.history.state.back,
+    current: router.options.history.state.current,
+    forward: router.options.history.state.forward,
     position: ((router.options.history.state.position as number) || 0) + 1,
   };
 };

@@ -10,7 +10,7 @@ const props = defineProps<{
 
 <template>
   <app-link
-    :to="props.to"
+    :to="{ replace: true, ...props.to }"
     class="flex w-full items-start justify-start space-x-3 p-5 text-left select-none"
   >
     <div class="relative flex-none rounded-xl bg-gray-100 p-3 text-gray-600">

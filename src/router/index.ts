@@ -81,6 +81,43 @@ const routes: Readonly<RouteRecordRaw[]> = [
             meta: {
               type: 'ROOT',
             },
+            children: [
+              {
+                path: 'bag',
+                name: 'order.bag',
+                component: () => import('../views/app-layout/stack-views/order/BagView.vue'),
+                meta: {
+                  type: 'STACK',
+                },
+              },
+              {
+                path: 'delivery-mode',
+                name: 'order.delivery-mode',
+                component: () =>
+                  import('../views/app-layout/stack-views/order/DeliveryModeView.vue'),
+                meta: {
+                  type: 'STACK',
+                },
+              },
+              {
+                path: 'payment-method',
+                name: 'order.payment-method',
+                component: () =>
+                  import('../views/app-layout/stack-views/order/PaymentMethodView.vue'),
+                meta: {
+                  type: 'STACK',
+                },
+              },
+              {
+                path: 'order',
+                name: 'order.order',
+                component: () =>
+                  import('../views/app-layout/stack-views/order/PaymentMethodView.vue'),
+                meta: {
+                  type: 'STACK',
+                },
+              },
+            ],
           },
           {
             path: 'merchant/:merchantId',
@@ -126,7 +163,7 @@ const routes: Readonly<RouteRecordRaw[]> = [
             path: '',
             name: 'app.authenticated',
             meta: {
-              middlewares: [isAuthenticatedMiddleware],
+              // middlewares: [isAuthenticatedMiddleware],
             },
             children: [
               {
@@ -173,14 +210,7 @@ const routes: Readonly<RouteRecordRaw[]> = [
             component: () => import('../views/app-layout/stack-views/MenuView.vue'),
             meta: {
               type: 'STACK',
-            },
-          },
-          {
-            path: 'bag',
-            name: 'bag',
-            component: () => import('../views/app-layout/stack-views/BagView.vue'),
-            meta: {
-              type: 'STACK',
+              ignoresOnHistory: true,
             },
           },
           {

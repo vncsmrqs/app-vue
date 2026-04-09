@@ -81,7 +81,7 @@ watch(
     <div class="text-2xl font-medium px-5 pt-5">Menu</div>
     <ul class="divide-y divide-gray-200">
       <li>
-        <menu-link :to="{ name: 'menu', replace: true, query: { uuid: uuid() } }">
+        <menu-link :to="{ name: 'menu', query: { uuid: uuid() } }">
           Menu
           <template #icon>
             <MenuIcon />
@@ -89,7 +89,7 @@ watch(
         </menu-link>
       </li>
       <li>
-        <menu-link :to="{ name: 'bag' }">
+        <menu-link :to="{ name: 'order.bag' }">
           Sacola
           <template #icon>
             <ShoppingOutlineIcon />

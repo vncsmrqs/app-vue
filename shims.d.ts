@@ -12,5 +12,6 @@ declare module 'vue-router' {
     mode?: DrawerMode;
     middlewares?: NavigationGuard[];
     permissions?: PermissionEnum[];
+    ignoresOnHistory?: boolean;
   }
 }

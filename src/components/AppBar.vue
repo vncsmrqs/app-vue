@@ -25,7 +25,7 @@ const emit = defineEmits<{ back: [void] }>();
           />
         </slot>
         <div class="min-w-0 flex-auto">
-          <h1 class="truncate text-xl leading-none font-medium">
+          <h1 class="truncate text-xl font-medium">
             <slot></slot>
           </h1>
         </div>

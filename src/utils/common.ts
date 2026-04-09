@@ -1,10 +1,16 @@
-export function debounce<T extends Function>(cb: T, wait = 20) {
-  let h: any = 0;
-  const callable = (...args: any) => {
-    clearTimeout(h);
-    h = setTimeout(() => cb(...args), wait);
+export function debounce<T extends (...args: unknown[]) => unknown>(
+  cb: T,
+  wait = 20,
+): (...args: Parameters<T>) => void {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  return (...args: Parameters<T>) => {
+    if (timeoutId) clearTimeout(timeoutId);
+
+    timeoutId = setTimeout(() => {
+      cb(...args);
+    }, wait);
   };
-  return <T>(<any>callable);
 }
 
 export const timeout = (ms: number): Promise<void> => {

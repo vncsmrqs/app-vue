@@ -7,7 +7,7 @@ import EmptyScreen from '@/components/EmptyScreen.vue';
 import ScreenFooter from '@/components/ScreenFooter.vue';
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
 
-const props = defineProps<StackViewBaseProps>();
+const _props = defineProps<StackViewBaseProps>();
 const emit = defineEmits<StackViewBaseEmitters>();
 
 const enabledRefresh = ref(false);

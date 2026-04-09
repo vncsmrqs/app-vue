@@ -1,6 +1,5 @@
 import './assets/main.css';
 import '@/utils/dayjs.ts';
-import 'swiper/css';
 import { v6 as uuid } from 'uuid';
 
 import { createApp } from 'vue';
