@@ -8,6 +8,7 @@ import { createPinia } from 'pinia';
 import App from './App.vue';
 import { virtualRouter, navigatorRouter, startRouterSync } from './router';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
+import { parseQueryString } from '@/utils';
 
 const app = createApp(App);
 
@@ -19,9 +20,13 @@ const removeListener = virtualRouter.beforeEach(async () => {
   removeListener();
   const stateId = window.history.state?.stateId || uuid();
 
+  const query = parseQueryString(window.location.search);
+
   if (PUSH_HISTORY_STATE) {
     await navigatorRouter.replace({
       path: window.location.pathname,
+      query,
+      hash: window.location.hash,
       state: { stateId: stateId },
     });
     return;
@@ -31,6 +36,8 @@ const removeListener = virtualRouter.beforeEach(async () => {
 
   await navigatorRouter.replace({
     path: window.location.pathname,
+    query,
+    hash: window.location.hash,
     state: { stateId, position: currentPosition },
   });
 });

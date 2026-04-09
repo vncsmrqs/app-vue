@@ -27,7 +27,7 @@ type NavigationCallbackPayload = {
   currentPosition: number;
   lastPosition: number;
   currentState: HistoryState;
-  lastState: HistoryState;
+  lastState: HistoryState | null;
 };
 
 const pubSub = new PubSub<{
@@ -104,13 +104,14 @@ const handleNavigationAction = (
 };
 
 const defineCurrentState = () => {
+  const state = router.options.history.state;
   currentState.value = {
-    replaced: router.options.history.state.replaced,
-    stateId: router.options.history.state.stateId,
-    back: router.options.history.state.back,
-    current: router.options.history.state.current,
-    forward: router.options.history.state.forward,
-    position: ((router.options.history.state.position as number) || 0) + 1,
+    replaced: state.replaced as boolean | undefined,
+    stateId: state.stateId as string | undefined,
+    back: state.back as string | undefined,
+    current: state.current as string,
+    forward: state.forward as string | undefined,
+    position: ((state.position as number) || 0) + 1,
   };
 };
 
@@ -138,7 +139,7 @@ router.afterEach((to, from, failure) => {
     action: navigationAction,
     currentPosition: currentPosition.value,
     lastPosition: lastPosition.value,
-    currentState: currentState.value,
+    currentState: currentState.value as HistoryState,
     lastState: lastState.value,
   });
 

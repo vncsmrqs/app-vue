@@ -17,7 +17,7 @@ import {
   LOG_VIRTUAL_ROUTER_NAVIGATION_EVENTS,
 } from '@/config/app-config.ts';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
-import { isAuthenticatedMiddleware } from '@/router/middlwares/is-authenticated.middleware.ts';
+// import { isAuthenticatedMiddleware } from '@/router/middlwares/is-authenticated.middleware.ts';
 
 const history = PUSH_HISTORY_STATE
   ? createWebHistory(import.meta.env.BASE_URL)

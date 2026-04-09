@@ -21,3 +21,23 @@ export const formatToCurrency = (value: number): string => {
 
   return currencyFormatter.format(value);
 };
+
+type QueryValue = string | string[];
+
+export function parseQueryString(query: string): Record<string, QueryValue> {
+  const params = new URLSearchParams(query);
+
+  const result: Record<string, QueryValue> = {};
+
+  for (const [key, value] of params.entries()) {
+    if (result[key]) {
+      result[key] = Array.isArray(result[key])
+        ? [...(result[key] as string[]), value]
+        : [result[key] as string, value];
+    } else {
+      result[key] = value;
+    }
+  }
+
+  return result;
+}

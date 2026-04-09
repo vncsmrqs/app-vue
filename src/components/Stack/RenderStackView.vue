@@ -38,7 +38,8 @@ onAfterRouterNavigate(async (payload) => {
   }
 
   if (currentState.replaced) {
-    await stackViewStore.remove(from.fullPath, lastPosition, 'REPLACE', !isMobileBrowser());
+    //todo: Await?
+    stackViewStore.remove(from.fullPath, lastPosition, 'REPLACE', !isMobileBrowser());
   }
 
   if (isNavigatingToStackViewRoute) {

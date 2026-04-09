@@ -19,7 +19,7 @@ export class AppError extends Error {
   constructor(
     public readonly code: string,
     message: string | string[],
-    public readonly data?: never,
+    public readonly data?: unknown,
   ) {
     super(Array.isArray(message) ? message.join(', ') : message);
 
@@ -62,13 +62,12 @@ export class NotFoundError extends AppError {
   }
 
   static is(candidate: unknown): candidate is NotFoundError {
-    return AppError.is(candidate) && candidate.code === ErrorEnum.NOT_FOUND_ERROR;
-    return isAppErrorOfType(candidate, ErrorEnum.GENERIC_ERROR, GenericError);
+    return isAppErrorOfType(candidate, ErrorEnum.NOT_FOUND_ERROR, NotFoundError);
   }
 }
 
 export class ServiceError extends AppError {
-  constructor(message: string | string[] = 'Service problem', data?: never) {
+  constructor(message: string | string[] = 'Service problem', data?: unknown) {
     super(ErrorEnum.SERVICE_ERROR, message, data);
   }
 
@@ -78,7 +77,7 @@ export class ServiceError extends AppError {
 }
 
 export class AuthenticationError extends AppError {
-  constructor(message: string | string[] = 'Not authenticated', data?: never) {
+  constructor(message: string | string[] = 'Not authenticated', data?: unknown) {
     super(ErrorEnum.NOT_AUTHENTICATED_ERROR, message, data);
   }
 
@@ -88,7 +87,7 @@ export class AuthenticationError extends AppError {
 }
 
 export class AuthorizationError extends AppError {
-  constructor(message: string | string[] = 'Not authenticated', data?: never) {
+  constructor(message: string | string[] = 'Not authenticated', data?: unknown) {
     super(ErrorEnum.NOT_AUTHORIZED_ERROR, message, data);
   }
 
@@ -98,7 +97,7 @@ export class AuthorizationError extends AppError {
 }
 
 export class ValidationError extends AppError {
-  constructor(message: string | string[] = 'Invalid data sent', data?: never) {
+  constructor(message: string | string[] = 'Invalid data sent', data?: unknown) {
     super(ErrorEnum.VALIDATION_ERROR, message, data);
   }
 
@@ -108,7 +107,7 @@ export class ValidationError extends AppError {
 }
 
 export class ClientError extends AppError {
-  constructor(message: string | string[] = 'Bad request', data?: never) {
+  constructor(message: string | string[] = 'Bad request', data?: unknown) {
     super(ErrorEnum.CLIENT_ERROR, message, data);
   }
 
