@@ -105,13 +105,15 @@ const handleNavigationAction = (
 
 const defineCurrentState = () => {
   const state = router.options.history.state;
+  const currentPosition = ((state.position as number) || 0) + 1;
   currentState.value = {
-    replaced: state.replaced as boolean | undefined,
+    replaced:
+      (state.replaced as boolean | undefined) || lastState.value?.position === currentPosition,
     stateId: state.stateId as string | undefined,
     back: state.back as string | undefined,
     current: state.current as string,
     forward: state.forward as string | undefined,
-    position: ((state.position as number) || 0) + 1,
+    position: currentPosition,
   };
 };
 
