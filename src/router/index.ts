@@ -2,10 +2,11 @@ import {
   createMemoryHistory,
   createRouter,
   createWebHistory,
+  type RouteLocationNormalizedLoaded,
   type RouteRecordRaw,
 } from 'vue-router';
 
-import { h, markRaw, resolveComponent } from 'vue';
+import { h, markRaw, resolveComponent, shallowReactive, watch } from 'vue';
 import { isGuestMiddleware } from '@/router/middlwares/is-guest.middleware.ts';
 import { loadSessionMiddleware } from '@/router/middlwares/load-session.middleware.ts';
 import { middlewarePipeline } from '@/router/middleware-pipeline.ts';
@@ -135,6 +136,7 @@ const routes: Readonly<RouteRecordRaw[]> = [
                   import('@/views/app-layout/stack-views/merchant/DetailProductView.vue'),
                 meta: {
                   type: 'STACK',
+                  forceMatchedRoot: true,
                 },
                 props: true,
               },
@@ -210,7 +212,24 @@ const routes: Readonly<RouteRecordRaw[]> = [
             component: () => import('../views/app-layout/stack-views/MenuView.vue'),
             meta: {
               type: 'STACK',
-              ignoresOnHistory: true,
+            },
+          },
+          {
+            path: 'bottom',
+            name: 'bottom',
+            component: () => import('../views/app-layout/stack-views/MenuView.vue'),
+            meta: {
+              type: 'STACK',
+              mode: 'BOTTOM_SHEET',
+            },
+          },
+          {
+            path: 'fixed-bottom',
+            name: 'fixed-bottom',
+            component: () => import('../views/app-layout/stack-views/FixedView.vue'),
+            meta: {
+              type: 'STACK',
+              mode: 'BOTTOM_SHEET',
             },
           },
           {
@@ -260,8 +279,24 @@ export const virtualRouter = createRouter({
   routes: nonStackViewRoutes,
 });
 
+let _route: RouteLocationNormalizedLoaded | undefined;
+
 export const useRoute = () => {
-  return navigatorRouter.currentRoute.value;
+  if (!_route) {
+    _route = shallowReactive({
+      ...navigatorRouter.currentRoute.value,
+    }) as RouteLocationNormalizedLoaded;
+
+    watch(
+      navigatorRouter.currentRoute,
+      (newRoute) => {
+        Object.assign(_route!, newRoute);
+      },
+      { immediate: true },
+    );
+  }
+
+  return _route;
 };
 
 export const useRouter = () => {

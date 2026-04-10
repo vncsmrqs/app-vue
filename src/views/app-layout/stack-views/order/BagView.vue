@@ -27,7 +27,7 @@ const emit = defineEmits<StackViewBaseEmitters>();
       />
     </screen-main>
     <screen-footer>
-      <app-link :to="{ name: 'order.delivery-mode' }" class="w-full" v-slot="navigate">
+      <app-link :to="{ name: 'order.delivery-mode' }" class="w-full" v-slot="{ navigate }">
         <app-button type="primary" size="lg" class="w-full flex gap-2" @click="navigate">
           Continuar
           <ArrowRightIcon />

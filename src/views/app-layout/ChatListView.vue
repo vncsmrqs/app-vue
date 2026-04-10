@@ -34,7 +34,7 @@ onMounted(() => {
 <template>
   <div class="w-full h-full lg:py-8">
     <div class="w-full h-full flex divide-x divide-gray-200 lg:border border-gray-200">
-      <router-view v-slot="{ Component, route }">
+      <router-view v-slot="{ Component }">
         <div
           class="w-full lg:w-2/5 h-full flex-col"
           :class="{
@@ -73,7 +73,7 @@ onMounted(() => {
             'hidden md:block': !Component,
           }"
         >
-          <component v-if="Component" :is="Component" :key="route.params.orderId" />
+          <component v-if="Component" :is="Component" :key="Component.props!.chatId" />
           <empty-screen
             v-else-if="chats.length"
             title="Selecione uma conversa"

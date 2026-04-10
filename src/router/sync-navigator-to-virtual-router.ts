@@ -28,23 +28,23 @@ export const syncNavigatorToVirtualRouter = ({ navigatorRouter, virtualRouter }:
       return;
     }
 
-    const currentVirtualRouteIsAlreadyIsRoot = virtualRouter.currentRoute.value.matched.some(
-      (route) => route.meta.type === 'ROOT',
-    );
-
-    if (currentVirtualRouteIsAlreadyIsRoot) {
-      return;
-    }
-
     const navigatorRouteRootTo = to.matched.find((route) => route.meta.type === 'ROOT');
 
-    if (navigatorRouteRootTo) {
+    if (navigatorRouteRootTo && to.meta.forceMatchedRoot) {
       await virtualRouter.replace({
         name: navigatorRouteRootTo.name,
         params: to.params,
         query: to.query,
         hash: to.hash,
       });
+      return;
+    }
+
+    const currentVirtualRouteIsAlreadyIsRoot = virtualRouter.currentRoute.value.matched.some(
+      (route) => route.meta.type === 'ROOT',
+    );
+
+    if (currentVirtualRouteIsAlreadyIsRoot) {
       return;
     }
 

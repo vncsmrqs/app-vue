@@ -2,21 +2,25 @@
 import AppLink from '@/components/AppLink.vue';
 import { useRoute } from '@/router';
 
-const _props = defineProps<{
+const props = defineProps<{
   merchantId: string;
   productId: string;
 }>();
 
 const route = useRoute();
-const params = route.params;
 </script>
 
 <template>
   <div class="flex flex-col">
     Detalhes do produto
     <app-link :to="{ name: 'menu' }">Menu</app-link>
-    <div>merchantId: {{ params.merchantId }}</div>
-    <div>productId: {{ params.productId }}</div>
+    <div>params</div>
+    <div>merchantId: {{ route.params.merchantId }}</div>
+    <div>productId: {{ route.params.productId }}</div>
+
+    <div>props</div>
+    <div>merchantId: {{ props.merchantId }}</div>
+    <div>productId: {{ props.productId }}</div>
   </div>
 </template>
 

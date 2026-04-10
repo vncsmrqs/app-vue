@@ -6,9 +6,9 @@ import { useRoute } from '@/router';
 import { onBeforeRouteUpdate } from 'vue-router';
 import { useAppLink } from '@/composables/use-app-link.ts';
 
-// const props = defineProps<{ chatId: string }>();
+const props = defineProps<{ chatId: string }>();
 
-const { params } = useRoute();
+const route = useRoute();
 
 const { navigate } = useAppLink({ name: 'chat-list', replace: true });
 
@@ -43,7 +43,9 @@ onMounted(() => {
     <div class="w-full h-full flex flex-col">
       <app-bar @back="back">Nome do usuário</app-bar>
       <screen-main @refresh="() => refresh(true)" :loading="isLoading" :enabled="enabledRefresh">
-        Chat id {{ params.chatId }}
+        <div>params.chatId {{ route.params.chatId }}</div>
+        <div>_props.chatId {{ props.chatId }}</div>
+        <div>query {{ route.query }}</div>
       </screen-main>
     </div>
   </div>

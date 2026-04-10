@@ -3,9 +3,8 @@ import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useElementSize, useSwipe } from '@vueuse/core';
 import { isMobileBrowser } from '@/utils/device.ts';
 import {
-  MIN_SWIPE_X_START,
   STACK_VIEW_BASE_TRANSITION_MILLISECOND,
-  STACK_VIEW_SWIPE_X_IS_ACTIVE,
+  STACK_VIEW_SWIPE_Y_IS_ACTIVE,
   CONTAINER_OPACITY_IS_ACTIVE,
 } from '@/config/stack-view-config.ts';
 
@@ -28,20 +27,24 @@ const close = async (animationTime: number) => {
   emit('close', animationTime);
 };
 
-const rootElement = useTemplateRef('root-element');
+// const rootElement = useTemplateRef('root-element');
+const containerElement = useTemplateRef('container-element');
+const swiperElement = useTemplateRef('swiper-element');
 
-const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
+const { height } = useElementSize(containerElement);
+
+const { isSwiping, lengthY, coordsEnd, coordsStart } = useSwipe(swiperElement, {
   passive: false,
   threshold: 10,
   onSwipeStart: (e) => {
-    if (coordsStart.x <= MIN_SWIPE_X_START && STACK_VIEW_SWIPE_X_IS_ACTIVE) {
+    if (STACK_VIEW_SWIPE_Y_IS_ACTIVE) {
       e.preventDefault();
       return;
     }
   },
   onSwipeEnd: () => {
-    if (STACK_VIEW_SWIPE_X_IS_ACTIVE) {
-      if (isRealSwiping.value && coordsEnd.x >= width.value * 0.4) {
+    if (STACK_VIEW_SWIPE_Y_IS_ACTIVE) {
+      if (isClosable.value) {
         close(animationTime.value);
       }
     }
@@ -49,10 +52,12 @@ const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
 });
 
 const isRealSwiping = computed(() => {
-  return coordsStart.x <= MIN_SWIPE_X_START && STACK_VIEW_SWIPE_X_IS_ACTIVE && isSwiping.value;
+  return STACK_VIEW_SWIPE_Y_IS_ACTIVE && isSwiping.value;
 });
 
-const { width } = useElementSize(rootElement);
+const isClosable = computed(() => {
+  return isRealSwiping.value && coordsEnd.y - coordsStart.y >= height.value * 0.4;
+});
 
 const isRendering = ref(false);
 const isVisible = ref(!props.transitionDuration || isMobileBrowser());
@@ -96,13 +101,13 @@ watch(
 );
 
 const containerTransform = computed(() => {
-  if (STACK_VIEW_SWIPE_X_IS_ACTIVE) {
+  if (STACK_VIEW_SWIPE_Y_IS_ACTIVE) {
     if (isRealSwiping.value) {
-      const x = lengthX.value * -1;
-      if (x <= 0) {
-        return `translateX(${0}px)`;
+      const y = lengthY.value * -1;
+      if (y <= 0) {
+        return `translateY(${0}px)`;
       }
-      return `translateX(${lengthX.value * -1}px)`;
+      return `translateY(${lengthY.value * -1}px)`;
     }
   }
   return '';
@@ -110,7 +115,7 @@ const containerTransform = computed(() => {
 
 const swipeDistancePercent = computed(() => {
   if (isRealSwiping.value) {
-    const percent = coordsEnd.x / width.value || 0;
+    const percent = (coordsEnd.y - coordsStart.y) / height.value || 0;
     if (percent > 100) {
       return 100;
     }
@@ -126,7 +131,7 @@ const remainingAnimationTime = computed(() => {
 });
 
 const animationTime = computed(() => {
-  if (STACK_VIEW_SWIPE_X_IS_ACTIVE) {
+  if (STACK_VIEW_SWIPE_Y_IS_ACTIVE) {
     if (isRealSwiping.value) {
       return 0;
     }
@@ -135,16 +140,16 @@ const animationTime = computed(() => {
 });
 
 const backdropOpacity = computed(() => {
-  if (STACK_VIEW_SWIPE_X_IS_ACTIVE) {
+  if (STACK_VIEW_SWIPE_Y_IS_ACTIVE) {
     if (isRealSwiping.value) {
       return 1 - swipeDistancePercent.value;
     }
   }
-  return undefined;
+  return 1;
 });
 
 const containerOpacity = computed(() => {
-  if (STACK_VIEW_SWIPE_X_IS_ACTIVE && CONTAINER_OPACITY_IS_ACTIVE) {
+  if (STACK_VIEW_SWIPE_Y_IS_ACTIVE && CONTAINER_OPACITY_IS_ACTIVE) {
     if (isRealSwiping.value) {
       return 1 - swipeDistancePercent.value * 0.25;
     }
@@ -161,7 +166,7 @@ provide('isInStackView', true);
   <Teleport to="#stack-view-target">
     <div
       ref="root-element"
-      class="drawer touch-pan-x"
+      class="bottom-sheet touch-pan-y"
       :class="{
         opened: isVisible,
         closed: !isVisible,
@@ -170,33 +175,43 @@ provide('isInStackView', true);
       :tabindex="index"
     >
       <div
-        class="drawer-backdrop"
+        class="bottom-sheet-backdrop"
         :class="{
-          'bg-black/50': STACK_VIEW_SWIPE_X_IS_ACTIVE,
+          'bg-black/50': STACK_VIEW_SWIPE_Y_IS_ACTIVE,
           'md:bg-black/50': true,
         }"
         :style="{ opacity: backdropOpacity }"
         @click="() => close(props.transitionDuration)"
       ></div>
       <div
-        class="drawer-container"
-        :class="{ 'animate-opacity': STACK_VIEW_SWIPE_X_IS_ACTIVE }"
+        ref="container-element"
+        class="bottom-sheet-container"
+        :class="{ 'animate-opacity': STACK_VIEW_SWIPE_Y_IS_ACTIVE }"
         :style="{ transform: containerTransform, opacity: containerOpacity }"
       >
-        <!--        <div v-if="isMobileApp()" class="z-20 absolute top-0 left-0 bg-red-500 flex flex-col">-->
-        <!--          <div>isSwiping: {{ isSwiping }}</div>-->
-        <!--          <div>direction: {{ direction }}</div>-->
-        <!--          <div>lengthX: {{ lengthX }}</div>-->
-        <!--          <div>lengthY: {{ lengthY }}</div>-->
-        <!--          <div>coordsEnd: {{ coordsEnd }}</div>-->
-        <!--          <div>coordsStart: {{ coordsStart }}</div>-->
-        <!--          <div>width: {{ width }}</div>-->
-        <!--          <div>transitionDuration: {{ transitionDuration }}</div>-->
-        <!--          <div>animationTime: {{ animationTime }}</div>-->
-        <!--          <div>backdropOpacity: {{ backdropOpacity }}</div>-->
-        <!--          <div>containerOpacity: {{ containerOpacity }}</div>-->
-        <!--        </div>-->
+        <div ref="swiper-element" class="w-full flex justify-center py-4">
+          <div class="w-10 h-1 rounded-md bg-gray-300"></div>
+        </div>
         <slot v-if="isRendering"></slot>
+        <div v-if="false" class="z-20 absolute top-0 left-0 bg-red-500 flex flex-col">
+          <!--          <div>isSwiping: {{ isSwiping }}</div>-->
+          <!--          <div>isRealSwiping: {{ isRealSwiping }}</div>-->
+          <div>swipeDistancePercent: {{ swipeDistancePercent }}</div>
+          <div>isClosable: {{ isClosable }}</div>
+          <!--          <div>top: {{ top }}</div>-->
+          <!--          <div>y: {{ y }}</div>-->
+          <!--          <div>{{ isRealSwiping }}</div>-->
+          <!--          <div>direction: {{ direction }}</div>-->
+          <!--          <div>lengthX: {{ lengthX }}</div>-->
+          <!--          <div>lengthY: {{ lengthY }}</div>-->
+          <!--          <div>coordsEnd: {{ coordsEnd }}</div>-->
+          <!--          <div>coordsStart: {{ coordsStart }}</div>-->
+          <!--          <div>height: {{ height }}</div>-->
+          <!--          <div>transitionDuration: {{ transitionDuration }}</div>-->
+          <!--          <div>animationTime: {{ animationTime }}</div>-->
+          <!--          <div>backdropOpacity: {{ backdropOpacity }}</div>-->
+          <!--          <div>containerOpacity: {{ containerOpacity }}</div>-->
+        </div>
       </div>
     </div>
   </Teleport>
@@ -205,42 +220,44 @@ provide('isInStackView', true);
 <style scoped>
 @reference "@/assets/main.css";
 
-.drawer {
-  @apply fixed top-0 left-0 w-dvw h-dvh pointer-events-none;
+.bottom-sheet {
+  @apply fixed bottom-0 left-0 w-dvw h-dvh pointer-events-none;
 }
 
-.drawer-backdrop {
+.bottom-sheet-backdrop {
   @apply w-dvw h-dvh pointer-events-auto;
   opacity: 1;
   transition: opacity calc(v-bind('animationTime') * 1s / 1000) ease-in-out;
 }
 
-.drawer-container {
-  @apply z-10 fixed top-0 right-0 w-dvw h-dvh bg-white pointer-events-auto transform-cpu;
+.bottom-sheet-container {
+  @apply z-10 fixed bottom-0 left-0 w-dvw bg-white pointer-events-auto transform-cpu rounded-t-3xl overflow-hidden flex flex-col;
   transition:
     transform calc(v-bind('animationTime') * 1s / 1000) ease-in-out,
     opacity calc(v-bind('animationTime') * 1s / 1000) ease-in-out;
-  transform: translateX(0);
+  transform: translateY(0);
   &.animate-opacity {
     opacity: 1;
   }
 }
 
-@media (min-width: 768px) {
-  .drawer-container {
-    max-width: calc(32rem - v-bind('props.index') * 0.5rem);
-  }
+.bottom-sheet-container {
+  max-height: calc(100% - 2rem);
 }
+/*
+@media (min-width: 768px) {
+}
+ */
 
 .closed {
-  .drawer-backdrop {
+  .bottom-sheet-backdrop {
     @apply pointer-events-none opacity-0;
   }
-  .drawer-container {
+  .bottom-sheet-container {
     &.animate-opacity {
       opacity: 0;
     }
-    transform: translateX(100%);
+    transform: translateY(100%);
   }
 }
 </style>

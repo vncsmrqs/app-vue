@@ -20,7 +20,7 @@ export type StackViewBaseEmitters = {
 };
 
 export type StackViewState = 'CLOSED' | 'OPENED';
-export type StackViewMode = 'MODAL' | 'FULLSCREEN' | 'DRAWER';
+export type StackViewMode = 'MODAL' | 'FULLSCREEN' | 'DRAWER' | 'BOTTOM_SHEET';
 
 export type StackViewProps<C extends Component = Component> = {
   routeFullPath: string;

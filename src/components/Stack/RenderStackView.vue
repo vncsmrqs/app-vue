@@ -8,6 +8,7 @@ import { useAppNavigation } from '@/composables/use-app-navigation.ts';
 import { isMobileBrowser } from '@/utils/device.ts';
 import { useRouter } from '@/router';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
+import BottomSheetStackView from '@/components/Stack/BottomSheetStackView.vue';
 
 const router = useRouter();
 const stackViewStore = useStackViewStore();
@@ -25,6 +26,7 @@ onAfterRouterNavigate(async (payload) => {
 
   if (!isNavigatingToStackViewRoute) {
     const isGoingToAppLayout = to.matched.some(({ name }) => name === 'app-layout');
+    //todo: Animate?
     const animate = !isMobileBrowser() && action === 'BACKWARD' && isGoingToAppLayout;
     await stackViewStore.clear(action, animate);
   }
@@ -154,7 +156,8 @@ onMounted(() => {});
       v-for="(stackView, index) in stackViewStore.stackViews"
       :key="`stack-view-${stackView.routePosition}-${stackView.routeFullPath}`"
     >
-      <DrawerStackView
+      <Component
+        :is="stackView.mode === 'DRAWER' ? DrawerStackView : BottomSheetStackView"
         :show="stackView.state === 'OPENED'"
         :index="index"
         :transition-duration="stackViewStore.getTransitionTime(stackView)"
@@ -178,7 +181,7 @@ onMounted(() => {});
             }
           "
         />
-      </DrawerStackView>
+      </Component>
     </template>
   </div>
 </template>

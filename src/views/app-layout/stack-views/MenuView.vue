@@ -13,6 +13,7 @@ import { useElementSize, useScroll } from '@vueuse/core';
 import { appConfig } from '@/config/app-config.ts';
 import { v6 as uuid } from 'uuid';
 import MenuIcon from 'vue-material-design-icons/Menu.vue';
+import ArrowDownIcon from 'vue-material-design-icons/ArrowDown.vue';
 
 const show = ref(false);
 
@@ -80,6 +81,22 @@ watch(
     </div>
     <div class="text-2xl font-medium px-5 pt-5">Menu</div>
     <ul class="divide-y divide-gray-200">
+      <li>
+        <menu-link :to="{ name: 'bottom', query: { uuid: uuid() } }">
+          Bottom
+          <template #icon>
+            <ArrowDownIcon />
+          </template>
+        </menu-link>
+      </li>
+      <li>
+        <menu-link :to="{ name: 'fixed-bottom', query: { uuid: uuid() } }">
+          Fixed Bottom
+          <template #icon>
+            <ArrowDownIcon />
+          </template>
+        </menu-link>
+      </li>
       <li>
         <menu-link :to="{ name: 'menu', query: { uuid: uuid() } }">
           Menu
