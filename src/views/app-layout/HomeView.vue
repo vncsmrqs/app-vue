@@ -38,6 +38,7 @@ onMounted(() => {
         <div class="flex-auto lg:container mx-auto flex flex-col">
           <app-link :to="{ name: 'fixed' }"> Fixo </app-link>
           <app-link :to="{ name: 'modal' }"> Modal </app-link>
+          <app-link :to="{ name: 'bottom' }"> Bottom </app-link>
           <app-link :to="{ name: 'merchant', params: { merchantId: uuid() } }"> Mercado </app-link>
         </div>
       </div>

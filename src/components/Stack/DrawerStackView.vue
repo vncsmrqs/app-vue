@@ -7,6 +7,7 @@ import {
   STACK_VIEW_BASE_TRANSITION_MILLISECOND,
   STACK_VIEW_SWIPE_X_IS_ACTIVE,
   CONTAINER_OPACITY_IS_ACTIVE,
+  STACK_VIEW_VISIBILITY_TIMEOUT_MILLISECOND,
 } from '@/config/stack-view-config.ts';
 
 const props = withDefaults(
@@ -30,6 +31,8 @@ const close = async (animationTime: number) => {
 
 const rootElement = useTemplateRef('root-element');
 
+const { width } = useElementSize(rootElement);
+
 const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
   passive: false,
   threshold: 10,
@@ -41,7 +44,7 @@ const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
   },
   onSwipeEnd: () => {
     if (STACK_VIEW_SWIPE_X_IS_ACTIVE) {
-      if (isRealSwiping.value && coordsEnd.x >= width.value * 0.4) {
+      if (isClosable.value) {
         close(animationTime.value);
       }
     }
@@ -52,7 +55,9 @@ const isRealSwiping = computed(() => {
   return coordsStart.x <= MIN_SWIPE_X_START && STACK_VIEW_SWIPE_X_IS_ACTIVE && isSwiping.value;
 });
 
-const { width } = useElementSize(rootElement);
+const isClosable = computed(() => {
+  return isRealSwiping.value && coordsEnd.x >= width.value * 0.4;
+});
 
 const isRendering = ref(false);
 const isVisible = ref(!props.transitionDuration || isMobileBrowser());
@@ -66,7 +71,7 @@ const handleVisibility = (show: boolean) => {
   if (show) {
     visibilityTimeout = setTimeout(() => {
       isVisible.value = true;
-    }, 100);
+    }, STACK_VIEW_VISIBILITY_TIMEOUT_MILLISECOND);
     return;
   }
 
@@ -183,19 +188,6 @@ provide('isInStackView', true);
         :class="{ 'animate-opacity': STACK_VIEW_SWIPE_X_IS_ACTIVE }"
         :style="{ transform: containerTransform, opacity: containerOpacity }"
       >
-        <!--        <div v-if="isMobileApp()" class="z-20 absolute top-0 left-0 bg-red-500 flex flex-col">-->
-        <!--          <div>isSwiping: {{ isSwiping }}</div>-->
-        <!--          <div>direction: {{ direction }}</div>-->
-        <!--          <div>lengthX: {{ lengthX }}</div>-->
-        <!--          <div>lengthY: {{ lengthY }}</div>-->
-        <!--          <div>coordsEnd: {{ coordsEnd }}</div>-->
-        <!--          <div>coordsStart: {{ coordsStart }}</div>-->
-        <!--          <div>width: {{ width }}</div>-->
-        <!--          <div>transitionDuration: {{ transitionDuration }}</div>-->
-        <!--          <div>animationTime: {{ animationTime }}</div>-->
-        <!--          <div>backdropOpacity: {{ backdropOpacity }}</div>-->
-        <!--          <div>containerOpacity: {{ containerOpacity }}</div>-->
-        <!--        </div>-->
         <slot v-if="isRendering"></slot>
       </div>
     </div>

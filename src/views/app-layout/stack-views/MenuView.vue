@@ -14,6 +14,7 @@ import { appConfig } from '@/config/app-config.ts';
 import { v6 as uuid } from 'uuid';
 import MenuIcon from 'vue-material-design-icons/Menu.vue';
 import ArrowDownIcon from 'vue-material-design-icons/ArrowDown.vue';
+import ArrowUpIcon from 'vue-material-design-icons/ArrowUp.vue';
 
 const show = ref(false);
 
@@ -94,6 +95,14 @@ watch(
           Fixed Bottom
           <template #icon>
             <ArrowDownIcon />
+          </template>
+        </menu-link>
+      </li>
+      <li>
+        <menu-link :to="{ name: 'modal', query: { uuid: uuid() } }">
+          Modal
+          <template #icon>
+            <ArrowUpIcon />
           </template>
         </menu-link>
       </li>

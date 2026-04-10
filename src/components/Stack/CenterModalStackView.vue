@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { isMobileBrowser } from '@/utils/device.ts';
-import { STACK_VIEW_BASE_TRANSITION_MILLISECOND } from '@/config/stack-view-config.ts';
+import {
+  STACK_VIEW_BASE_TRANSITION_MILLISECOND,
+  STACK_VIEW_VISIBILITY_TIMEOUT_MILLISECOND,
+} from '@/config/stack-view-config.ts';
 
 const props = withDefaults(
   defineProps<{
@@ -36,7 +39,7 @@ const handleVisibility = (show: boolean) => {
   if (show) {
     visibilityTimeout = setTimeout(() => {
       isVisible.value = true;
-    }, 1);
+    }, STACK_VIEW_VISIBILITY_TIMEOUT_MILLISECOND);
     return;
   }
 

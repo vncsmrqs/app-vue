@@ -6,6 +6,7 @@ import {
   STACK_VIEW_BASE_TRANSITION_MILLISECOND,
   STACK_VIEW_SWIPE_Y_IS_ACTIVE,
   CONTAINER_OPACITY_IS_ACTIVE,
+  STACK_VIEW_VISIBILITY_TIMEOUT_MILLISECOND,
 } from '@/config/stack-view-config.ts';
 
 const props = withDefaults(
@@ -73,7 +74,7 @@ const handleVisibility = (show: boolean) => {
   if (show) {
     visibilityTimeout = setTimeout(() => {
       isVisible.value = true;
-    }, 100);
+    }, STACK_VIEW_VISIBILITY_TIMEOUT_MILLISECOND);
     return;
   }
 
@@ -147,7 +148,7 @@ const backdropOpacity = computed(() => {
       return 1 - swipeDistancePercent.value;
     }
   }
-  return 1;
+  return undefined;
 });
 
 const containerOpacity = computed(() => {
@@ -195,25 +196,6 @@ provide('isInStackView', true);
           <div class="w-10 h-1 rounded-md bg-gray-300"></div>
         </div>
         <slot v-if="isRendering"></slot>
-        <div v-if="false" class="z-20 absolute top-0 left-0 bg-red-500 flex flex-col">
-          <!--          <div>isSwiping: {{ isSwiping }}</div>-->
-          <!--          <div>isRealSwiping: {{ isRealSwiping }}</div>-->
-          <div>swipeDistancePercent: {{ swipeDistancePercent }}</div>
-          <div>isClosable: {{ isClosable }}</div>
-          <!--          <div>top: {{ top }}</div>-->
-          <!--          <div>y: {{ y }}</div>-->
-          <!--          <div>{{ isRealSwiping }}</div>-->
-          <!--          <div>direction: {{ direction }}</div>-->
-          <!--          <div>lengthX: {{ lengthX }}</div>-->
-          <!--          <div>lengthY: {{ lengthY }}</div>-->
-          <!--          <div>coordsEnd: {{ coordsEnd }}</div>-->
-          <!--          <div>coordsStart: {{ coordsStart }}</div>-->
-          <!--          <div>height: {{ height }}</div>-->
-          <!--          <div>transitionDuration: {{ transitionDuration }}</div>-->
-          <!--          <div>animationTime: {{ animationTime }}</div>-->
-          <!--          <div>backdropOpacity: {{ backdropOpacity }}</div>-->
-          <!--          <div>containerOpacity: {{ containerOpacity }}</div>-->
-        </div>
       </div>
     </div>
   </Teleport>
@@ -246,10 +228,6 @@ provide('isInStackView', true);
 .bottom-sheet-container {
   max-height: calc(100% - 2rem);
 }
-/*
-@media (min-width: 768px) {
-}
- */
 
 .closed {
   .bottom-sheet-backdrop {
