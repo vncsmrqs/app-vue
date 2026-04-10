@@ -21,7 +21,7 @@ const emit = defineEmits<StackViewBaseEmitters>();
       />
     </screen-main>
     <screen-footer>
-      <app-button type="primary" size="lg" class="w-full flex gap-2">
+      <app-button custom type="primary" size="lg" class="w-full flex gap-2">
         Continuar
         <ArrowRightIcon />
       </app-button>
