@@ -117,13 +117,9 @@ provide('isInStackView', true);
 }
 
 .center-modal-container {
-  max-height: calc(100% - 2rem);
-  max-width: calc(32rem - 2rem);
+  max-height: calc(100% - 6rem);
+  max-width: min(calc(32rem - 2rem), calc(100% - 2rem));
   @apply mx-auto;
-}
-
-@media (min-width: 768px) {
-  max-width: calc(100% - 2rem);
 }
 
 .closed {
