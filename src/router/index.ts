@@ -220,7 +220,17 @@ const routes: Readonly<RouteRecordRaw[]> = [
             component: () => import('../views/app-layout/stack-views/MenuView.vue'),
             meta: {
               type: 'STACK',
-              mode: 'BOTTOM_SHEET',
+              stackMode: 'BOTTOM_SHEET',
+            },
+          },
+          {
+            path: 'modal',
+            name: 'modal',
+            component: () => import('../views/app-layout/stack-views/MenuView.vue'),
+            meta: {
+              type: 'STACK',
+              stackMode: 'MODAL',
+              stackProps: { fullHeight: true },
             },
           },
           {
@@ -229,7 +239,8 @@ const routes: Readonly<RouteRecordRaw[]> = [
             component: () => import('../views/app-layout/stack-views/FixedView.vue'),
             meta: {
               type: 'STACK',
-              mode: 'BOTTOM_SHEET',
+              stackMode: 'BOTTOM_SHEET',
+              stackProps: { fullHeight: true },
             },
           },
           {

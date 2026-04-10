@@ -13,10 +13,12 @@ const props = withDefaults(
     show: boolean;
     index?: number;
     transitionDuration?: number;
+    fullHeight?: boolean;
   }>(),
   {
     index: 0,
     transitionDuration: STACK_VIEW_BASE_TRANSITION_MILLISECOND,
+    fullHeight: false,
   },
 );
 const emit = defineEmits<{
@@ -186,7 +188,7 @@ provide('isInStackView', true);
       <div
         ref="container-element"
         class="bottom-sheet-container"
-        :class="{ 'animate-opacity': STACK_VIEW_SWIPE_Y_IS_ACTIVE }"
+        :class="{ 'animate-opacity': STACK_VIEW_SWIPE_Y_IS_ACTIVE, 'h-dvh': fullHeight }"
         :style="{ transform: containerTransform, opacity: containerOpacity }"
       >
         <div ref="swiper-element" class="w-full flex justify-center py-4">

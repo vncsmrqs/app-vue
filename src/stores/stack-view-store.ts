@@ -35,6 +35,7 @@ export type StackViewProps<C extends Component = Component> = {
   canClose: () => Promise<boolean>;
   onBeforeClose: (hook: HookFunction<void[], boolean>) => () => void;
   animate?: boolean;
+  props?: Record<string, unknown>;
 };
 
 export type AddStackViewParams<C extends Component> = Pick<
@@ -47,6 +48,7 @@ export type AddStackViewParams<C extends Component> = Pick<
   | 'routeTo'
   | 'routeFrom'
   | 'mode'
+  | 'props'
 >;
 
 export const useStackViewStore = defineStore('stack-view', () => {
@@ -80,6 +82,7 @@ export const useStackViewStore = defineStore('stack-view', () => {
       routeFrom: payload.routeFrom,
       onBeforeClose,
       canClose,
+      props: payload.props,
     };
 
     if (['PUSH', 'FORWARD', 'REPLACE'].includes(payload.routeAction) || true) {

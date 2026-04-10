@@ -10,7 +10,8 @@ export {};
 declare module 'vue-router' {
   export interface RouteMeta {
     type?: 'PAGE' | 'ROOT' | 'STACK';
-    mode?: StackViewMode;
+    stackMode?: StackViewMode;
+    stackProps?: Record<string, unknown>;
     middlewares?: NavigationGuard[];
     permissions?: PermissionEnum[];
     forceMatchedRoot?: boolean;

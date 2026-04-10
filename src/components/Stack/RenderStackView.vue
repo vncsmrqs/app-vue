@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import { type StackViewProps, useStackViewStore } from '@/stores/stack-view-store.ts';
-import { defineAsyncComponent, onMounted, watch } from 'vue';
+import {
+  type StackViewMode,
+  type StackViewProps,
+  useStackViewStore,
+} from '@/stores/stack-view-store.ts';
+import { type Component, defineAsyncComponent, onMounted, watch } from 'vue';
 import DrawerStackView from '@/components/Stack/DrawerStackView.vue';
 import { type AsyncComponentLoader } from 'vue';
 import { onAfterRouterNavigate } from '@/composables/on-after-router-navigate.ts';
 import { useAppNavigation } from '@/composables/use-app-navigation.ts';
-import { isMobileBrowser } from '@/utils/device.ts';
+import { isMobileBrowser, isResponsive } from '@/utils/device.ts';
 import { useRouter } from '@/router';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
 import BottomSheetStackView from '@/components/Stack/BottomSheetStackView.vue';
+import CenterModalStackView from '@/components/Stack/CenterModalStackView.vue';
 
 const router = useRouter();
 const stackViewStore = useStackViewStore();
@@ -56,7 +61,8 @@ onAfterRouterNavigate(async (payload) => {
         routeAction: action,
         routeTo: to,
         routeFrom: from,
-        mode: to.meta.mode || 'DRAWER',
+        mode: to.meta.stackMode || 'DRAWER',
+        props: to.meta.stackProps,
       });
     }
 
@@ -141,6 +147,17 @@ const closeStackView = async (
   await navigateBack(stackView);
 };
 
+const getViewComponent = (stackView: StackViewProps): Component => {
+  const componentMap: Record<StackViewMode, Component | undefined> = {
+    DRAWER: DrawerStackView,
+    BOTTOM_SHEET: isResponsive() ? CenterModalStackView : BottomSheetStackView,
+    MODAL: CenterModalStackView,
+    FULLSCREEN: undefined,
+  };
+
+  return componentMap?.[stackView.mode] ?? DrawerStackView;
+};
+
 const defineComponent = (stackView: StackViewProps) => {
   return stackView.component instanceof Function
     ? defineAsyncComponent(stackView.component as AsyncComponentLoader<typeof stackView.component>)
@@ -157,12 +174,13 @@ onMounted(() => {});
       :key="`stack-view-${stackView.routePosition}-${stackView.routeFullPath}`"
     >
       <Component
-        :is="stackView.mode === 'DRAWER' ? DrawerStackView : BottomSheetStackView"
+        :is="getViewComponent(stackView)"
         :show="stackView.state === 'OPENED'"
         :index="index"
         :transition-duration="stackViewStore.getTransitionTime(stackView)"
+        v-bind="stackView.props"
         @close="
-          async (animationTime) => {
+          async (animationTime: number) => {
             if (await stackView.canClose()) {
               await closeStackView(stackView, true, animationTime);
             }
