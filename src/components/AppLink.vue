@@ -11,19 +11,16 @@ const props = defineProps<{
 const { href, isActive, isExactActive, navigate } = useAppLink(props.to);
 
 const onClick = (e: MouseEvent) => {
-  if (
-    props.custom ||
-    e.defaultPrevented ||
-    e.metaKey ||
-    e.ctrlKey ||
-    e.shiftKey ||
-    e.altKey ||
-    e.button !== 0
-  ) {
+  if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) {
     return;
   }
 
   e.preventDefault();
+
+  if (props.custom) {
+    return;
+  }
+
   navigate();
 };
 
