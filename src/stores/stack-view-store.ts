@@ -118,32 +118,39 @@ export const useStackViewStore = defineStore('stack-view', () => {
     action: NavigationAction,
     animate: boolean = false,
   ): Promise<void> => {
+    if (stackViews.length === 0) {
+      return;
+    }
+
     await Promise.all(
       stackViews.map(({ routeFullPath, routePosition }) => {
         return hide(routeFullPath, routePosition, action, animate);
       }),
     );
 
-    const stackViewIndexList = stackViews.map(({ routeFullPath, routePosition }) => {
-      return _stackViewList.value.findIndex((stackView) => {
-        return (
-          stackView.routeFullPath === routeFullPath && stackView.routePosition === routePosition
-        );
-      });
-    });
+    const stackViewsToRemove = new Set(
+      stackViews.map((sv) => `${sv.routeFullPath}:${sv.routePosition}`),
+    );
 
     _stackViewList.value = _stackViewList.value.filter(
-      (_, index) => !stackViewIndexList.includes(index),
+      (stackView) =>
+        !stackViewsToRemove.has(`${stackView.routeFullPath}:${stackView.routePosition}`),
     );
   };
 
   const clear = async (action: NavigationAction, animate: boolean = true) => {
-    await Promise.all(
-      _stackViewList.value.map((stackView) => {
-        return hide(stackView.routeFullPath, stackView.routePosition, action, animate);
-      }),
+    if (_stackViewList.value.length === 0) {
+      return;
+    }
+
+    await removeMany(
+      [..._stackViewList.value].map((sv) => ({
+        routeFullPath: sv.routeFullPath,
+        routePosition: sv.routePosition,
+      })),
+      action,
+      animate,
     );
-    _stackViewList.value = [];
   };
 
   const find = (fullPath: string, routePosition: number) => {
