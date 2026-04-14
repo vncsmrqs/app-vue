@@ -7,14 +7,11 @@ const props = withDefaults(
   }>(),
   {},
 );
-
-defineEmits(['click']);
 </script>
 
 <template>
   <button
     class="flex items-center flex-col p-2 transition-colors"
-    @click="$emit('click')"
     :class="{
       'text-gray-500': !props.active,
       'text-fuchsia-700 font-bold': props.active,

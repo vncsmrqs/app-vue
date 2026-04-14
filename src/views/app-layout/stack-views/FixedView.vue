@@ -7,6 +7,8 @@ import AppBar from '@/components/AppBar.vue';
 import ScreenMain from '@/components/ScreenMain.vue';
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
 import { isMobile } from '@/utils/device.ts';
+import ScreenRoot from '@/components/ScreenRoot.vue';
+import AppButton from '@/components/Buttons/AppButton.vue';
 
 const props = defineProps<StackViewBaseProps>();
 const emit = defineEmits<StackViewBaseEmitters>();
@@ -37,10 +39,12 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col bg-white">
-    <app-bar :show-back-button="canClose" @back="emit('close', canClose)">
-      Exemplo de página fixa
-    </app-bar>
+  <screen-root>
+    <template #header>
+      <app-bar :show-back-button="canClose" @back="emit('close', canClose)">
+        Exemplo de página fixa
+      </app-bar>
+    </template>
     <screen-main :enabled="isMobile()">
       <empty-screen
         v-if="!canClose"
@@ -49,16 +53,14 @@ onBeforeUnmount(() => {
       />
       <empty-screen v-else title="Tudo certo!" subtitle="Agora você pode fechar" />
     </screen-main>
-    <screen-footer>
-      <button
-        v-if="!canClose"
-        @click="turnOnClose"
-        class="w-full h-14 bg-gray-100 rounded-xl cursor-pointer"
-      >
-        Habilitar fechamento
-      </button>
-    </screen-footer>
-  </div>
+    <template #footer v-if="!canClose">
+      <screen-footer>
+        <app-button type="primary" @click="turnOnClose" class="w-full">
+          Habilitar fechamento
+        </app-button>
+      </screen-footer>
+    </template>
+  </screen-root>
 </template>
 
 <style scoped></style>

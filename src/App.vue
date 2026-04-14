@@ -2,21 +2,21 @@
 import { RouterView } from 'vue-router';
 import RenderStackView from '@/components/Stack/RenderStackView.vue';
 import { onMounted } from 'vue';
-// import { useAppStore } from '@/stores/app-store.ts';
-import { changeThemeColor } from '@/utils/common.ts';
+import { useAppStore } from '@/stores/app-store.ts';
+import { changeThemeColor, updateThemeColor } from '@/utils/common.ts';
 import UpdateApp from '@/components/UpdateApp.vue';
 
-// const appStore = useAppStore();
+useAppStore();
 
 onMounted(async () => {
   await Notification.requestPermission();
 
   changeThemeColor('#FFFFFF');
-  // updateThemeColor();
-  //
-  // window
-  //   .matchMedia('(prefers-color-scheme: dark)')
-  //   .addEventListener('change', () => updateThemeColor());
+  updateThemeColor();
+
+  window
+    .matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', () => updateThemeColor());
 });
 </script>
 

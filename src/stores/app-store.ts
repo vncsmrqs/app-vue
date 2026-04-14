@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia';
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth-store.ts';
 import { useResize } from '@/composables/use-resize.ts';
 import device from '@/utils/device';
 import { debounce } from '@/utils/common';
 import { AppError } from '@/errors/app.error';
+import { useFullscreen } from '@vueuse/core';
 
 const RESIZE_TIMEOUT = 1000;
 const UPDATE_VIEW_MODE_TIMEOUT = 300;
@@ -36,6 +37,8 @@ const defineView = (width: number): ViewMode => {
 export const useAppStore = defineStore('app', () => {
   const loading = ref<boolean>(false);
 
+  const fullscreenController = useFullscreen(document.body);
+
   const error = ref<AppError | null>(null);
 
   const { width, height } = useResize(() => document.body);
@@ -64,8 +67,6 @@ export const useAppStore = defineStore('app', () => {
     },
     { immediate: true },
   );
-
-  const forceFullscreen = ref<boolean>(false);
 
   const authStore = useAuthStore();
 
@@ -135,20 +136,6 @@ export const useAppStore = defineStore('app', () => {
     navigationCount.value -= 1;
   };
 
-  onMounted(() => {
-    window.addEventListener('fullscreenchange', onFullscreenChange);
-  });
-
-  onBeforeUnmount(() => {
-    window.removeEventListener('fullscreenchange', onFullscreenChange);
-  });
-
-  const onFullscreenChange = () => {
-    setTimeout(() => {
-      forceFullscreen.value = !!document.fullscreenElement;
-    }, 0);
-  };
-
   return {
     //State
     appLoading,
@@ -157,7 +144,9 @@ export const useAppStore = defineStore('app', () => {
     navigationLoadingPercentage,
     width,
     height,
-    screen: computed(() => (forceFullscreen.value ? 'fullscreen-view' : definedView.value)),
+    screen: computed(() =>
+      fullscreenController.isFullscreen ? 'fullscreen-view' : definedView.value,
+    ),
     isResizing,
     showNavigationLoading,
     //Actions

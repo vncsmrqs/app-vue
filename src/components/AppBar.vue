@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import BackButton from '@/components/Buttons/BackButton.vue';
+import { isMobile } from '@/utils/device.ts';
 
 const props = withDefaults(
   defineProps<{
@@ -19,7 +20,7 @@ const emit = defineEmits<{ back: [void] }>();
       <div class="flex h-14 items-center px-5 gap-2 bg-white shadow-xl/2 z-50">
         <slot name="prepend">
           <back-button
-            v-if="props.showBackButton || $slots.prepend"
+            v-if="props.showBackButton && isMobile()"
             @click="emit('back')"
             class="first:-ml-2"
           />
@@ -29,7 +30,13 @@ const emit = defineEmits<{ back: [void] }>();
             <slot></slot>
           </h1>
         </div>
-        <slot name="append"> </slot>
+        <slot name="append">
+          <back-button
+            v-if="props.showBackButton && !isMobile()"
+            @click="emit('back')"
+            class="last:-mr-2"
+          />
+        </slot>
       </div>
     </div>
   </header>

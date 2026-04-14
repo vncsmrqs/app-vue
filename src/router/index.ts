@@ -18,6 +18,7 @@ import {
   LOG_VIRTUAL_ROUTER_NAVIGATION_EVENTS,
 } from '@/config/app-config.ts';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
+import { isMobile } from '@/utils/device.ts';
 // import { isAuthenticatedMiddleware } from '@/router/middlwares/is-authenticated.middleware.ts';
 
 const history = PUSH_HISTORY_STATE
@@ -148,6 +149,8 @@ const routes: Readonly<RouteRecordRaw[]> = [
             component: () => import('../views/app-layout/stack-views/AddressListView.vue'),
             meta: {
               type: 'STACK',
+              stackMode: isMobile() ? 'BOTTOM_SHEET' : undefined,
+              stackProps: { fullHeight: true },
             },
             props: true,
             children: [
@@ -291,6 +294,7 @@ export const virtualRouter = createRouter({
 });
 
 let _route: RouteLocationNormalizedLoaded | undefined;
+let _virtualRoute: RouteLocationNormalizedLoaded | undefined;
 
 export const useRoute = () => {
   if (!_route) {
@@ -308,6 +312,24 @@ export const useRoute = () => {
   }
 
   return _route;
+};
+
+export const useVirtualRoute = () => {
+  if (!_virtualRoute) {
+    _virtualRoute = shallowReactive({
+      ...virtualRouter.currentRoute.value,
+    }) as RouteLocationNormalizedLoaded;
+
+    watch(
+      virtualRouter.currentRoute,
+      (newRoute) => {
+        Object.assign(_virtualRoute!, newRoute);
+      },
+      { immediate: true },
+    );
+  }
+
+  return _virtualRoute;
 };
 
 export const useRouter = () => {

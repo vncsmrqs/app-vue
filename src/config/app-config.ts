@@ -11,5 +11,5 @@ export const appConfig = {
   version: '0.0.25',
 };
 
-export const LOG_NAVIGATOR_ROUTER_NAVIGATION_EVENTS = true;
+export const LOG_NAVIGATOR_ROUTER_NAVIGATION_EVENTS = false;
 export const LOG_VIRTUAL_ROUTER_NAVIGATION_EVENTS = false;

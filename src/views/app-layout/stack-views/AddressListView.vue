@@ -6,6 +6,8 @@ import AppBar from '@/components/AppBar.vue';
 import ScreenMain from '@/components/ScreenMain.vue';
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
 import ScreenFooter from '@/components/ScreenFooter.vue';
+import ScreenRoot from '@/components/ScreenRoot.vue';
+import AppButton from '@/components/Buttons/AppButton.vue';
 
 const _props = defineProps<StackViewBaseProps>();
 const emit = defineEmits<StackViewBaseEmitters>();
@@ -29,8 +31,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col bg-white">
-    <app-bar @back="emit('close')">Endereços</app-bar>
+  <screen-root>
+    <template #header>
+      <app-bar @back="emit('close')">Endereços</app-bar>
+    </template>
     <screen-main @refresh="() => refresh(true)" :loading="isLoading" :enabled="enabledRefresh">
       <div
         v-if="isLoading"
@@ -44,10 +48,12 @@ onMounted(() => {
         subtitle="Cadastre um endereço para ver as opções mais perto de você"
       />
     </screen-main>
-    <screen-footer>
-      <button class="" @click="emit('close')">Fechar</button>
-    </screen-footer>
-  </div>
+    <template #footer>
+      <screen-footer>
+        <app-button type="primary" @click="emit('close')" class="w-full">Fechar</app-button>
+      </screen-footer>
+    </template>
+  </screen-root>
 </template>
 
 <style scoped></style>

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import AppLink from '@/components/AppLink.vue';
+import AppButton from '@/components/Buttons/AppButton.vue';
 </script>
 
 <template>
   <div class="w-full h-full flex flex-col justify-center items-center">
     Página inicial
     <app-link :to="{ name: 'home' }">
-      <button class="w-full h-14 bg-gray-100 rounded-xl cursor-pointer px-4">Ir para home</button>
+      <app-button type="primary" class="w-full">Ir para home</app-button>
     </app-link>
   </div>
 </template>

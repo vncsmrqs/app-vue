@@ -5,6 +5,11 @@ import { v6 as uuid } from 'uuid';
 import MobileHomeBar from '@/components/Mobile/MobileHomeBar.vue';
 import ScreenMain from '@/components/ScreenMain.vue';
 import { isMobile } from '@/utils/device.ts';
+import ScreenRoot from '@/components/ScreenRoot.vue';
+import { useRoute, useVirtualRoute } from '@/router';
+
+const route = useRoute();
+const virtualRoute = useVirtualRoute();
 
 const enabledRefresh = ref(false);
 
@@ -25,17 +30,20 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col">
-    <mobile-home-bar />
+  <screen-root>
+    <template #header>
+      <mobile-home-bar />
+    </template>
     <screen-main
       :swipe-content="true"
       :enabled="isMobile()"
       :loading="isLoading"
       @refresh="() => refresh(true)"
-      class="bg-gray-200"
     >
-      <div class="w-full min-h-full flex-auto bg-white flex">
+      <div class="w-full min-h-full flex-auto flex">
         <div class="flex-auto lg:container mx-auto flex flex-col">
+          <div>ROUTE: {{ route.name }}</div>
+          <div>VIRTUAL ROUTE: {{ virtualRoute.name }}</div>
           <app-link :to="{ name: 'fixed' }"> Fixo </app-link>
           <app-link :to="{ name: 'modal' }"> Modal </app-link>
           <app-link :to="{ name: 'bottom' }"> Bottom </app-link>
@@ -43,5 +51,5 @@ onMounted(() => {
         </div>
       </div>
     </screen-main>
-  </div>
+  </screen-root>
 </template>

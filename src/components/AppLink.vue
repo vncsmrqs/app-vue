@@ -8,7 +8,7 @@ const props = defineProps<{
   custom?: boolean;
 }>();
 
-const { href, isActive, isExactActive, navigate } = useAppLink(props.to);
+const { href, isActive, isExactActive, navigate, route } = useAppLink(props.to);
 
 const onClick = (e: MouseEvent) => {
   if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) {
@@ -38,6 +38,7 @@ const onContextMenu = (e: MouseEvent) => {
       :isExactActive="isExactActive"
       :navigate="navigate"
       :href="href"
+      :route="route"
     ></slot>
   </a>
 </template>

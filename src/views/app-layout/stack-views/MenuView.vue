@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, watch } from 'vue';
 import BellOutlineIcon from 'vue-material-design-icons/BellOutline.vue';
 import MenuLink from '@/components/Menu/MenuLink.vue';
 import AppBar from '@/components/AppBar.vue';
@@ -8,78 +7,22 @@ import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue';
 import ChatOutlineIcon from 'vue-material-design-icons/ChatOutline.vue';
 import ShoppingOutlineIcon from 'vue-material-design-icons/ShoppingOutline.vue';
 import MapMarkerOutlineIcon from 'vue-material-design-icons/MapMarkerOutline.vue';
-import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
-import { useElementSize, useScroll } from '@vueuse/core';
+import type { StackViewBaseEmitters } from '@/stores/stack-view-store.ts';
 import { appConfig } from '@/config/app-config.ts';
 import { v6 as uuid } from 'uuid';
 import MenuIcon from 'vue-material-design-icons/Menu.vue';
 import ArrowDownIcon from 'vue-material-design-icons/ArrowDown.vue';
 import ArrowUpIcon from 'vue-material-design-icons/ArrowUp.vue';
+import ScreenRoot from '@/components/ScreenRoot.vue';
 
-const show = ref(false);
-
-const props = defineProps<StackViewBaseProps>();
 const emit = defineEmits<StackViewBaseEmitters>();
-
-props.stackView.onBeforeClose(() => {
-  return true;
-});
-
-onMounted(() => {
-  setTimeout(() => {
-    show.value = true;
-  }, 100);
-});
-
-onMounted(() => {});
-
-const rootElement = useTemplateRef<HTMLElement>('root-element');
-const stickyElement = useTemplateRef<HTMLElement>('sticky-element');
-
-const { y: scrollTop } = useScroll(rootElement);
-
-const { height } = useElementSize(stickyElement);
-
-const translateY = ref(0);
-
-watch(
-  () => scrollTop.value,
-  (value, oldValue) => {
-    if (scrollTop.value < 0) {
-      return;
-    }
-
-    // rolando para baixo
-    if (value >= oldValue) {
-      const diff = value - oldValue;
-      const a = translateY.value * -1 >= height.value ? height.value : translateY.value * -1 + diff;
-      translateY.value = a * -1;
-
-      return;
-    }
-
-    // rolando para cima
-    const diff = oldValue - value;
-
-    if (diff > 0) {
-      translateY.value = translateY.value >= 0 ? 0 : translateY.value + diff;
-    }
-  },
-);
 </script>
 
 <template>
-  <div
-    ref="root-element"
-    class="w-full h-full flex-auto flex flex-col overflow-x-hidden overflow-y-auto relative"
-  >
-    <div
-      ref="sticky-element"
-      class="sticky top-0 transform-gpu z-10"
-      :style="{ transform: `translateY(${translateY}px)` }"
-    >
+  <screen-root>
+    <template #header>
       <app-bar @back="() => emit('close')" class=""></app-bar>
-    </div>
+    </template>
     <div class="text-2xl font-medium px-5 pt-5">Menu</div>
     <ul class="divide-y divide-gray-200">
       <li>
@@ -163,13 +106,14 @@ watch(
         </menu-link>
       </li>
     </ul>
-    <div class="flex-1"></div>
-    <div
-      class="w-full h-14 sticky flex-none bottom-0 border-t border-gray-200 px-5 bg-white flex items-center"
-    >
-      VERSÃO DO APP: {{ appConfig.version }}
-    </div>
-  </div>
+    <template #footer>
+      <div
+        class="w-full h-14 sticky flex-none bottom-0 border-t border-gray-200 px-5 bg-white flex items-center"
+      >
+        VERSÃO DO APP: {{ appConfig.version }}
+      </div>
+    </template>
+  </screen-root>
 </template>
 
 <style scoped></style>

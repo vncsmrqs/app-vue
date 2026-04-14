@@ -117,7 +117,7 @@ const iconStyle = computed(() => {
 <template>
   <main
     ref="scrollableElement"
-    class="w-full min-h-0 flex-auto flex flex-col overflow-x-hidden overflow-y-auto relative"
+    class="w-full min-h-0 flex-auto flex flex-col overflow-x-hidden overflow-y-auto relative bg-gray-200"
     :class="{ 'overflow-y-hidden': props.loading || thresholdPercentage }"
   >
     <div
@@ -156,8 +156,9 @@ const iconStyle = computed(() => {
       :style="contentStyle"
       :class="{
         'transition-transform': !isSwiping,
+        'min-h-0': false,
       }"
-      class="w-full min-h-0 flex-auto transform-cpu"
+      class="w-full flex-auto transform-cpu bg-gray-50"
     >
       <slot></slot>
     </div>
