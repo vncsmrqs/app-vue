@@ -34,6 +34,9 @@ const pubSub = new PubSub<{
   onAfterRouterNavigate: NavigationCallbackPayload;
 }>();
 
+// Configurar limite de listeners para detectar memory leaks
+pubSub.setMaxListeners(10);
+
 let backwardRouteList: BackwardRoute[] = [];
 
 type HistoryState = {
@@ -158,15 +161,30 @@ router.afterEach((to, from, failure) => {
 
 type NavigationCallback = (payload: NavigationCallbackPayload) => void;
 
+/**
+ * Hook para se inscrever em eventos de navegação após rota
+ * Garante cleanup automático ao desmontar o componente
+ */
 export const onAfterRouterNavigate = (callback: NavigationCallback) => {
-  let unsubscribe = () => {};
+  let subscription: ReturnType<typeof pubSub.subscribe> | null = null;
 
   onMounted(() => {
-    unsubscribe();
-    unsubscribe = pubSub.subscribe('onAfterRouterNavigate', callback);
+    if (subscription?.isActive()) {
+      subscription?.unsubscribe();
+    }
+    subscription = pubSub.subscribe('onAfterRouterNavigate', callback);
   });
 
-  onUnmounted(unsubscribe);
+  onUnmounted(() => {
+    if (subscription?.isActive()) {
+      subscription?.unsubscribe();
+    }
+    subscription = null;
+  });
 
-  return unsubscribe;
+  return () => {
+    if (subscription?.isActive()) {
+      subscription?.unsubscribe();
+    }
+  };
 };
