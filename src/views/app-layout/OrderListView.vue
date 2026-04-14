@@ -5,6 +5,7 @@ import ScreenMain from '@/components/ScreenMain.vue';
 import AppBar from '@/components/AppBar.vue';
 import EmptyScreen from '@/components/EmptyScreen.vue';
 import { isMobile } from '@/utils/device.ts';
+import ScreenRoot from '@/components/ScreenRoot.vue';
 
 const enabledRefresh = ref(false);
 
@@ -25,8 +26,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col">
-    <app-bar :show-back-button="false" class="lg:hidden">Meus pedidos</app-bar>
+  <screen-root>
+    <template #header>
+      <app-bar v-if="isMobile()" :show-back-button="false">Meus pedidos</app-bar>
+    </template>
     <screen-main
       @refresh="() => refresh(true)"
       :loading="isLoading"
@@ -50,7 +53,7 @@ onMounted(() => {
         </div>
       </div>
     </screen-main>
-  </div>
+  </screen-root>
 </template>
 
 <style scoped></style>
