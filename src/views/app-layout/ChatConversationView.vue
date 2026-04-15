@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import ScreenMain from '@/components/ScreenMain.vue';
+import ScreenRoot from '@/components/ScreenRoot.vue';
 import { onMounted, ref } from 'vue';
 import AppBar from '@/components/AppBar.vue';
 import { useRoute } from '@/router';
 import { onBeforeRouteUpdate } from 'vue-router';
 import { useAppLink } from '@/composables/use-app-link.ts';
-import ScreenRoot from '@/components/ScreenRoot.vue';
 import AppButton from '@/components/Buttons/AppButton.vue';
 import SendIcon from 'vue-material-design-icons/Send.vue';
 import ScreenFooter from '@/components/ScreenFooter.vue';
@@ -44,25 +43,23 @@ onMounted(() => {
 </script>
 
 <template>
-  <screen-root class="divide-x divide-gray-200">
+  <screen-root @refresh="() => refresh(true)" :loading="isLoading" :pullToRefresh="enabledRefresh">
     <template #header>
       <app-bar @back="back">Nome do usuário</app-bar>
     </template>
-    <screen-main @refresh="() => refresh(true)" :loading="isLoading" :enabled="enabledRefresh">
-      <template v-if="isLoading">
-        <div
-          v-if="isLoading"
-          class="w-full h-full flex flex-col justify-center items-center text-center gap-2"
-        >
-          <app-loading-animation />
-        </div>
-      </template>
-      <template v-else>
-        <div>params.chatId {{ route.params.chatId }}</div>
-        <div v-for="i in 50" :key="i">_props.chatId {{ props.chatId }}</div>
-        <div>query {{ route.query }}</div>
-      </template>
-    </screen-main>
+    <template v-if="isLoading">
+      <div
+        v-if="isLoading"
+        class="w-full h-full flex flex-col justify-center items-center text-center gap-2"
+      >
+        <app-loading-animation />
+      </div>
+    </template>
+    <template v-else>
+      <div>params.chatId {{ route.params.chatId }}</div>
+      <div v-for="i in 50" :key="i">_props.chatId {{ props.chatId }}</div>
+      <div>query {{ route.query }}</div>
+    </template>
     <template #footer>
       <screen-footer padding-size-x="sm">
         <div class="w-full flex gap-2">

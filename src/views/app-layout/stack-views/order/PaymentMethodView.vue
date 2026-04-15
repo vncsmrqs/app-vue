@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppBar from '@/components/AppBar.vue';
-import ScreenMain from '@/components/ScreenMain.vue';
+import ScreenRoot from '@/components/ScreenRoot.vue';
 import EmptyScreen from '@/components/EmptyScreen.vue';
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
 import AppButton from '@/components/Buttons/AppButton.vue';
@@ -14,12 +14,12 @@ const emit = defineEmits<StackViewBaseEmitters>();
 <template>
   <div class="w-full h-full flex flex-col">
     <app-bar @back="emit('close')"> Forma de pagamento </app-bar>
-    <screen-main :enabled="false">
+    <screen-root :pullToRefresh="false">
       <empty-screen
         title="Você precisa selecionar items primeiro"
         subtitle="Adicione items para realizar um pedido"
       />
-    </screen-main>
+    </screen-root>
     <screen-footer>
       <app-button custom type="primary" size="lg" class="w-full flex gap-2">
         Continuar

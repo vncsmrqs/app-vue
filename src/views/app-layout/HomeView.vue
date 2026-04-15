@@ -3,9 +3,8 @@ import { onMounted, ref } from 'vue';
 import AppLink from '@/components/AppLink.vue';
 import { v6 as uuid } from 'uuid';
 import MobileHomeBar from '@/components/Mobile/MobileHomeBar.vue';
-import ScreenMain from '@/components/ScreenMain.vue';
-import { isMobile } from '@/utils/device.ts';
 import ScreenRoot from '@/components/ScreenRoot.vue';
+import { isMobile } from '@/utils/device.ts';
 import { useRoute, useVirtualRoute } from '@/router';
 
 const route = useRoute();
@@ -30,16 +29,16 @@ onMounted(() => {
 </script>
 
 <template>
-  <screen-root>
+  <screen-root
+    :swipe-content="true"
+    :pullToRefresh="isMobile()"
+    :loading="isLoading"
+    @refresh="() => refresh(true)"
+  >
     <template #header>
       <mobile-home-bar />
     </template>
-    <screen-main
-      :swipe-content="true"
-      :enabled="isMobile()"
-      :loading="isLoading"
-      @refresh="() => refresh(true)"
-    >
+    <div>
       <div class="w-full min-h-full flex-auto flex">
         <div class="flex-auto lg:container mx-auto flex flex-col">
           <div>ROUTE: {{ route.name }}</div>
@@ -50,6 +49,6 @@ onMounted(() => {
           <app-link :to="{ name: 'merchant', params: { merchantId: uuid() } }"> Mercado </app-link>
         </div>
       </div>
-    </screen-main>
+    </div>
   </screen-root>
 </template>

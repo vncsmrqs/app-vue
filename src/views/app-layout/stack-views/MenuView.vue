@@ -14,7 +14,6 @@ import MenuIcon from 'vue-material-design-icons/Menu.vue';
 import ArrowDownIcon from 'vue-material-design-icons/ArrowDown.vue';
 import ArrowUpIcon from 'vue-material-design-icons/ArrowUp.vue';
 import ScreenRoot from '@/components/ScreenRoot.vue';
-import ScreenMain from '@/components/ScreenMain.vue';
 import ScreenFooter from '@/components/ScreenFooter.vue';
 
 const emit = defineEmits<StackViewBaseEmitters>();
@@ -25,7 +24,7 @@ const emit = defineEmits<StackViewBaseEmitters>();
     <template #header>
       <app-bar @back="() => emit('close')" class=""></app-bar>
     </template>
-    <screen-main>
+    <div>
       <div class="text-2xl font-medium px-5 pt-5">Menu</div>
       <ul class="divide-y divide-gray-200">
         <li>
@@ -109,7 +108,7 @@ const emit = defineEmits<StackViewBaseEmitters>();
           </menu-link>
         </li>
       </ul>
-    </screen-main>
+    </div>
     <template #footer>
       <screen-footer> VERSÃO DO APP: {{ appConfig.version }} </screen-footer>
     </template>

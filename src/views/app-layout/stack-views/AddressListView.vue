@@ -3,10 +3,9 @@ import { onMounted, ref } from 'vue';
 import EmptyScreen from '@/components/EmptyScreen.vue';
 import AppLoadingAnimation from '@/components/AppLoadingAnimation.vue';
 import AppBar from '@/components/AppBar.vue';
-import ScreenMain from '@/components/ScreenMain.vue';
+import ScreenRoot from '@/components/ScreenRoot.vue';
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
 import ScreenFooter from '@/components/ScreenFooter.vue';
-import ScreenRoot from '@/components/ScreenRoot.vue';
 import AppButton from '@/components/Buttons/AppButton.vue';
 
 const _props = defineProps<StackViewBaseProps>();
@@ -31,23 +30,21 @@ onMounted(() => {
 </script>
 
 <template>
-  <screen-root>
+  <screen-root @refresh="() => refresh(true)" :loading="isLoading" :pullToRefresh="enabledRefresh">
     <template #header>
       <app-bar @back="emit('close')">Endereços</app-bar>
     </template>
-    <screen-main @refresh="() => refresh(true)" :loading="isLoading" :enabled="enabledRefresh">
-      <div
-        v-if="isLoading"
-        class="w-full h-full flex flex-col justify-center items-center text-center gap-2"
-      >
-        <app-loading-animation />
-      </div>
-      <empty-screen
-        v-else
-        title="Nenhum endereço cadastrado"
-        subtitle="Cadastre um endereço para ver as opções mais perto de você"
-      />
-    </screen-main>
+    <div
+      v-if="isLoading"
+      class="w-full h-full flex flex-col justify-center items-center text-center gap-2"
+    >
+      <app-loading-animation />
+    </div>
+    <empty-screen
+      v-else
+      title="Nenhum endereço cadastrado"
+      subtitle="Cadastre um endereço para ver as opções mais perto de você"
+    />
     <template #footer>
       <screen-footer>
         <app-button type="primary" @click="emit('close')" class="w-full">Fechar</app-button>

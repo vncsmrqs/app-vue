@@ -1,18 +1,24 @@
 <script setup lang="ts">
 import AppLink from '@/components/AppLink.vue';
 import { useRoute } from '@/router';
+import ScreenRoot from '@/components/ScreenRoot.vue';
+import AppBar from '@/components/AppBar.vue';
+import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
 
-const props = defineProps<{
-  merchantId: string;
-  productId: string;
-}>();
+const props = defineProps<
+  StackViewBaseProps & {
+    merchantId: string;
+    productId: string;
+  }
+>();
+const emit = defineEmits<StackViewBaseEmitters>();
 
 const route = useRoute();
 </script>
 
 <template>
-  <div class="flex flex-col">
-    Detalhes do produto
+  <screen-root>
+    <app-bar @back="emit('close')">Nome do produto</app-bar>
     <app-link :to="{ name: 'menu' }">Menu</app-link>
     <div>params</div>
     <div>merchantId: {{ route.params.merchantId }}</div>
@@ -21,7 +27,7 @@ const route = useRoute();
     <div>props</div>
     <div>merchantId: {{ props.merchantId }}</div>
     <div>productId: {{ props.productId }}</div>
-  </div>
+  </screen-root>
 </template>
 
 <style scoped></style>

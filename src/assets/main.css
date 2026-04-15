@@ -5,7 +5,7 @@ html {
 }
 
 * {
-  /*overscroll-behavior-y: none;*/
+  overscroll-behavior-y: none;
   touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none; /* Safari/iOS */

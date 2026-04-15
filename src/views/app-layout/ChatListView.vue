@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppBar from '@/components/AppBar.vue';
-import ScreenMain from '@/components/ScreenMain.vue';
+import ScreenRoot from '@/components/ScreenRoot.vue';
 import EmptyScreen from '@/components/EmptyScreen.vue';
 import { computed, onMounted, ref } from 'vue';
 import { v6 as uuid } from 'uuid';
@@ -23,7 +23,7 @@ const refresh = async (fromRefresh?: boolean) => {
   setTimeout(() => {
     isLoading.value = false;
     enabledRefresh.value = true;
-  }, 500);
+  }, 1500);
 };
 
 onMounted(() => {
@@ -44,10 +44,10 @@ onMounted(() => {
         >
           <div class="w-full flex flex-col overflow-hidden relative">
             <app-bar :show-back-button="false">Mensagens</app-bar>
-            <screen-main
+            <screen-root
               @refresh="() => refresh(true)"
               :loading="isLoading"
-              :enabled="enabledRefresh"
+              :pullToRefresh="enabledRefresh"
             >
               <empty-screen
                 v-if="!chats.length"
@@ -63,7 +63,7 @@ onMounted(() => {
                   />
                 </li>
               </ul>
-            </screen-main>
+            </screen-root>
           </div>
         </div>
         <div

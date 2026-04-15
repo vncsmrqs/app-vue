@@ -2,11 +2,10 @@
 import { onMounted, ref } from 'vue';
 import AppBar from '@/components/AppBar.vue';
 import AppLoadingAnimation from '@/components/AppLoadingAnimation.vue';
-import ScreenMain from '@/components/ScreenMain.vue';
+import ScreenRoot from '@/components/ScreenRoot.vue';
 import EmptyScreen from '@/components/EmptyScreen.vue';
 import ScreenFooter from '@/components/ScreenFooter.vue';
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
-import ScreenRoot from '@/components/ScreenRoot.vue';
 import AppButton from '@/components/Buttons/AppButton.vue';
 
 const _props = defineProps<StackViewBaseProps>();
@@ -31,24 +30,21 @@ onMounted(() => {
 </script>
 
 <template>
-  <screen-root>
+  <screen-root @refresh="() => refresh(true)" :loading="isLoading" :pullToRefresh="enabledRefresh">
     <template #header>
       <app-bar @back="emit('close')">Notificações</app-bar>
     </template>
-    <screen-main @refresh="() => refresh(true)" :loading="isLoading" :enabled="enabledRefresh">
-      "
-      <div
-        v-if="isLoading"
-        class="w-full h-full flex flex-col justify-center items-center text-center gap-2"
-      >
-        <app-loading-animation />
-      </div>
-      <empty-screen
-        v-else
-        title="Sem novidades por enquanto"
-        subtitle=" Quando uma notificação chegar, ela vai ficar aqui"
-      />
-    </screen-main>
+    <div
+      v-if="isLoading"
+      class="w-full h-full flex flex-col justify-center items-center text-center gap-2"
+    >
+      <app-loading-animation />
+    </div>
+    <empty-screen
+      v-else
+      title="Sem novidades por enquanto"
+      subtitle=" Quando uma notificação chegar, ela vai ficar aqui"
+    />
     <template #footer>
       <screen-footer>
         <div class="w-full flex flex-col gap-4">

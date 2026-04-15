@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import ScreenRoot from '@/components/ScreenRoot.vue';
 import AppBar from '@/components/AppBar.vue';
-import ScreenMain from '@/components/ScreenMain.vue';
+import ScreenRoot from '@/components/ScreenRoot.vue';
 import { isMobile } from '@/utils/device.ts';
+import EmptyScreen from '@/components/EmptyScreen.vue';
 </script>
 
 <template>
@@ -10,7 +10,7 @@ import { isMobile } from '@/utils/device.ts';
     <template #header>
       <app-bar v-if="isMobile()" :show-back-button="false">Favoritos</app-bar>
     </template>
-    <screen-main>Lista de restaurantes favoritos </screen-main>
+    <empty-screen title="Favoritos" subtitle="Seus restaurantes favoritos ficarão aqui" />
   </screen-root>
 </template>
 
