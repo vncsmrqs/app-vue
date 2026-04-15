@@ -32,7 +32,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full h-full lg:py-8">
+  <div class="w-full h-full lg:mt-[-1px]">
     <div class="w-full h-full flex divide-x divide-gray-200 lg:border border-gray-200">
       <router-view v-slot="{ Component }">
         <div

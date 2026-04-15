@@ -14,6 +14,8 @@ import MenuIcon from 'vue-material-design-icons/Menu.vue';
 import ArrowDownIcon from 'vue-material-design-icons/ArrowDown.vue';
 import ArrowUpIcon from 'vue-material-design-icons/ArrowUp.vue';
 import ScreenRoot from '@/components/ScreenRoot.vue';
+import ScreenMain from '@/components/ScreenMain.vue';
+import ScreenFooter from '@/components/ScreenFooter.vue';
 
 const emit = defineEmits<StackViewBaseEmitters>();
 </script>
@@ -23,95 +25,93 @@ const emit = defineEmits<StackViewBaseEmitters>();
     <template #header>
       <app-bar @back="() => emit('close')" class=""></app-bar>
     </template>
-    <div class="text-2xl font-medium px-5 pt-5">Menu</div>
-    <ul class="divide-y divide-gray-200">
-      <li>
-        <menu-link :to="{ name: 'bottom', query: { uuid: uuid() } }">
-          Bottom
-          <template #icon>
-            <ArrowDownIcon />
-          </template>
-        </menu-link>
-      </li>
-      <li>
-        <menu-link :to="{ name: 'fixed-bottom', query: { uuid: uuid() } }">
-          Fixed Bottom
-          <template #icon>
-            <ArrowDownIcon />
-          </template>
-        </menu-link>
-      </li>
-      <li>
-        <menu-link :to="{ name: 'modal', query: { uuid: uuid() } }">
-          Modal
-          <template #icon>
-            <ArrowUpIcon />
-          </template>
-        </menu-link>
-      </li>
-      <li>
-        <menu-link :to="{ name: 'menu', query: { uuid: uuid() } }">
-          Menu
-          <template #icon>
-            <MenuIcon />
-          </template>
-        </menu-link>
-      </li>
-      <li>
-        <menu-link :to="{ name: 'order.bag' }">
-          Sacola
-          <template #icon>
-            <ShoppingOutlineIcon />
-          </template>
-        </menu-link>
-      </li>
-      <li>
-        <menu-link :to="{ name: 'address-list' }">
-          Endereços
-          <template #icon>
-            <MapMarkerOutlineIcon />
-          </template>
-        </menu-link>
-      </li>
-      <li>
-        <menu-link :to="{ name: 'notifications' }">
-          Notificações
-          <template #icon>
-            <BellOutlineIcon />
-          </template>
-        </menu-link>
-      </li>
-      <li>
-        <menu-link :to="{ name: 'orders' }">
-          Pedidos
-          <template #icon>
-            <TextBoxOutlineIcon />
-          </template>
-        </menu-link>
-      </li>
-      <li>
-        <menu-link :to="{ name: 'favorites' }">
-          Favoritos
-          <template #icon>
-            <HeartOutlineIcon />
-          </template>
-        </menu-link>
-      </li>
-      <li>
-        <menu-link :to="{ name: 'chat-list' }">
-          Chats
-          <template #icon>
-            <ChatOutlineIcon />
-          </template>
-        </menu-link>
-      </li>
-    </ul>
+    <screen-main>
+      <div class="text-2xl font-medium px-5 pt-5">Menu</div>
+      <ul class="divide-y divide-gray-200">
+        <li>
+          <menu-link :to="{ name: 'bottom', query: { uuid: uuid() } }">
+            Bottom
+            <template #icon>
+              <ArrowDownIcon />
+            </template>
+          </menu-link>
+        </li>
+        <li>
+          <menu-link :to="{ name: 'fixed-bottom', query: { uuid: uuid() } }">
+            Fixed Bottom
+            <template #icon>
+              <ArrowDownIcon />
+            </template>
+          </menu-link>
+        </li>
+        <li>
+          <menu-link :to="{ name: 'modal', query: { uuid: uuid() } }">
+            Modal
+            <template #icon>
+              <ArrowUpIcon />
+            </template>
+          </menu-link>
+        </li>
+        <li>
+          <menu-link :to="{ name: 'menu', query: { uuid: uuid() } }">
+            Menu
+            <template #icon>
+              <MenuIcon />
+            </template>
+          </menu-link>
+        </li>
+        <li>
+          <menu-link :to="{ name: 'order.bag' }">
+            Sacola
+            <template #icon>
+              <ShoppingOutlineIcon />
+            </template>
+          </menu-link>
+        </li>
+        <li>
+          <menu-link :to="{ name: 'address-list' }">
+            Endereços
+            <template #icon>
+              <MapMarkerOutlineIcon />
+            </template>
+          </menu-link>
+        </li>
+        <li>
+          <menu-link :to="{ name: 'notifications' }">
+            Notificações
+            <template #icon>
+              <BellOutlineIcon />
+            </template>
+          </menu-link>
+        </li>
+        <li>
+          <menu-link :to="{ name: 'orders' }">
+            Pedidos
+            <template #icon>
+              <TextBoxOutlineIcon />
+            </template>
+          </menu-link>
+        </li>
+        <li>
+          <menu-link :to="{ name: 'favorites' }">
+            Favoritos
+            <template #icon>
+              <HeartOutlineIcon />
+            </template>
+          </menu-link>
+        </li>
+        <li>
+          <menu-link :to="{ name: 'chat-list' }">
+            Chats
+            <template #icon>
+              <ChatOutlineIcon />
+            </template>
+          </menu-link>
+        </li>
+      </ul>
+    </screen-main>
     <template #footer>
-      <div
-        class="w-full h-14 sticky flex-none bottom-0 border-t border-gray-200 px-5 bg-white flex items-center"
-      >
-        VERSÃO DO APP: {{ appConfig.version }}
-      </div>
+      <screen-footer> VERSÃO DO APP: {{ appConfig.version }} </screen-footer>
     </template>
   </screen-root>
 </template>

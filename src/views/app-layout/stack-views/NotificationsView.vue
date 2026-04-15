@@ -36,6 +36,7 @@ onMounted(() => {
       <app-bar @back="emit('close')">Notificações</app-bar>
     </template>
     <screen-main @refresh="() => refresh(true)" :loading="isLoading" :enabled="enabledRefresh">
+      "
       <div
         v-if="isLoading"
         class="w-full h-full flex flex-col justify-center items-center text-center gap-2"
