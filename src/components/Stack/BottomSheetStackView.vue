@@ -104,16 +104,29 @@ watch(
 );
 
 const containerTransform = computed(() => {
-  if (STACK_VIEW_SWIPE_Y_IS_ACTIVE) {
+  if (STACK_VIEW_SWIPE_Y_IS_ACTIVE && props.fullHeight) {
     if (isRealSwiping.value) {
       const y = lengthY.value * -1;
       if (y <= 0) {
         return `translateY(${0}px)`;
       }
-      return `translateY(${lengthY.value * -1}px)`;
+      return `translateY(${y}px)`;
     }
   }
   return '';
+});
+
+const containerMaxHeight = computed(() => {
+  if (STACK_VIEW_SWIPE_Y_IS_ACTIVE && !props.fullHeight) {
+    if (isRealSwiping.value) {
+      const y = lengthY.value * -1;
+      if (y <= 0) {
+        return { maxHeight: 'calc(100% - 2rem)' };
+      }
+      return { maxHeight: `calc(100% - 2rem - ${y}px )` };
+    }
+  }
+  return { maxHeight: 'calc(100% - 2rem)' };
 });
 
 const swipeDistancePercent = computed(() => {
@@ -190,7 +203,11 @@ provide('isInStackView', true);
         ref="container-element"
         class="bottom-sheet-container"
         :class="{ 'animate-opacity': STACK_VIEW_SWIPE_Y_IS_ACTIVE, 'h-dvh': fullHeight }"
-        :style="{ transform: containerTransform, opacity: containerOpacity }"
+        :style="{
+          transform: containerTransform,
+          opacity: containerOpacity,
+          ...containerMaxHeight,
+        }"
       >
         <div ref="swiper-element" class="w-full flex justify-center py-4">
           <div class="w-10 h-1 rounded-md bg-gray-300"></div>
@@ -223,10 +240,6 @@ provide('isInStackView', true);
   &.animate-opacity {
     opacity: 1;
   }
-}
-
-.bottom-sheet-container {
-  max-height: calc(100% - 2rem);
 }
 
 .closed {
