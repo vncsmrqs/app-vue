@@ -27,10 +27,10 @@ const emit = defineEmits<{
 }>();
 
 const close = async (animationTime: number) => {
+  isClosing.value = true;
   emit('close', animationTime);
 };
 
-// const rootElement = useTemplateRef('root-element');
 const containerElement = useTemplateRef('container-element');
 const swiperElement = useTemplateRef('swiper-element');
 
@@ -61,6 +61,8 @@ const isRealSwiping = computed(() => {
 const isClosable = computed(() => {
   return isRealSwiping.value && coordsEnd.y - coordsStart.y >= height.value * 0.4;
 });
+
+const isClosing = ref(false);
 
 const isRendering = ref(false);
 const isVisible = ref(!props.transitionDuration || isMobileBrowser());
@@ -108,24 +110,23 @@ const containerTransform = computed(() => {
     if (isRealSwiping.value) {
       const y = lengthY.value * -1;
       if (y <= 0) {
-        return `translateY(${0}px)`;
+        return { transform: `translateY(${0}px)` };
       }
-      return `translateY(${y}px)`;
+      return { transform: `translateY(${y}px)` };
     }
   }
-  return '';
+  return {};
 });
 
 const containerMaxHeight = computed(() => {
   if (STACK_VIEW_SWIPE_Y_IS_ACTIVE && !props.fullHeight) {
-    if (isRealSwiping.value) {
-      const y = lengthY.value * -1;
-      if (y <= 0) {
-        return { maxHeight: 'calc(100% - 2rem)' };
-      }
+    const y = lengthY.value * -1;
+
+    if ((isRealSwiping.value && y > 0) || isClosing.value) {
       return { maxHeight: `calc(100% - 2rem - ${y}px )` };
     }
   }
+
   return { maxHeight: 'calc(100% - 2rem)' };
 });
 
@@ -167,10 +168,10 @@ const backdropOpacity = computed(() => {
 const containerOpacity = computed(() => {
   if (STACK_VIEW_SWIPE_Y_IS_ACTIVE && CONTAINER_OPACITY_IS_ACTIVE) {
     if (isRealSwiping.value) {
-      return 1 - swipeDistancePercent.value * 0.25;
+      return { opacity: 1 - swipeDistancePercent.value * 0.25 };
     }
   }
-  return undefined;
+  return { opacity: undefined };
 });
 
 import { provide } from 'vue';
@@ -190,6 +191,14 @@ provide('isInStackView', true);
       }"
       :tabindex="index"
     >
+      <!--      <div class="fixed yop-0 left-0 bg-red-500 z-50">-->
+      <!--        <div>lengthY: {{ lengthY }}</div>-->
+      <!--        <div>Y: {{ lengthY * -1 }}</div>-->
+      <!--        <div>transform: {{ containerTransform }}</div>-->
+      <!--        <div>maxHeight: {{ containerMaxHeight }}</div>-->
+      <!--        <div>isClosable: {{ isClosable }}</div>-->
+      <!--        <div>isRealSwiping: {{ isRealSwiping }}</div>-->
+      <!--      </div>-->
       <div
         class="bottom-sheet-backdrop"
         :class="{
@@ -204,8 +213,8 @@ provide('isInStackView', true);
         class="bottom-sheet-container"
         :class="{ 'animate-opacity': STACK_VIEW_SWIPE_Y_IS_ACTIVE, 'h-dvh': fullHeight }"
         :style="{
-          transform: containerTransform,
-          opacity: containerOpacity,
+          ...containerTransform,
+          ...containerOpacity,
           ...containerMaxHeight,
         }"
       >
