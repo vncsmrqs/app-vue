@@ -47,7 +47,7 @@ export default defineConfig({
         background_color: appConfig.startBackgroundColor,
         display: 'standalone',
         scope: '/',
-        start_url: '/?utm_source=homescreen&utm_medium=shortcut',
+        start_url: '/app/?utm_source=homescreen&utm_medium=shortcut',
         name: appConfig.name,
         short_name: appConfig.shortName,
         description: appConfig.description,
@@ -68,7 +68,40 @@ export default defineConfig({
         shortcuts: [
           {
             name: 'Home',
-            url: '/home/?utm_source=jumplist&utm_medium=shortcut',
+            url: '/app/home/?utm_source=jumplist&utm_medium=shortcut',
+            icons: [
+              {
+                src: 'logo-192x192.png',
+                type: 'image/png',
+                sizes: '192x192',
+              },
+            ],
+          },
+          {
+            name: 'Pedidos',
+            url: '/app/orders/?utm_source=jumplist&utm_medium=shortcut',
+            icons: [
+              {
+                src: 'logo-192x192.png',
+                type: 'image/png',
+                sizes: '192x192',
+              },
+            ],
+          },
+          {
+            name: 'Conversas',
+            url: '/app/chats/?utm_source=jumplist&utm_medium=shortcut',
+            icons: [
+              {
+                src: 'logo-192x192.png',
+                type: 'image/png',
+                sizes: '192x192',
+              },
+            ],
+          },
+          {
+            name: 'Notificações',
+            url: '/app/notifications/?utm_source=jumplist&utm_medium=shortcut',
             icons: [
               {
                 src: 'logo-192x192.png',
