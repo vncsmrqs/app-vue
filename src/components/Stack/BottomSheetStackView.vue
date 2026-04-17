@@ -39,15 +39,15 @@ const swiperElement = useTemplateRef('swiper-element');
 const { height: containerHeight, top: containerTop } = useElementBounding(containerElement);
 const { height: swiperHeight } = useElementBounding(swiperElement);
 
-const startContainerTop = ref(0);
+const startContainerTop = ref(containerTop.value);
 
 const { isSwiping, coordsEnd, coordsStart } = useSwipe(swiperElement, {
   passive: false,
   threshold: 10,
   onSwipeStart: (e) => {
+    startContainerTop.value = containerTop.value;
     if (STACK_VIEW_SWIPE_Y_IS_ACTIVE) {
       e.preventDefault();
-      startContainerTop.value = containerTop.value;
       return;
     }
   },
@@ -209,15 +209,15 @@ provide('isInStackView', true);
       }"
       :tabindex="index"
     >
-      <div class="fixed yop-0 left-0 bg-red-500 z-50">
-        <div>coordsStart: {{ coordsStart.y }}</div>
-        <div>coordsEnd: {{ coordsEnd.y }}</div>
-        <div>swiperHeight: {{ swiperHeight }}</div>
-        <div>containerHeight: {{ containerHeight }}</div>
-        <!--        <div>isRealSwiping: {{ isRealSwiping }}</div>-->
-        <div>containerTop: {{ containerTop }}</div>
-        <div>startContainerTop: {{ startContainerTop }}</div>
-      </div>
+      <!--      <div class="fixed yop-0 left-0 bg-red-500 z-50">-->
+      <!--        <div>coordsStart: {{ coordsStart.y }}</div>-->
+      <!--        <div>coordsEnd: {{ coordsEnd.y }}</div>-->
+      <!--        <div>swiperHeight: {{ swiperHeight }}</div>-->
+      <!--        <div>containerHeight: {{ containerHeight }}</div>-->
+      <!--        &lt;!&ndash;        <div>isRealSwiping: {{ isRealSwiping }}</div>&ndash;&gt;-->
+      <!--        <div>containerTop: {{ containerTop }}</div>-->
+      <!--        <div>startContainerTop: {{ startContainerTop }}</div>-->
+      <!--      </div>-->
       <div
         class="bottom-sheet-backdrop"
         :class="{
