@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, useAttrs, watch } from 'vue';
 import { isMobileBrowser } from '@/utils/device.ts';
 import {
   STACK_VIEW_BASE_TRANSITION_MILLISECOND,
   STACK_VIEW_VISIBILITY_TIMEOUT_MILLISECOND,
 } from '@/config/stack-view-config.ts';
+import { provide } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -19,19 +20,26 @@ const props = withDefaults(
     fullHeight: false,
   },
 );
+
 const emit = defineEmits<{
   close: [number];
 }>();
 
-const close = async (animationTime: number) => {
-  emit('close', animationTime);
-};
+defineOptions({
+  inheritAttrs: false,
+});
+
+const attrs = useAttrs();
 
 const isRendering = ref(false);
 const isVisible = ref(!props.transitionDuration || isMobileBrowser());
 
 let visibilityTimeout: NodeJS.Timeout;
 let renderingTimeout: NodeJS.Timeout;
+
+const close = async (animationTime: number) => {
+  emit('close', animationTime);
+};
 
 const handleVisibility = (show: boolean) => {
   clearTimeout(visibilityTimeout);
@@ -68,8 +76,6 @@ watch(
   { immediate: true },
 );
 
-import { provide } from 'vue';
-
 provide('isInStackView', true);
 </script>
 
@@ -78,6 +84,7 @@ provide('isInStackView', true);
     <div
       ref="root-element"
       class="center-modal touch-pan-y"
+      v-bind="attrs"
       :class="{
         opened: isVisible,
         closed: !isVisible,

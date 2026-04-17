@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef, watch } from 'vue';
-import { useElementSize, useSwipe } from '@vueuse/core';
+import { computed, ref, useAttrs, useTemplateRef, watch } from 'vue';
+import { useElementBounding, useSwipe } from '@vueuse/core';
 import { isMobileBrowser } from '@/utils/device.ts';
 import {
   MIN_SWIPE_X_START,
@@ -9,6 +9,7 @@ import {
   CONTAINER_OPACITY_IS_ACTIVE,
   STACK_VIEW_VISIBILITY_TIMEOUT_MILLISECOND,
 } from '@/config/stack-view-config.ts';
+import { provide } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -21,17 +22,20 @@ const props = withDefaults(
     transitionDuration: STACK_VIEW_BASE_TRANSITION_MILLISECOND,
   },
 );
+
 const emit = defineEmits<{
   close: [number];
 }>();
 
-const close = async (animationTime: number) => {
-  emit('close', animationTime);
-};
+defineOptions({
+  inheritAttrs: false,
+});
+
+const attrs = useAttrs();
 
 const rootElement = useTemplateRef('root-element');
 
-const { width } = useElementSize(rootElement);
+const { width } = useElementBounding(rootElement);
 
 const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
   passive: false,
@@ -51,6 +55,12 @@ const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
   },
 });
 
+const isRendering = ref(false);
+const isVisible = ref(!props.transitionDuration || isMobileBrowser());
+
+let visibilityTimeout: NodeJS.Timeout;
+let renderingTimeout: NodeJS.Timeout;
+
 const isRealSwiping = computed(() => {
   return coordsStart.x <= MIN_SWIPE_X_START && STACK_VIEW_SWIPE_X_IS_ACTIVE && isSwiping.value;
 });
@@ -59,11 +69,66 @@ const isClosable = computed(() => {
   return isRealSwiping.value && coordsEnd.x >= width.value * 0.4;
 });
 
-const isRendering = ref(false);
-const isVisible = ref(!props.transitionDuration || isMobileBrowser());
+const containerTransform = computed(() => {
+  if (STACK_VIEW_SWIPE_X_IS_ACTIVE) {
+    if (isRealSwiping.value) {
+      const x = lengthX.value * -1;
+      if (x <= 0) {
+        return { transform: `translateX(${0}px)` };
+      }
+      return { transform: `translateX(${lengthX.value * -1}px)` };
+    }
+  }
+  return { transform: '' };
+});
 
-let visibilityTimeout: NodeJS.Timeout;
-let renderingTimeout: NodeJS.Timeout;
+const swipeDistancePercent = computed(() => {
+  if (isRealSwiping.value) {
+    const percent = coordsEnd.x / width.value || 0;
+    if (percent > 100) {
+      return 100;
+    }
+    return percent < 0 ? 0 : percent;
+  }
+
+  return 0;
+});
+
+const remainingAnimationTime = computed(() => {
+  const percent = 1 - swipeDistancePercent.value;
+  return props.transitionDuration * percent;
+});
+
+const animationTime = computed(() => {
+  if (STACK_VIEW_SWIPE_X_IS_ACTIVE) {
+    if (isRealSwiping.value) {
+      return 0;
+    }
+  }
+  return remainingAnimationTime.value;
+});
+
+const backdropOpacity = computed(() => {
+  if (STACK_VIEW_SWIPE_X_IS_ACTIVE) {
+    if (isRealSwiping.value) {
+      return { opacity: 1 - swipeDistancePercent.value };
+    }
+  }
+  return { opacity: undefined };
+});
+
+const containerOpacity = computed(() => {
+  if (STACK_VIEW_SWIPE_X_IS_ACTIVE && CONTAINER_OPACITY_IS_ACTIVE) {
+    if (isRealSwiping.value) {
+      return { opacity: 1 - swipeDistancePercent.value * 0.25 };
+    }
+  }
+  return { opacity: undefined };
+});
+
+const close = async (animationTime: number) => {
+  emit('close', animationTime);
+};
 
 const handleVisibility = (show: boolean) => {
   clearTimeout(visibilityTimeout);
@@ -100,65 +165,6 @@ watch(
   { immediate: true },
 );
 
-const containerTransform = computed(() => {
-  if (STACK_VIEW_SWIPE_X_IS_ACTIVE) {
-    if (isRealSwiping.value) {
-      const x = lengthX.value * -1;
-      if (x <= 0) {
-        return `translateX(${0}px)`;
-      }
-      return `translateX(${lengthX.value * -1}px)`;
-    }
-  }
-  return '';
-});
-
-const swipeDistancePercent = computed(() => {
-  if (isRealSwiping.value) {
-    const percent = coordsEnd.x / width.value || 0;
-    if (percent > 100) {
-      return 100;
-    }
-    return percent < 0 ? 0 : percent;
-  }
-
-  return 0;
-});
-
-const remainingAnimationTime = computed(() => {
-  const percent = 1 - swipeDistancePercent.value;
-  return props.transitionDuration * percent;
-});
-
-const animationTime = computed(() => {
-  if (STACK_VIEW_SWIPE_X_IS_ACTIVE) {
-    if (isRealSwiping.value) {
-      return 0;
-    }
-  }
-  return remainingAnimationTime.value;
-});
-
-const backdropOpacity = computed(() => {
-  if (STACK_VIEW_SWIPE_X_IS_ACTIVE) {
-    if (isRealSwiping.value) {
-      return 1 - swipeDistancePercent.value;
-    }
-  }
-  return undefined;
-});
-
-const containerOpacity = computed(() => {
-  if (STACK_VIEW_SWIPE_X_IS_ACTIVE && CONTAINER_OPACITY_IS_ACTIVE) {
-    if (isRealSwiping.value) {
-      return 1 - swipeDistancePercent.value * 0.25;
-    }
-  }
-  return undefined;
-});
-
-import { provide } from 'vue';
-
 provide('isInStackView', true);
 </script>
 
@@ -167,6 +173,7 @@ provide('isInStackView', true);
     <div
       ref="root-element"
       class="drawer touch-pan-x"
+      v-bind="attrs"
       :class="{
         opened: isVisible,
         closed: !isVisible,
@@ -180,13 +187,13 @@ provide('isInStackView', true);
           'bg-black/50': STACK_VIEW_SWIPE_X_IS_ACTIVE,
           'md:bg-black/50': true,
         }"
-        :style="{ opacity: backdropOpacity }"
+        :style="{ ...backdropOpacity }"
         @click="() => close(props.transitionDuration)"
       ></div>
       <div
         class="drawer-container"
         :class="{ 'animate-opacity': STACK_VIEW_SWIPE_X_IS_ACTIVE }"
-        :style="{ transform: containerTransform, opacity: containerOpacity }"
+        :style="{ ...containerTransform, ...containerOpacity }"
       >
         <slot v-if="isRendering"></slot>
       </div>

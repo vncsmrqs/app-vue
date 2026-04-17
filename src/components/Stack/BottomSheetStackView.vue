@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef, watch } from 'vue';
+import { computed, ref, useAttrs, useTemplateRef, watch } from 'vue';
 import { useElementBounding, useSwipe } from '@vueuse/core';
 import { isMobileBrowser } from '@/utils/device.ts';
+import { provide } from 'vue';
+
 import {
   STACK_VIEW_BASE_TRANSITION_MILLISECOND,
   STACK_VIEW_SWIPE_Y_IS_ACTIVE,
@@ -24,22 +26,34 @@ const props = withDefaults(
     minHeight: 0,
   },
 );
+
 const emit = defineEmits<{
   close: [number];
 }>();
 
-const close = async (animationTime: number) => {
-  isClosing.value = true;
-  emit('close', animationTime);
-};
+defineOptions({
+  inheritAttrs: false,
+});
 
+const attrs = useAttrs();
+
+provide('isInStackView', true);
+
+const rootElement = useTemplateRef('root-element');
 const containerElement = useTemplateRef('container-element');
 const swiperElement = useTemplateRef('swiper-element');
 
 const { height: containerHeight, top: containerTop } = useElementBounding(containerElement);
 const { height: swiperHeight } = useElementBounding(swiperElement);
+const { height: rootHeight } = useElementBounding(rootElement);
 
+const isClosing = ref(false);
+const isRendering = ref(false);
+const isVisible = ref(!props.transitionDuration || isMobileBrowser());
 const startContainerTop = ref(containerTop.value);
+
+let visibilityTimeout: NodeJS.Timeout;
+let renderingTimeout: NodeJS.Timeout;
 
 const { isSwiping, coordsEnd, coordsStart } = useSwipe(swiperElement, {
   passive: false,
@@ -68,48 +82,13 @@ const isClosable = computed(() => {
   return isRealSwiping.value && coordsEnd.y - coordsStart.y >= containerHeight.value * 0.4;
 });
 
-const isClosing = ref(false);
-
-const isRendering = ref(false);
-const isVisible = ref(!props.transitionDuration || isMobileBrowser());
-
-let visibilityTimeout: NodeJS.Timeout;
-let renderingTimeout: NodeJS.Timeout;
-
-const handleVisibility = (show: boolean) => {
-  clearTimeout(visibilityTimeout);
-
-  if (show) {
-    visibilityTimeout = setTimeout(() => {
-      isVisible.value = true;
-    }, STACK_VIEW_VISIBILITY_TIMEOUT_MILLISECOND);
-    return;
-  }
-
-  isVisible.value = show;
-};
-
-const handleRendering = (show: boolean) => {
-  clearTimeout(renderingTimeout);
-
-  if (show) {
-    isRendering.value = true;
-    return;
-  }
-
-  renderingTimeout = setTimeout(() => {
-    isRendering.value = false;
-  }, remainingAnimationTime.value);
-};
-
-watch(
-  () => props.show,
-  async (show: boolean) => {
-    handleVisibility(show);
-    handleRendering(show);
-  },
-  { immediate: true },
-);
+const translateY = computed(() => {
+  const scrollableHeight = props.minHeight + swiperHeight.value;
+  const minHeight = rootHeight.value - scrollableHeight;
+  const distanceY = coordsEnd.y - coordsStart.y + startContainerTop.value;
+  const translateY = distanceY - minHeight;
+  return translateY < 0 ? 0 : translateY;
+});
 
 const containerTransform = computed(() => {
   const scrollableHeight = props.minHeight + swiperHeight.value;
@@ -121,7 +100,7 @@ const containerTransform = computed(() => {
     if (isRealSwiping.value && distanceY > 0) {
       if (reachesMinHeight) {
         return {
-          transform: `translateY(calc(${containerHeight.value}px - 100dvh - ${coordsStart.y - startContainerTop.value}px + ${coordsEnd.y}px))`,
+          transform: `translateY(${translateY.value}px)`,
         };
       }
 
@@ -192,9 +171,45 @@ const containerOpacity = computed(() => {
   return { opacity: undefined };
 });
 
-import { provide } from 'vue';
+const handleVisibility = (show: boolean) => {
+  clearTimeout(visibilityTimeout);
 
-provide('isInStackView', true);
+  if (show) {
+    visibilityTimeout = setTimeout(() => {
+      isVisible.value = true;
+    }, STACK_VIEW_VISIBILITY_TIMEOUT_MILLISECOND);
+    return;
+  }
+
+  isVisible.value = show;
+};
+
+const close = async (animationTime: number) => {
+  isClosing.value = true;
+  emit('close', animationTime);
+};
+
+const handleRendering = (show: boolean) => {
+  clearTimeout(renderingTimeout);
+
+  if (show) {
+    isRendering.value = true;
+    return;
+  }
+
+  renderingTimeout = setTimeout(() => {
+    isRendering.value = false;
+  }, remainingAnimationTime.value);
+};
+
+watch(
+  () => props.show,
+  async (show: boolean) => {
+    handleVisibility(show);
+    handleRendering(show);
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -207,17 +222,19 @@ provide('isInStackView', true);
         closed: !isVisible,
         'is-swiping': !!isSwiping,
       }"
+      v-bind="attrs"
       :tabindex="index"
     >
-      <!--      <div class="fixed yop-0 left-0 bg-red-500 z-50">-->
-      <!--        <div>coordsStart: {{ coordsStart.y }}</div>-->
-      <!--        <div>coordsEnd: {{ coordsEnd.y }}</div>-->
-      <!--        <div>swiperHeight: {{ swiperHeight }}</div>-->
-      <!--        <div>containerHeight: {{ containerHeight }}</div>-->
-      <!--        &lt;!&ndash;        <div>isRealSwiping: {{ isRealSwiping }}</div>&ndash;&gt;-->
-      <!--        <div>containerTop: {{ containerTop }}</div>-->
-      <!--        <div>startContainerTop: {{ startContainerTop }}</div>-->
-      <!--      </div>-->
+      <div v-if="false" class="fixed yop-0 left-0 bg-red-500 z-50">
+        <div>translateY: {{ translateY }}</div>
+        <!--              <div>coordsStart: {{ coordsStart.y }}</div>-->
+        <!--              <div>coordsEnd: {{ coordsEnd.y }}</div>-->
+        <!--              <div>swiperHeight: {{ swiperHeight }}</div>-->
+        <div>containerHeight: {{ containerHeight }}</div>
+        <!--        <div>isRealSwiping: {{ isRealSwiping }}</div>-->
+        <!--              <div>containerTop: {{ containerTop }}</div>-->
+        <!--              <div>startContainerTop: {{ startContainerTop }}</div>-->
+      </div>
       <div
         class="bottom-sheet-backdrop"
         :class="{
