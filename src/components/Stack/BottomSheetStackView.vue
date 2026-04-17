@@ -43,14 +43,14 @@ const rootElement = useTemplateRef('root-element');
 const containerElement = useTemplateRef('container-element');
 const swiperElement = useTemplateRef('swiper-element');
 
-const { height: containerHeight, top: containerTop } = useElementBounding(containerElement);
+const { height: containerHeight } = useElementBounding(containerElement);
 const { height: swiperHeight } = useElementBounding(swiperElement);
 const { height: rootHeight } = useElementBounding(rootElement);
 
 const isClosing = ref(false);
 const isRendering = ref(false);
 const isVisible = ref(!props.transitionDuration || isMobileBrowser());
-const startContainerTop = ref(containerTop.value);
+const startContainerHeight = ref(containerHeight.value);
 
 let visibilityTimeout: NodeJS.Timeout;
 let renderingTimeout: NodeJS.Timeout;
@@ -59,7 +59,7 @@ const { isSwiping, coordsEnd, coordsStart } = useSwipe(swiperElement, {
   passive: false,
   threshold: 10,
   onSwipeStart: (e) => {
-    startContainerTop.value = containerTop.value;
+    startContainerHeight.value = containerHeight.value;
     if (STACK_VIEW_SWIPE_Y_IS_ACTIVE) {
       e.preventDefault();
       return;
@@ -80,6 +80,10 @@ const isRealSwiping = computed(() => {
 
 const isClosable = computed(() => {
   return isRealSwiping.value && coordsEnd.y - coordsStart.y >= containerHeight.value * 0.4;
+});
+
+const startContainerTop = computed(() => {
+  return rootHeight.value - startContainerHeight.value;
 });
 
 const translateY = computed(() => {
@@ -227,13 +231,14 @@ watch(
     >
       <div v-if="false" class="fixed yop-0 left-0 bg-red-500 z-50">
         <div>translateY: {{ translateY }}</div>
-        <!--              <div>coordsStart: {{ coordsStart.y }}</div>-->
-        <!--              <div>coordsEnd: {{ coordsEnd.y }}</div>-->
-        <!--              <div>swiperHeight: {{ swiperHeight }}</div>-->
+        <div>coordsStart: {{ coordsStart.y }}</div>
+        <div>coordsEnd: {{ coordsEnd.y }}</div>
+        <div>swiperHeight: {{ swiperHeight }}</div>
+        <div>startContainerTop: {{ startContainerTop }}</div>
         <div>containerHeight: {{ containerHeight }}</div>
         <!--        <div>isRealSwiping: {{ isRealSwiping }}</div>-->
         <!--              <div>containerTop: {{ containerTop }}</div>-->
-        <!--              <div>startContainerTop: {{ startContainerTop }}</div>-->
+        <div>startContainerTop: {{ startContainerTop }}</div>
       </div>
       <div
         class="bottom-sheet-backdrop"
