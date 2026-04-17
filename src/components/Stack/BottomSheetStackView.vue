@@ -50,7 +50,7 @@ const { height: rootHeight } = useElementBounding(rootElement);
 const isClosing = ref(false);
 const isRendering = ref(false);
 const isVisible = ref(!props.transitionDuration || isMobileBrowser());
-const startContainerHeight = ref(containerHeight.value);
+const startContainerHeight = ref(0);
 
 let visibilityTimeout: NodeJS.Timeout;
 let renderingTimeout: NodeJS.Timeout;
@@ -86,29 +86,28 @@ const startContainerTop = computed(() => {
   return rootHeight.value - startContainerHeight.value;
 });
 
+const allowedMinHeight = computed(() => props.minHeight + swiperHeight.value);
+const allowedMaxContainerTop = computed(() => rootHeight.value - allowedMinHeight.value);
+const distanceY = computed(() => coordsEnd.y - coordsStart.y + startContainerTop.value);
+const reachedMinHeight = computed(() => containerHeight.value <= allowedMinHeight.value + 1);
+
 const translateY = computed(() => {
-  const scrollableHeight = props.minHeight + swiperHeight.value;
-  const minHeight = rootHeight.value - scrollableHeight;
-  const distanceY = coordsEnd.y - coordsStart.y + startContainerTop.value;
-  const translateY = distanceY - minHeight;
+  const translateY = distanceY.value - allowedMaxContainerTop.value;
   return translateY < 0 ? 0 : translateY;
 });
 
 const containerTransform = computed(() => {
-  const scrollableHeight = props.minHeight + swiperHeight.value;
-  const reachesMinHeight = containerHeight.value <= scrollableHeight;
+  const distance = coordsEnd.y - coordsStart.y;
 
-  const distanceY = coordsEnd.y - coordsStart.y;
-
-  if (STACK_VIEW_SWIPE_Y_IS_ACTIVE && (props.fullHeight || reachesMinHeight)) {
-    if (isRealSwiping.value && distanceY > 0) {
-      if (reachesMinHeight) {
+  if (STACK_VIEW_SWIPE_Y_IS_ACTIVE && (props.fullHeight || reachedMinHeight.value)) {
+    if (isRealSwiping.value && distance > 0) {
+      if (reachedMinHeight.value) {
         return {
           transform: `translateY(${translateY.value}px)`,
         };
       }
 
-      return { transform: `translateY(${distanceY}px)` };
+      return { transform: `translateY(${distance}px)` };
     }
   }
 
@@ -116,14 +115,13 @@ const containerTransform = computed(() => {
 });
 
 const containerMaxHeight = computed(() => {
-  const scrollableHeight = props.minHeight + swiperHeight.value;
-
   if (STACK_VIEW_SWIPE_Y_IS_ACTIVE && !props.fullHeight) {
-    const distanceY = coordsEnd.y - coordsStart.y;
+    const distance = coordsEnd.y - coordsStart.y;
 
-    if ((isRealSwiping.value && distanceY > 0) || isClosing.value) {
+    if ((isRealSwiping.value && distance > 0) || isClosing.value) {
       return {
-        maxHeight: `max(calc(100dvh - ${startContainerTop.value}px - ${distanceY}px), ${scrollableHeight}px)`,
+        // allowedMaxContainerTop: `max(calc(100dvh - ${startContainerTop.value}px - ${distance}px), ${allowedMinHeight.value}px)`,
+        maxHeight: `max(calc(100dvh - ${startContainerTop.value}px - ${distance}px), ${allowedMinHeight.value}px)`,
       };
     }
   }
@@ -230,15 +228,19 @@ watch(
       :tabindex="index"
     >
       <div v-if="false" class="fixed yop-0 left-0 bg-red-500 z-50">
-        <div>translateY: {{ translateY }}</div>
-        <div>coordsStart: {{ coordsStart.y }}</div>
-        <div>coordsEnd: {{ coordsEnd.y }}</div>
-        <div>swiperHeight: {{ swiperHeight }}</div>
-        <div>startContainerTop: {{ startContainerTop }}</div>
+        <div>containerTransform {{ containerTransform }}</div>
+        <div>reachedMinHeight: {{ reachedMinHeight }}</div>
+        <!--        <div>props.minHeight: {{ props.minHeight }}</div>-->
+        <!--        <div>coordsStart: {{ coordsStart.y }}</div>-->
+        <!--        <div>coordsEnd: {{ coordsEnd.y }}</div>-->
+        <!--        <div>startContainerTop: {{ startContainerTop }}</div>-->
+        <!--        <div>rootHeight: {{ rootHeight }}</div>-->
         <div>containerHeight: {{ containerHeight }}</div>
-        <!--        <div>isRealSwiping: {{ isRealSwiping }}</div>-->
-        <!--              <div>containerTop: {{ containerTop }}</div>-->
-        <div>startContainerTop: {{ startContainerTop }}</div>
+        <!--        <div>swiperHeight: {{ swiperHeight }}</div>-->
+        <div>allowedMinHeight {{ allowedMinHeight }}</div>
+        <div>allowedMaxContainerTop {{ allowedMaxContainerTop }}</div>
+        <!--        <div>distanceY {{ distanceY }}</div>-->
+        <!--        <div>translateY {{ translateY }}</div>-->
       </div>
       <div
         class="bottom-sheet-backdrop"
