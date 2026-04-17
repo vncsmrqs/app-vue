@@ -227,6 +227,15 @@ const routes: Readonly<RouteRecordRaw[]> = [
             },
           },
           {
+            path: 'bottom-short',
+            name: 'bottom-short',
+            component: () => import('../views/app-layout/stack-views/MenuViewShort.vue'),
+            meta: {
+              type: 'STACK',
+              stackMode: 'BOTTOM_SHEET',
+            },
+          },
+          {
             path: 'modal',
             name: 'modal',
             component: () => import('../views/app-layout/stack-views/MenuView.vue'),

@@ -17,6 +17,7 @@ export type StackViewBaseProps = {
 
 export type StackViewBaseEmitters = {
   close: [boolean | void | undefined];
+  'update:stack-props': [StackViewBaseProps['stackView']['props']];
 };
 
 export type StackViewState = 'CLOSED' | 'OPENED';

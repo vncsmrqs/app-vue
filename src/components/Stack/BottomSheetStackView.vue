@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef, watch } from 'vue';
-import { useElementSize, useSwipe } from '@vueuse/core';
+import { useElementBounding, useSwipe } from '@vueuse/core';
 import { isMobileBrowser } from '@/utils/device.ts';
 import {
   STACK_VIEW_BASE_TRANSITION_MILLISECOND,
@@ -15,11 +15,13 @@ const props = withDefaults(
     index?: number;
     transitionDuration?: number;
     fullHeight?: boolean;
+    minHeight?: number;
   }>(),
   {
     index: 0,
     transitionDuration: STACK_VIEW_BASE_TRANSITION_MILLISECOND,
     fullHeight: false,
+    minHeight: 0,
   },
 );
 const emit = defineEmits<{
@@ -34,14 +36,18 @@ const close = async (animationTime: number) => {
 const containerElement = useTemplateRef('container-element');
 const swiperElement = useTemplateRef('swiper-element');
 
-const { height } = useElementSize(containerElement);
+const { height: containerHeight, top: containerTop } = useElementBounding(containerElement);
+const { height: swiperHeight } = useElementBounding(swiperElement);
 
-const { isSwiping, lengthY, coordsEnd, coordsStart } = useSwipe(swiperElement, {
+const startContainerTop = ref(0);
+
+const { isSwiping, coordsEnd, coordsStart } = useSwipe(swiperElement, {
   passive: false,
   threshold: 10,
   onSwipeStart: (e) => {
     if (STACK_VIEW_SWIPE_Y_IS_ACTIVE) {
       e.preventDefault();
+      startContainerTop.value = containerTop.value;
       return;
     }
   },
@@ -59,7 +65,7 @@ const isRealSwiping = computed(() => {
 });
 
 const isClosable = computed(() => {
-  return isRealSwiping.value && coordsEnd.y - coordsStart.y >= height.value * 0.4;
+  return isRealSwiping.value && coordsEnd.y - coordsStart.y >= containerHeight.value * 0.4;
 });
 
 const isClosing = ref(false);
@@ -106,33 +112,45 @@ watch(
 );
 
 const containerTransform = computed(() => {
-  if (STACK_VIEW_SWIPE_Y_IS_ACTIVE && props.fullHeight) {
-    if (isRealSwiping.value) {
-      const y = lengthY.value * -1;
-      if (y <= 0) {
-        return { transform: `translateY(${0}px)` };
+  const scrollableHeight = props.minHeight + swiperHeight.value;
+  const reachesMinHeight = containerHeight.value <= scrollableHeight;
+
+  const distanceY = coordsEnd.y - coordsStart.y;
+
+  if (STACK_VIEW_SWIPE_Y_IS_ACTIVE && (props.fullHeight || reachesMinHeight)) {
+    if (isRealSwiping.value && distanceY > 0) {
+      if (reachesMinHeight) {
+        return {
+          transform: `translateY(calc(${containerHeight.value}px - 100dvh - ${coordsStart.y - startContainerTop.value}px + ${coordsEnd.y}px))`,
+        };
       }
-      return { transform: `translateY(${y}px)` };
+
+      return { transform: `translateY(${distanceY}px)` };
     }
   }
+
   return {};
 });
 
 const containerMaxHeight = computed(() => {
-  if (STACK_VIEW_SWIPE_Y_IS_ACTIVE && !props.fullHeight) {
-    const y = lengthY.value * -1;
+  const scrollableHeight = props.minHeight + swiperHeight.value;
 
-    if ((isRealSwiping.value && y > 0) || isClosing.value) {
-      return { maxHeight: `calc(100% - 2rem - ${y}px )` };
+  if (STACK_VIEW_SWIPE_Y_IS_ACTIVE && !props.fullHeight) {
+    const distanceY = coordsEnd.y - coordsStart.y;
+
+    if ((isRealSwiping.value && distanceY > 0) || isClosing.value) {
+      return {
+        maxHeight: `max(calc(100dvh - ${startContainerTop.value}px - ${distanceY}px), ${scrollableHeight}px)`,
+      };
     }
   }
 
-  return { maxHeight: 'calc(100% - 2rem)' };
+  return { maxHeight: 'calc(100dvh - 2rem)' };
 });
 
 const swipeDistancePercent = computed(() => {
   if (isRealSwiping.value) {
-    const percent = (coordsEnd.y - coordsStart.y) / height.value || 0;
+    const percent = (coordsEnd.y - coordsStart.y) / containerHeight.value || 0;
     if (percent > 100) {
       return 100;
     }
@@ -191,14 +209,15 @@ provide('isInStackView', true);
       }"
       :tabindex="index"
     >
-      <!--      <div class="fixed yop-0 left-0 bg-red-500 z-50">-->
-      <!--        <div>lengthY: {{ lengthY }}</div>-->
-      <!--        <div>Y: {{ lengthY * -1 }}</div>-->
-      <!--        <div>transform: {{ containerTransform }}</div>-->
-      <!--        <div>maxHeight: {{ containerMaxHeight }}</div>-->
-      <!--        <div>isClosable: {{ isClosable }}</div>-->
-      <!--        <div>isRealSwiping: {{ isRealSwiping }}</div>-->
-      <!--      </div>-->
+      <div class="fixed yop-0 left-0 bg-red-500 z-50">
+        <div>coordsStart: {{ coordsStart.y }}</div>
+        <div>coordsEnd: {{ coordsEnd.y }}</div>
+        <div>swiperHeight: {{ swiperHeight }}</div>
+        <div>containerHeight: {{ containerHeight }}</div>
+        <!--        <div>isRealSwiping: {{ isRealSwiping }}</div>-->
+        <div>containerTop: {{ containerTop }}</div>
+        <div>startContainerTop: {{ startContainerTop }}</div>
+      </div>
       <div
         class="bottom-sheet-backdrop"
         :class="{
@@ -218,7 +237,10 @@ provide('isInStackView', true);
           ...containerMaxHeight,
         }"
       >
-        <div ref="swiper-element" class="w-full flex justify-center py-4">
+        <div
+          ref="swiper-element"
+          class="w-full flex justify-center py-4 z-10 bg-white border-b border-gray-200"
+        >
           <div class="w-10 h-1 rounded-md bg-gray-300"></div>
         </div>
         <slot v-if="isRendering"></slot>

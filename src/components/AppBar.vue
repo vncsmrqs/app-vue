@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import BackButton from '@/components/Buttons/BackButton.vue';
 import { isMobile } from '@/utils/device.ts';
+import { useTemplateRef, watch } from 'vue';
+import { useElementSize } from '@vueuse/core';
 
 const props = withDefaults(
   defineProps<{
@@ -11,11 +13,23 @@ const props = withDefaults(
   },
 );
 
-const emit = defineEmits<{ back: [void] }>();
+const emit = defineEmits<{ back: [void]; 'update:height': [number] }>();
+
+const rootElement = useTemplateRef('root-element');
+
+const { height } = useElementSize(rootElement);
+
+watch(
+  () => height.value,
+  (newHeight) => {
+    emit('update:height', newHeight);
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
-  <header class="relative">
+  <header ref="root-element" class="relative">
     <div class="">
       <div class="flex h-14 items-center px-5 gap-2 bg-white shadow-xl/2 z-50">
         <slot name="prepend">

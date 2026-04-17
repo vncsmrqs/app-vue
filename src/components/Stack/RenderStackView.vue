@@ -191,6 +191,7 @@ onMounted(() => {});
           :is="defineComponent(stackView)"
           v-bind="stackView.componentProps"
           :stack-view="stackView"
+          @update:stack-props="(value: typeof stackView.props) => (stackView.props = value)"
           @close="
             async (hideBeforeNavigate?: boolean) => {
               if (await stackView.canClose()) {
