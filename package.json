@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "run-p type-check \"build-only {@}\" -- && npm run postbuild",
+    "build": "run-p type-check \"build-only {@}\" --",
     "only-preview": "vite preview --host",
     "preview": "npm run build && npm run only-preview",
-    "build-only": "vite build",
+    "build-only": "vite build && npm run postbuild",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
     "format": "prettier --write src/",
