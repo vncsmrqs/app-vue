@@ -2,14 +2,14 @@
 
 @theme {
   /* PRIMARY */
-  --color-primary: #FF6600;
-  --color-primary-light: #FF8700;
-  --color-primary-lighter: #FFF4E8;
+  --color-primary: #ff6600;
+  --color-primary-light: #ff8700;
+  --color-primary-lighter: #fff4e8;
 
   /* SECONDARY */
-  --color-secondary: #D83367;
-  --color-secondary-dark: #C02455;
-  --color-secondary-darker: #B9023C;
+  --color-secondary: #d83367;
+  --color-secondary-dark: #c02455;
+  --color-secondary-darker: #b9023c;
 
   /* INFO */
   --color-info-50: #eff6ff;
@@ -52,5 +52,5 @@
 }
 
 @theme {
-  --background-image-primary-gradient: linear-gradient(140deg, #FF8700, #D83367);
+  --background-image-primary-gradient: linear-gradient(140deg, #ff8700, #d83367);
 }

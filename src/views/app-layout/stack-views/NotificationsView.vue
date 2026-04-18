@@ -8,7 +8,7 @@ import ScreenFooter from '@/components/ScreenFooter.vue';
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
 import AppButton from '@/components/Buttons/AppButton.vue';
 import { timeout } from '@/utils';
-import { notifySW, updateSW } from '@/utils/service-worker.ts';
+import { notifySW } from '@/utils/service-worker.ts';
 
 const _props = defineProps<StackViewBaseProps>();
 const emit = defineEmits<StackViewBaseEmitters>();
