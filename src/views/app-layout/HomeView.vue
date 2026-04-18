@@ -6,6 +6,7 @@ import MobileHomeBar from '@/components/Mobile/MobileHomeBar.vue';
 import ScreenRoot from '@/components/ScreenRoot.vue';
 import { isMobile } from '@/utils/device.ts';
 import { useRoute, useVirtualRoute } from '@/router';
+import AppButton from '@/components/Buttons/AppButton.vue';
 
 const route = useRoute();
 const virtualRoute = useVirtualRoute();
@@ -47,6 +48,15 @@ onMounted(() => {
           <app-link :to="{ name: 'modal' }"> Modal </app-link>
           <app-link :to="{ name: 'bottom' }"> Bottom </app-link>
           <app-link :to="{ name: 'merchant', params: { merchantId: uuid() } }"> Mercado </app-link>
+          <app-link
+            class="w-full"
+            :to="{
+              name: 'merchant.product',
+              params: { merchantId: uuid(), productId: uuid() },
+            }"
+          >
+            <app-button type="primary" class="w-full">Ver produto</app-button>
+          </app-link>
         </div>
       </div>
     </div>

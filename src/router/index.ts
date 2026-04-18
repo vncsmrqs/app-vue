@@ -137,7 +137,7 @@ const routes: Readonly<RouteRecordRaw[]> = [
                   import('@/views/app-layout/stack-views/merchant/DetailProductView.vue'),
                 meta: {
                   type: 'STACK',
-                  forceMatchedRoot: true,
+                  forceMatchedRoot: false,
                 },
                 props: true,
               },

@@ -11,7 +11,7 @@ export const syncNavigatorToVirtualRouter = ({ navigatorRouter, virtualRouter }:
     navigatorRouter.getRoutes().filter((route) => route.meta?.type === 'STACK'),
   );
 
-  navigatorRouter.afterEach(async (to, _from, failure) => {
+  navigatorRouter.afterEach(async (to, from, failure) => {
     if (failure) {
       return;
     }
@@ -28,11 +28,13 @@ export const syncNavigatorToVirtualRouter = ({ navigatorRouter, virtualRouter }:
       return;
     }
 
-    const navigatorRouteRootTo = to.matched.find((route) => route.meta.type === 'ROOT');
+    const rootTo = to.matched.find((route) => route.meta.type === 'ROOT');
 
-    if (navigatorRouteRootTo && to.meta.forceMatchedRoot) {
+    const isFirstNavigation = from.fullPath === to.fullPath || !from.name;
+
+    if (rootTo && (to.meta.forceMatchedRoot || isFirstNavigation)) {
       await virtualRouter.replace({
-        name: navigatorRouteRootTo.name,
+        name: rootTo.name,
         params: to.params,
         query: to.query,
         hash: to.hash,

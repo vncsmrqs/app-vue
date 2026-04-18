@@ -118,16 +118,16 @@ const closeStackView = async (
   const stackView = stackViewStore.find(routeFullPath, routePosition);
 
   if (stackView) {
+    if (hideBeforeNavigate) {
+      await hideStackViewBeforeNavigate(stackView, animationTime);
+    }
+
     const isFirstNavigation =
       stackView.routeFrom.fullPath === stackView.routeFullPath || !stackView.routeFrom.name;
 
-    if (isFirstNavigation) {
-      const rootTo = stackView.routeTo.matched.find((route) => route.meta.type === 'ROOT');
+    const rootTo = stackView.routeTo.matched.find((route) => route.meta.type === 'ROOT');
 
-      if (hideBeforeNavigate) {
-        await hideStackViewBeforeNavigate(stackView, animationTime);
-      }
-
+    if (isFirstNavigation || stackView.routeTo.meta.forceMatchedRoot) {
       await navigate({
         name: rootTo?.name || 'app',
         replace: true,
@@ -137,10 +137,6 @@ const closeStackView = async (
       });
 
       return;
-    }
-
-    if (hideBeforeNavigate) {
-      await hideStackViewBeforeNavigate(stackView, animationTime);
     }
   }
 
