@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 // import vueDevTools from 'vite-plugin-vue-devtools';
 import tailwindcss from '@tailwindcss/vite';
-import { VitePWA } from 'vite-plugin-pwa';
+import { ManifestOptions, VitePWA } from 'vite-plugin-pwa';
 import { appConfig } from './src/config/app-config';
 
 const globPatterns = ['**/*.{js,style,html,ico,png,svg,json,vue,txt,ttf,woff,woff2,css,jpg}'];
@@ -42,100 +42,7 @@ export default defineConfig({
       workbox: {
         globPatterns,
       },
-      manifest: {
-        theme_color: appConfig.themeColor,
-        background_color: appConfig.startBackgroundColor,
-        display: 'standalone',
-        scope: '/',
-        start_url: '/app/?utm_source=homescreen&utm_medium=shortcut',
-        name: appConfig.name,
-        short_name: appConfig.shortName,
-        description: appConfig.description,
-        screenshots: [
-          // {
-          //   src: '/screenshot-mobile-default.jpeg',
-          //   sizes: '794x1600',
-          //   type: 'image/jpeg',
-          //   form_factor: 'narrow',
-          // },
-          // {
-          //   src: '/screenshot-desktop-default.png',
-          //   sizes: '3456x2234',
-          //   type: 'image/png',
-          //   form_factor: 'wide',
-          // },
-        ],
-        shortcuts: [
-          {
-            name: 'Home',
-            url: '/app/home/?utm_source=jumplist&utm_medium=shortcut',
-            icons: [
-              {
-                src: 'logo-192x192.png',
-                type: 'image/png',
-                sizes: '192x192',
-              },
-            ],
-          },
-          {
-            name: 'Pedidos',
-            url: '/app/orders/?utm_source=jumplist&utm_medium=shortcut',
-            icons: [
-              {
-                src: 'logo-192x192.png',
-                type: 'image/png',
-                sizes: '192x192',
-              },
-            ],
-          },
-          {
-            name: 'Conversas',
-            url: '/app/chats/?utm_source=jumplist&utm_medium=shortcut',
-            icons: [
-              {
-                src: 'logo-192x192.png',
-                type: 'image/png',
-                sizes: '192x192',
-              },
-            ],
-          },
-          {
-            name: 'Notificações',
-            url: '/app/notifications/?utm_source=jumplist&utm_medium=shortcut',
-            icons: [
-              {
-                src: 'logo-192x192.png',
-                type: 'image/png',
-                sizes: '192x192',
-              },
-            ],
-          },
-        ],
-        icons: [
-          {
-            src: 'logo-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: 'logo-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-          {
-            purpose: 'maskable',
-            src: 'logo-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            purpose: 'maskable',
-            src: 'logo-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-        ],
-      },
+      manifest: appConfig.manifest as Partial<ManifestOptions>,
       devOptions: {
         enabled: true,
         type: 'module',

@@ -7,6 +7,8 @@ import EmptyScreen from '@/components/EmptyScreen.vue';
 import ScreenFooter from '@/components/ScreenFooter.vue';
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
 import AppButton from '@/components/Buttons/AppButton.vue';
+import { timeout } from '@/utils';
+import { notifySW, updateSW } from '@/utils/service-worker.ts';
 
 const _props = defineProps<StackViewBaseProps>();
 const emit = defineEmits<StackViewBaseEmitters>();
@@ -15,14 +17,25 @@ const enabledRefresh = ref(false);
 
 const refresh = async (fromRefresh?: boolean) => {
   enabledRefresh.value = !!fromRefresh;
-  isLoading.value = true;
-  setTimeout(() => {
-    isLoading.value = false;
-    enabledRefresh.value = true;
-  }, 500);
+  await load();
 };
 
 const isLoading = ref(false);
+
+const load = async () => {
+  isLoading.value = true;
+  await timeout(1000);
+  isLoading.value = false;
+  enabledRefresh.value = true;
+
+  await notifySW({
+    title: 'Seu pedido está pronto!',
+    body: 'TESTE',
+    data: {
+      path: '/app/orders',
+    },
+  });
+};
 
 onMounted(() => {
   refresh();

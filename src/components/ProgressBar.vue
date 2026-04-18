@@ -19,6 +19,6 @@ const props = defineProps<{
 
 <style scoped>
 .bg-primary-gradient {
-  background: theme('colors.primary.gradient');
+  background: var(--background-image-primary-gradient);
 }
 </style>

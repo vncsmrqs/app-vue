@@ -1,18 +1,21 @@
 import 'workbox-precaching';
+import { appConfig } from '@/config/app-config.ts';
 
 declare let self: ServiceWorkerGlobalScope;
 
-type NotificationType = {
+export type NotificationPayload = {
   type: 'NOTIFICATION';
   title: string;
   body: string;
-  tag: string;
-  data: {
+  tag?: string;
+  icon?: string;
+  badge?: string;
+  data?: {
     path: string;
   };
 };
 
-const notify = async (notification?: NotificationType) => {
+const notify = async (notification?: NotificationPayload) => {
   const permission = Notification.permission;
 
   if (notification?.type !== 'NOTIFICATION') {
@@ -23,21 +26,38 @@ const notify = async (notification?: NotificationType) => {
     const notificationOptions: NotificationOptions = {
       body: notification.body, //ok
       data: notification.data || {},
-      icon: 'icon-logo-192x192.png',
-      badge: 'icon-logo-192x192.png',
+      icon: notification.icon ?? 'logo.svg',
+      badge: notification.badge ?? 'logo.svg',
       tag: notification.tag || crypto.randomUUID(),
     };
 
-    await self.registration.showNotification(notification.title ?? 'Realtime', notificationOptions);
+    await self.registration.showNotification(
+      notification.title ?? appConfig.manifest.name,
+      notificationOptions,
+    );
   }
 };
 
-self.addEventListener('push', (event: PushEvent) => {
+self.addEventListener('push', (event) => {
   if (!event.data) {
     return;
   }
+
   const data = event.data.json();
-  event.waitUntil(notify(data));
+
+  if (data?.type === 'NOTIFICATION') {
+    event.waitUntil(notify(data));
+  }
+});
+
+self.addEventListener('message', async (event) => {
+  if (!event.data) {
+    return;
+  }
+
+  if (event.data?.type === 'NOTIFICATION') {
+    event.waitUntil(notify(event.data));
+  }
 });
 
 self.addEventListener(

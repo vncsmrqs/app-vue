@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "./tailwind.css";
 
 html {
   @apply w-dvw h-dvh overflow-hidden bg-white m-0 p-0 overscroll-y-none scroll-smooth;
