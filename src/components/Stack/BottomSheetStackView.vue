@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, useAttrs, useTemplateRef, watch } from 'vue';
-import { useElementBounding, useSwipe } from '@vueuse/core';
+import { useElementSize, useSwipe } from '@vueuse/core';
 import { isMobileBrowser } from '@/utils/device.ts';
 import { provide } from 'vue';
 
@@ -43,9 +43,9 @@ const rootElement = useTemplateRef('root-element');
 const containerElement = useTemplateRef('container-element');
 const swiperElement = useTemplateRef('swiper-element');
 
-const { height: containerHeight } = useElementBounding(containerElement);
-const { height: swiperHeight } = useElementBounding(swiperElement);
-const { height: rootHeight } = useElementBounding(rootElement);
+const { height: containerHeight } = useElementSize(containerElement);
+const { height: swiperHeight } = useElementSize(swiperElement);
+const { height: rootHeight } = useElementSize(rootElement);
 
 const isClosing = ref(false);
 const isRendering = ref(false);

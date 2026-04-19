@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { isIosApp } from '@/utils/device.ts';
-import { useElementBounding } from '@vueuse/core';
+import { useElementSize } from '@vueuse/core';
 import { useTemplateRef, watch } from 'vue';
 
 const props = withDefaults(
@@ -14,7 +14,7 @@ const emit = defineEmits<{ 'update:height': [number] }>();
 
 const rootElement = useTemplateRef('root-element');
 
-const { height } = useElementBounding(rootElement);
+const { height } = useElementSize(rootElement);
 
 watch(
   () => height.value,

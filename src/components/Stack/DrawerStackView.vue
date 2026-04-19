@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, useAttrs, useTemplateRef, watch } from 'vue';
-import { useElementBounding, useSwipe } from '@vueuse/core';
+import { useElementSize, useSwipe } from '@vueuse/core';
 import { isMobileBrowser } from '@/utils/device.ts';
 import {
   MIN_SWIPE_X_START,
@@ -35,7 +35,7 @@ const attrs = useAttrs();
 
 const rootElement = useTemplateRef('root-element');
 
-const { width } = useElementBounding(rootElement);
+const { width } = useElementSize(rootElement);
 
 const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
   passive: false,

@@ -45,6 +45,14 @@ watch(
       <div class="text-2xl font-medium px-5 pt-5">Menu</div>
       <ul class="divide-y divide-gray-200">
         <li>
+          <menu-link :to="{ name: 'comments', query: { uuid: uuid() } }">
+            Comments
+            <template #icon>
+              <ArrowDownIcon />
+            </template>
+          </menu-link>
+        </li>
+        <li>
           <menu-link :to="{ name: 'bottom', query: { uuid: uuid() } }">
             Bottom
             <template #icon>

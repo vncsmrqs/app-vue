@@ -246,6 +246,16 @@ const routes: Readonly<RouteRecordRaw[]> = [
             },
           },
           {
+            path: 'comments',
+            name: 'comments',
+            component: () => import('../views/app-layout/stack-views/CommentsView.vue'),
+            meta: {
+              type: 'STACK',
+              stackMode: 'BOTTOM_SHEET',
+              stackProps: { fullHeight: false },
+            },
+          },
+          {
             path: 'fixed-bottom',
             name: 'fixed-bottom',
             component: () => import('../views/app-layout/stack-views/FixedView.vue'),
