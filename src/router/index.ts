@@ -122,6 +122,44 @@ const routes: Readonly<RouteRecordRaw[]> = [
             ],
           },
           {
+            path: 'settings',
+            name: 'settings',
+            component: () => import('../views/app-layout/settings/SettingsLayout.vue'),
+            props: true,
+            meta: {
+              type: 'ROOT',
+            },
+            children: [
+              {
+                path: 'account',
+                name: 'settings.account',
+                meta: {
+                  type: 'ROOT',
+                },
+                props: true,
+                component: () => import('../views/app-layout/settings/AccountView.vue'),
+              },
+              {
+                path: 'account/password',
+                name: 'settings.account.password',
+                meta: {
+                  type: 'ROOT',
+                },
+                props: true,
+                component: () => import('../views/app-layout/settings/AccountPasswordView.vue'),
+              },
+              {
+                path: 'profile',
+                name: 'settings.profile',
+                meta: {
+                  type: 'ROOT',
+                },
+                props: true,
+                component: () => import('../views/app-layout/settings/ProfileView.vue'),
+              },
+            ],
+          },
+          {
             path: 'merchant/:merchantId',
             name: 'merchant',
             component: () => import('@/views/app-layout/MerchantView.vue'),

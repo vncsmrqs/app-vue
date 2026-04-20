@@ -16,6 +16,7 @@ import ArrowUpIcon from 'vue-material-design-icons/ArrowUp.vue';
 import ScreenRoot from '@/components/ScreenRoot.vue';
 import ScreenFooter from '@/components/ScreenFooter.vue';
 import { computed, ref, watch } from 'vue';
+import CogOutlineIcon from 'vue-material-design-icons/CogOutline.vue';
 
 const emit = defineEmits<StackViewBaseEmitters>();
 
@@ -44,6 +45,14 @@ watch(
     <div>
       <div class="text-2xl font-medium px-5 pt-5">Menu</div>
       <ul class="divide-y divide-gray-200">
+        <li>
+          <menu-link :to="{ name: 'settings' }">
+            Settings
+            <template #icon>
+              <CogOutlineIcon />
+            </template>
+          </menu-link>
+        </li>
         <li>
           <menu-link :to="{ name: 'comments', query: { uuid: uuid() } }">
             Comments
