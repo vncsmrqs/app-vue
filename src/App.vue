@@ -1,12 +1,21 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
 import RenderStackView from '@/components/Stack/RenderStackView.vue';
-import { onMounted } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 import { useAppStore } from '@/stores/app-store.ts';
 import { changeThemeColor, updateThemeColor } from '@/utils/common.ts';
 import UpdateApp from '@/components/UpdateApp.vue';
+import { useRouter } from '@/router';
 
 useAppStore();
+
+const router = useRouter();
+
+const handleServiceWorkerMessage = (event: MessageEvent) => {
+  if (event.data?.type === 'NAVIGATE') {
+    router.push(event.data.path);
+  }
+};
 
 onMounted(async () => {
   await Notification.requestPermission();
@@ -17,6 +26,12 @@ onMounted(async () => {
   window
     .matchMedia('(prefers-color-scheme: dark)')
     .addEventListener('change', () => updateThemeColor());
+
+  navigator.serviceWorker.addEventListener('message', handleServiceWorkerMessage);
+});
+
+onUnmounted(() => {
+  navigator.serviceWorker.removeEventListener('message', handleServiceWorkerMessage);
 });
 </script>
 
