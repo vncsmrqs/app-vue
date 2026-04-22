@@ -189,6 +189,7 @@ const handleVisibility = (show: boolean) => {
 const close = async (animationTime: number) => {
   isClosing.value = true;
   emit('close', animationTime);
+  isClosing.value = false;
 };
 
 const handleRendering = (show: boolean) => {

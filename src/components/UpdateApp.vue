@@ -1,11 +1,13 @@
 <script setup lang="ts">
 /// <reference types="vite-plugin-pwa/vue" />
 import { useRegisterSW } from 'virtual:pwa-register/vue';
-import { computed, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { appConfig } from '@/config/app-config.ts';
 import AppButton from '@/components/Buttons/AppButton.vue';
 import { useRouter } from '@/router';
-import { isIosApp } from '@/utils/device.ts';
+import BottomSheetStackView from '@/components/Stack/BottomSheetStackView.vue';
+import ScreenFooter from '@/components/Screen/ScreenFooter.vue';
+import { routerPendingAction } from '@/router/router-navigation-core.ts';
 
 const router = useRouter();
 
@@ -21,12 +23,12 @@ function close() {
   clearInterval(interval);
   offlineReady.value = false;
   needRefresh.value = false;
-  removeBeforeResolve();
+  unsubscribeBeforeResolve();
 }
 
 const startTimer = () => {
   if (needRefresh.value) {
-    addBeforeResolve();
+    subscribeBeforeResolve();
     clearInterval(interval);
     interval = setInterval(() => {
       remainingTime.value = remainingTime.value - 0.01;
@@ -45,47 +47,39 @@ const updateNow = async () => {
 
 watch(() => needRefresh.value, startTimer);
 
-let removeBeforeResolve: () => void = () => {};
+let unsubscribeBeforeResolve: () => void = () => undefined;
 
-const addBeforeResolve = () => {
-  removeBeforeResolve();
-  removeBeforeResolve = router.beforeResolve(() => {
+const subscribeBeforeResolve = () => {
+  unsubscribeBeforeResolve();
+  unsubscribeBeforeResolve = router.beforeResolve(() => {
     if (needRefresh.value) {
       close();
-      return false;
+
+      if (!routerPendingAction || ['BACKWARD'].includes(routerPendingAction)) {
+        return false;
+      }
     }
-    return true;
   });
 };
+
+onBeforeUnmount(() => {
+  unsubscribeBeforeResolve();
+});
 </script>
 
 <template>
   <Teleport to="#toast-target">
-    <Transition name="fade">
-      <div
-        v-show="needRefresh"
-        class="bg-black/25 w-dvw h-dvh fixed top-0 left-0"
-        @click="close"
-      ></div>
-    </Transition>
-    <Transition name="slide-up">
-      <div
-        v-if="needRefresh"
-        class="w-full fixed bottom-0 right-0 z-10 flex justify-end bg-white"
-        :class="{
-          'pb-5': isIosApp(),
-        }"
-        role="alert"
-      >
-        <div class="w-full px-5 py-4 flex flex-col sm:flex-row gap-2 items-center">
-          <span class="font-semibold w-full mb-2 sm:mb-0">Atualização disponível</span>
-          <AppButton type="primary" class="w-full sm:w-auto" @click="updateNow">
-            Atualizar ({{ formattedRemainingTime }})
-          </AppButton>
-          <AppButton class="w-full sm:w-auto" @click="close"> Mais tarde </AppButton>
+    <BottomSheetStackView :show="needRefresh">
+      <screen-footer>
+        <div class="w-full flex flex-col sm:flex-row gap-2 items-center">
+          <span class="w-full mb-2 sm:mb-0"> Uma nova versão do app está disponível </span>
+          <app-button type="primary" class="w-full sm:w-auto" @click="updateNow">
+            Atualizar agora ({{ formattedRemainingTime }}s)
+          </app-button>
+          <app-button class="w-full sm:w-auto" @click="close"> Deixar para mais tarde </app-button>
         </div>
-      </div>
-    </Transition>
+      </screen-footer>
+    </BottomSheetStackView>
   </Teleport>
 </template>
 
