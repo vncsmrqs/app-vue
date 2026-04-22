@@ -6,21 +6,31 @@ import AppLink from '@/components/AppLink.vue';
 import MenuIcon from 'vue-material-design-icons/Menu.vue';
 import AppButton from '@/components/Buttons/AppButton.vue';
 import MenuView from '@/views/app-layout/stack-views/MenuView.vue';
-import { ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import CenterModalStackView from '@/components/Stack/CenterModalStackView.vue';
-import {
-  onAfterRouterNavigate,
-  onBeforeRouterNavigate,
-} from '@/composables/on-after-router-navigate.ts';
+import { routerPendingAction } from '@/composables/on-after-router-navigate.ts';
+import { useRouter } from '@/router';
+
+const router = useRouter();
 
 const menuIsVisible = ref(false);
 
-onBeforeRouterNavigate((before) => {
-  console.log('before', before);
+let unsubscribeBeforeResolve: () => void = () => undefined;
+
+onMounted(() => {
+  unsubscribeBeforeResolve = router.beforeResolve(() => {
+    if (menuIsVisible.value) {
+      menuIsVisible.value = false;
+
+      if (!routerPendingAction || ['BACKWARD'].includes(routerPendingAction)) {
+        return false;
+      }
+    }
+  });
 });
 
-onAfterRouterNavigate((after) => {
-  console.log('after', after);
+onBeforeUnmount(() => {
+  unsubscribeBeforeResolve();
 });
 </script>
 
