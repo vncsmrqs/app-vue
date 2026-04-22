@@ -71,9 +71,9 @@ self.addEventListener('notificationclick', (event) => {
         type: 'window',
         includeUncontrolled: true,
       })
-      .then(async (clientsArr) => {
-        for (const client of clientsArr) {
-          if (client.url.includes(path) && 'focus' in client) {
+      .then(async (clientList) => {
+        for (const client of clientList) {
+          if ('focus' in client) {
             await client.focus();
 
             try {
