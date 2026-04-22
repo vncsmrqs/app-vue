@@ -68,19 +68,17 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <Teleport to="#toast-target">
-    <BottomSheetStackView :show="needRefresh">
-      <screen-footer>
-        <div class="w-full flex flex-col sm:flex-row gap-2 items-center">
-          <span class="w-full mb-2 sm:mb-0"> Uma nova versão do app está disponível </span>
-          <app-button type="primary" class="w-full sm:w-auto" @click="updateNow">
-            Atualizar agora ({{ formattedRemainingTime }}s)
-          </app-button>
-          <app-button class="w-full sm:w-auto" @click="close"> Deixar para mais tarde </app-button>
-        </div>
-      </screen-footer>
-    </BottomSheetStackView>
-  </Teleport>
+  <BottomSheetStackView :show="needRefresh" @close="close" teleport-to="#toast-target">
+    <screen-footer>
+      <div class="w-full flex flex-col sm:flex-row gap-2 items-center">
+        <span class="w-full mb-2 sm:mb-0"> Uma nova versão do app está disponível </span>
+        <app-button type="primary" class="w-full sm:w-auto" @click="updateNow">
+          Atualizar agora ({{ formattedRemainingTime }}s)
+        </app-button>
+        <app-button class="w-full sm:w-auto" @click="close"> Deixar para mais tarde </app-button>
+      </div>
+    </screen-footer>
+  </BottomSheetStackView>
 </template>
 
 <style></style>

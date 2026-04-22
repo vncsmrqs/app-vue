@@ -18,12 +18,16 @@ const props = withDefaults(
     transitionDuration?: number;
     fullHeight?: boolean;
     minHeight?: number;
+    canClose?: boolean;
+    teleportTo?: string;
   }>(),
   {
     index: 0,
     transitionDuration: STACK_VIEW_BASE_TRANSITION_MILLISECOND,
     fullHeight: false,
     minHeight: 0,
+    canClose: true,
+    teleportTo: '#stack-view-target',
   },
 );
 
@@ -66,10 +70,8 @@ const { isSwiping, coordsEnd, coordsStart } = useSwipe(swiperElement, {
     }
   },
   onSwipeEnd: () => {
-    if (STACK_VIEW_SWIPE_Y_IS_ACTIVE) {
-      if (isClosable.value) {
-        close(animationTime.value);
-      }
+    if (STACK_VIEW_SWIPE_Y_IS_ACTIVE && isClosableBySwipe.value) {
+      close(animationTime.value);
     }
   },
 });
@@ -78,7 +80,7 @@ const isRealSwiping = computed(() => {
   return STACK_VIEW_SWIPE_Y_IS_ACTIVE && isSwiping.value;
 });
 
-const isClosable = computed(() => {
+const isClosableBySwipe = computed(() => {
   return isRealSwiping.value && coordsEnd.y - coordsStart.y >= containerHeight.value * 0.4;
 });
 
@@ -120,7 +122,6 @@ const containerMaxHeight = computed(() => {
 
     if ((isRealSwiping.value && distance > 0) || isClosing.value) {
       return {
-        // allowedMaxContainerTop: `max(calc(100dvh - ${startContainerTop.value}px - ${distance}px), ${allowedMinHeight.value}px)`,
         maxHeight: `max(calc(100dvh - ${startContainerTop.value}px - ${distance}px), ${allowedMinHeight.value}px)`,
       };
     }
@@ -187,9 +188,10 @@ const handleVisibility = (show: boolean) => {
 };
 
 const close = async (animationTime: number) => {
-  isClosing.value = true;
-  emit('close', animationTime);
-  isClosing.value = false;
+  if (props.canClose) {
+    isClosing.value = true;
+    emit('close', animationTime);
+  }
 };
 
 const handleRendering = (show: boolean) => {
@@ -216,7 +218,7 @@ watch(
 </script>
 
 <template>
-  <Teleport to="#stack-view-target">
+  <Teleport :to="props.teleportTo">
     <div
       ref="root-element"
       class="bottom-sheet touch-pan-y"
@@ -228,21 +230,6 @@ watch(
       v-bind="attrs"
       :tabindex="index"
     >
-      <div v-if="false" class="fixed yop-0 left-0 bg-red-500 z-50">
-        <div>containerTransform {{ containerTransform }}</div>
-        <div>reachedMinHeight: {{ reachedMinHeight }}</div>
-        <!--        <div>props.minHeight: {{ props.minHeight }}</div>-->
-        <!--        <div>coordsStart: {{ coordsStart.y }}</div>-->
-        <!--        <div>coordsEnd: {{ coordsEnd.y }}</div>-->
-        <!--        <div>startContainerTop: {{ startContainerTop }}</div>-->
-        <!--        <div>rootHeight: {{ rootHeight }}</div>-->
-        <div>containerHeight: {{ containerHeight }}</div>
-        <!--        <div>swiperHeight: {{ swiperHeight }}</div>-->
-        <div>allowedMinHeight {{ allowedMinHeight }}</div>
-        <div>allowedMaxContainerTop {{ allowedMaxContainerTop }}</div>
-        <!--        <div>distanceY {{ distanceY }}</div>-->
-        <!--        <div>translateY {{ translateY }}</div>-->
-      </div>
       <div
         class="bottom-sheet-backdrop"
         :class="{
