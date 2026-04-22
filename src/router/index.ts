@@ -18,7 +18,6 @@ import {
   LOG_VIRTUAL_ROUTER_NAVIGATION_EVENTS,
 } from '@/config/app-config.ts';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
-import { isMobile } from '@/utils/device.ts';
 // import { isAuthenticatedMiddleware } from '@/router/middlwares/is-authenticated.middleware.ts';
 
 const history = PUSH_HISTORY_STATE
@@ -187,8 +186,6 @@ const routes: Readonly<RouteRecordRaw[]> = [
             component: () => import('../views/app-layout/stack-views/AddressListView.vue'),
             meta: {
               type: 'STACK',
-              stackMode: isMobile() ? 'BOTTOM_SHEET' : undefined,
-              stackProps: { fullHeight: true },
             },
             props: true,
             children: [

@@ -9,7 +9,7 @@ import DrawerStackView from '@/components/Stack/DrawerStackView.vue';
 import { type AsyncComponentLoader } from 'vue';
 import { onAfterRouterNavigate } from '@/router/on-after-router-navigate.ts';
 import { useAppNavigation } from '@/composables/use-app-navigation.ts';
-import { isMobileBrowser, isResponsive } from '@/utils/device.ts';
+import { isMobile, isMobileBrowser } from '@/utils/device.ts';
 import { useRouter } from '@/router';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
 import BottomSheetStackView from '@/components/Stack/BottomSheetStackView.vue';
@@ -146,7 +146,7 @@ const closeStackView = async (
 const getViewComponent = (stackView: StackViewProps): Component => {
   const componentMap: Record<StackViewMode, Component | undefined> = {
     DRAWER: DrawerStackView,
-    BOTTOM_SHEET: isResponsive() ? CenterModalStackView : BottomSheetStackView,
+    BOTTOM_SHEET: !isMobile() ? CenterModalStackView : BottomSheetStackView,
     MODAL: CenterModalStackView,
     FULLSCREEN: undefined,
   };

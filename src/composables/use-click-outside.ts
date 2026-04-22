@@ -1,5 +1,5 @@
 import { onBeforeUnmount, onMounted } from 'vue';
-import device from '@/utils/device';
+import { isMobile } from '@/utils/device';
 
 export default function useClickOutside(
   fnComponent: HTMLElement | (() => HTMLElement),
@@ -34,14 +34,14 @@ export default function useClickOutside(
 
   onMounted(() => {
     window.addEventListener('click', listener);
-    if (device.isMobile()) {
+    if (isMobile()) {
       window.addEventListener('touchend', listener);
     }
   });
 
   onBeforeUnmount(() => {
     window.removeEventListener('click', listener);
-    if (device.isMobile()) {
+    if (isMobile()) {
       window.removeEventListener('touchend', listener);
     }
   });

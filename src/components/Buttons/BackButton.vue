@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { isMobile } from '@/utils/device.ts';
 import CloseIcon from 'vue-material-design-icons/Close.vue';
 import ArrowLeftIcon from 'vue-material-design-icons/ArrowLeft.vue';
 import SquareIconButton from '@/components/Buttons/SquareIconButton.vue';
+import { useAppStore } from '@/stores/app-store.ts';
 
 const emit = defineEmits(['click']);
+
+const appStore = useAppStore();
 </script>
 
 <template>
@@ -16,7 +18,7 @@ const emit = defineEmits(['click']);
     type="transparent-secondary"
     size="sm"
   >
-    <ArrowLeftIcon v-if="isMobile()" />
+    <ArrowLeftIcon v-if="appStore.view === 'mobile'" />
     <CloseIcon v-else />
   </SquareIconButton>
 </template>

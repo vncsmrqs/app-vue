@@ -5,39 +5,28 @@ import { useResize } from '@/composables/use-resize.ts';
 import device from '@/utils/device';
 import { debounce } from '@/utils/common';
 import { AppError } from '@/errors/app.error';
-import { useFullscreen } from '@vueuse/core';
 
 const RESIZE_TIMEOUT = 1000;
-const UPDATE_VIEW_MODE_TIMEOUT = 300;
+const UPDATE_VIEW_MODE_TIMEOUT = 100;
 const MIN_DESKTOP_VIEW = 1280;
 const MIN_MOBILE_VIEW = 600;
 
-export type ViewMode = 'fullscreen-view' | 'mobile-view' | 'responsive-view' | 'desktop-view';
+export type ViewMode = 'mobile' | 'responsive' | 'desktop';
 
 const defineView = (width: number): ViewMode => {
-  //Mobile and Portrait = Mobile View
-  //Mobile and Landscape = Fullscreen View
-  //Desktop and large screen = Desktop View
-  //Desktop and small screen = Mobile View / Responsive View
-  if (device.isMobile() && device.isLandscape()) {
-    return 'fullscreen-view';
-  }
-
   if (device.isMobile() || width < MIN_MOBILE_VIEW) {
-    return 'mobile-view';
+    return 'mobile';
   }
 
   if (width < MIN_DESKTOP_VIEW) {
-    return 'responsive-view';
+    return 'responsive';
   }
 
-  return 'desktop-view';
+  return 'desktop';
 };
 
 export const useAppStore = defineStore('app', () => {
   const loading = ref<boolean>(false);
-
-  const fullscreenController = useFullscreen(document.body);
 
   const error = ref<AppError | null>(null);
 
@@ -144,9 +133,7 @@ export const useAppStore = defineStore('app', () => {
     navigationLoadingPercentage,
     width,
     height,
-    screen: computed(() =>
-      fullscreenController.isFullscreen ? 'fullscreen-view' : definedView.value,
-    ),
+    view: computed(() => definedView.value),
     isResizing,
     showNavigationLoading,
     //Actions

@@ -2,13 +2,15 @@
 import ChevronDownIcon from 'vue-material-design-icons/ChevronDown.vue';
 import BellOutlineIcon from 'vue-material-design-icons/BellOutline.vue';
 import AppLink from '@/components/AppLink.vue';
-import { isMobile } from '@/utils/device.ts';
 import CircleIconButton from '@/components/Buttons/CircleIconButton.vue';
 import AppBar from '@/components/AppBar.vue';
+import { useAppStore } from '@/stores/app-store.ts';
+
+const appStore = useAppStore();
 </script>
 
 <template>
-  <app-bar v-if="isMobile()" :show-back-button="false">
+  <app-bar v-if="appStore.view === 'mobile'" :show-back-button="false">
     <app-link :to="{ name: 'address-list' }" class="w-4/5 flex items-center justify-between">
       <div class="font-bold whitespace-nowrap overflow-hidden text-ellipsis text-base">
         R. Camerindo Pereira Costa, 455

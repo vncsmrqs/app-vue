@@ -94,8 +94,10 @@ self.addEventListener(
                 'focus' in client
               ) {
                 await client.focus();
-                client.postMessage({ type: 'NAVIGATE', path: event.notification.data.path });
-                return client.navigate(event.notification.data.path);
+
+                return client.postMessage({ type: 'NAVIGATE', path: event.notification.data.path });
+
+                // return client.navigate(event.notification.data.path);
               }
             }
 

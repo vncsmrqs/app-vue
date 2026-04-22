@@ -9,13 +9,16 @@ import HomeIcon from 'vue-material-design-icons/Home.vue';
 import { useAuthStore } from '@/stores/auth-store';
 import MobileNavigationItem from '@/components/Mobile/MobileNavigationItem.vue';
 import AppLink from '@/components/AppLink.vue';
-import { isIosApp, isMobile } from '@/utils/device.ts';
+import { isIosApp } from '@/utils/device.ts';
+import { useAppStore } from '@/stores/app-store.ts';
+
 const authStore = useAuthStore();
+const appStore = useAppStore();
 </script>
 
 <template>
   <nav
-    v-if="isMobile()"
+    v-if="appStore.view === 'mobile'"
     class="w-full z-50 bg-white flex justify-around drop-shadow-2xl"
     :class="{ 'pb-5': isIosApp() }"
   >
