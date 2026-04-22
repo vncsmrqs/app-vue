@@ -8,8 +8,8 @@ import AppButton from '@/components/Buttons/AppButton.vue';
 import MenuView from '@/views/app-layout/stack-views/MenuView.vue';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import CenterModalStackView from '@/components/Stack/CenterModalStackView.vue';
-import { routerPendingAction } from '@/composables/on-after-router-navigate.ts';
 import { useRouter } from '@/router';
+import { routerPendingAction } from '@/router/router-navigation-core.ts';
 
 const router = useRouter();
 

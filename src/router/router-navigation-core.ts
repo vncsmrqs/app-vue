@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, ref, toRaw, computed } from 'vue';
+import { ref, toRaw, computed } from 'vue';
 import {
   type RouteLocationNormalizedGeneric,
   type RouteLocationNormalizedLoadedGeneric,
@@ -13,13 +13,22 @@ const router = useRouter();
 
 export type NavigationAction = 'PUSH' | 'BACKWARD' | 'FORWARD' | 'REPLACE';
 
-type BackwardRoute = {
+export type BackwardRoute = {
   position: number;
   fullPath: string;
   stateId?: string;
 };
 
-type AfterNavigationCallbackPayload = {
+export type HistoryState = {
+  position: number;
+  replaced?: boolean;
+  stateId?: string;
+  back?: string;
+  current: string;
+  forward?: string;
+};
+
+export type AfterNavigationCallbackPayload = {
   to: RouteLocationNormalizedGeneric;
   from: RouteLocationNormalizedLoadedGeneric;
   action: NavigationAction;
@@ -30,13 +39,13 @@ type AfterNavigationCallbackPayload = {
   lastState: HistoryState | null;
 };
 
-type BeforeNavigationCallbackPayload = {
+export type BeforeNavigationCallbackPayload = {
   to: RouteLocationNormalizedGeneric;
   from: RouteLocationNormalizedLoadedGeneric;
   action: NavigationAction;
 };
 
-const pubSub = new PubSub<{
+export const pubSub = new PubSub<{
   onAfterRouterNavigate: AfterNavigationCallbackPayload;
   onBeforeRouterNavigate: BeforeNavigationCallbackPayload;
 }>();
@@ -45,15 +54,6 @@ const pubSub = new PubSub<{
 pubSub.setMaxListeners(10);
 
 let backwardRouteList: BackwardRoute[] = [];
-
-type HistoryState = {
-  position: number;
-  replaced?: boolean;
-  stateId?: string;
-  back?: string;
-  current: string;
-  forward?: string;
-};
 
 const currentState = ref<HistoryState | null>(null);
 const lastState = ref<HistoryState | null>(null);
@@ -67,6 +67,9 @@ const lastStateId = computed<string | undefined>(() => lastState.value?.stateId)
 /**
  * Ação pendente, registrada pelos wrappers de router.push/replace/back/forward/go
  * ou pelo listener de popstate. É consumida pelo beforeEach e então limpa.
+ *
+ * Exportada como getter para permitir acesso externo ao valor atualizado,
+ * já que `let` exportado não é reativo para o consumidor em todos os contextos.
  */
 export let routerPendingAction: NavigationAction | null = null;
 
@@ -275,62 +278,3 @@ router.beforeEach((to, from, next) => {
 
   next();
 });
-
-type AfterNavigationCallback = (payload: AfterNavigationCallbackPayload) => void;
-type BeforeNavigationCallback = (payload: BeforeNavigationCallbackPayload) => void;
-
-/**
- * Hook para se inscrever em eventos de navegação após rota
- * Garante cleanup automático ao desmontar o componente
- */
-export const onAfterRouterNavigate = (callback: AfterNavigationCallback) => {
-  let subscription: ReturnType<typeof pubSub.subscribe> | null = null;
-
-  onMounted(() => {
-    if (subscription?.isActive()) {
-      subscription?.unsubscribe();
-    }
-    subscription = pubSub.subscribe('onAfterRouterNavigate', callback);
-  });
-
-  onUnmounted(() => {
-    if (subscription?.isActive()) {
-      subscription?.unsubscribe();
-    }
-    subscription = null;
-  });
-
-  return () => {
-    if (subscription?.isActive()) {
-      subscription?.unsubscribe();
-    }
-  };
-};
-
-/**
- * Hook para se inscrever em eventos de navegação antes rota
- * Garante cleanup automático ao desmontar o componente
- */
-export const onBeforeRouterNavigate = (callback: BeforeNavigationCallback) => {
-  let subscription: ReturnType<typeof pubSub.subscribe> | null = null;
-
-  onMounted(() => {
-    if (subscription?.isActive()) {
-      subscription?.unsubscribe();
-    }
-    subscription = pubSub.subscribe('onBeforeRouterNavigate', callback);
-  });
-
-  onUnmounted(() => {
-    if (subscription?.isActive()) {
-      subscription?.unsubscribe();
-    }
-    subscription = null;
-  });
-
-  return () => {
-    if (subscription?.isActive()) {
-      subscription?.unsubscribe();
-    }
-  };
-};

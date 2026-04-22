@@ -6,7 +6,7 @@ import { useAppStore } from '@/stores/app-store.ts';
 import { changeThemeColor, updateThemeColor } from '@/utils/common.ts';
 import UpdateApp from '@/components/UpdateApp.vue';
 import { useRouter } from '@/router';
-import { onAfterRouterNavigate } from '@/composables/on-after-router-navigate.ts';
+import { onAfterRouterNavigate } from '@/router/on-after-router-navigate.ts';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
 
 useAppStore();

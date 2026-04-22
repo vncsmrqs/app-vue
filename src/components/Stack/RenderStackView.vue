@@ -7,7 +7,7 @@ import {
 import { type Component, defineAsyncComponent, onMounted, watch } from 'vue';
 import DrawerStackView from '@/components/Stack/DrawerStackView.vue';
 import { type AsyncComponentLoader } from 'vue';
-import { onAfterRouterNavigate } from '@/composables/on-after-router-navigate.ts';
+import { onAfterRouterNavigate } from '@/router/on-after-router-navigate.ts';
 import { useAppNavigation } from '@/composables/use-app-navigation.ts';
 import { isMobileBrowser, isResponsive } from '@/utils/device.ts';
 import { useRouter } from '@/router';
