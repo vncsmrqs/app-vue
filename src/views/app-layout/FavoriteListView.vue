@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppBar from '@/components/AppBar.vue';
-import ScreenRoot from '@/components/ScreenRoot.vue';
+import ScreenRoot from '@/components/Screen/ScreenRoot.vue';
 import { isMobile } from '@/utils/device.ts';
 import EmptyScreen from '@/components/EmptyScreen.vue';
 </script>

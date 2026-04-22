@@ -2,9 +2,9 @@
 import { onMounted, ref } from 'vue';
 import AppBar from '@/components/AppBar.vue';
 import AppLoadingAnimation from '@/components/AppLoadingAnimation.vue';
-import ScreenRoot from '@/components/ScreenRoot.vue';
+import ScreenRoot from '@/components/Screen/ScreenRoot.vue';
 import EmptyScreen from '@/components/EmptyScreen.vue';
-import ScreenFooter from '@/components/ScreenFooter.vue';
+import ScreenFooter from '@/components/Screen/ScreenFooter.vue';
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
 import AppButton from '@/components/Buttons/AppButton.vue';
 import { timeout } from '@/utils';

@@ -13,8 +13,8 @@ import { v6 as uuid } from 'uuid';
 import MenuIcon from 'vue-material-design-icons/Menu.vue';
 import ArrowDownIcon from 'vue-material-design-icons/ArrowDown.vue';
 import ArrowUpIcon from 'vue-material-design-icons/ArrowUp.vue';
-import ScreenRoot from '@/components/ScreenRoot.vue';
-import ScreenFooter from '@/components/ScreenFooter.vue';
+import ScreenRoot from '@/components/Screen/ScreenRoot.vue';
+import ScreenFooter from '@/components/Screen/ScreenFooter.vue';
 import { computed, ref, watch } from 'vue';
 import CogOutlineIcon from 'vue-material-design-icons/CogOutline.vue';
 

@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue';
 import AppLink from '@/components/AppLink.vue';
 import { v6 as uuid } from 'uuid';
 import MobileHomeBar from '@/components/Mobile/MobileHomeBar.vue';
-import ScreenRoot from '@/components/ScreenRoot.vue';
+import ScreenRoot from '@/components/Screen/ScreenRoot.vue';
 import { isMobile } from '@/utils/device.ts';
 import { useRoute, useVirtualRoute } from '@/router';
 import AppButton from '@/components/Buttons/AppButton.vue';

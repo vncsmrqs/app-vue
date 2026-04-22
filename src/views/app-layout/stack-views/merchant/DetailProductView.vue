@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AppLink from '@/components/AppLink.vue';
 import { useRoute } from '@/router';
-import ScreenRoot from '@/components/ScreenRoot.vue';
+import ScreenRoot from '@/components/Screen/ScreenRoot.vue';
 import AppBar from '@/components/AppBar.vue';
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
 

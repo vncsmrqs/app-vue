@@ -2,9 +2,9 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from '@/router';
 import EmptyScreen from '@/components/EmptyScreen.vue';
-import ScreenFooter from '@/components/ScreenFooter.vue';
+import ScreenFooter from '@/components/Screen/ScreenFooter.vue';
 import AppBar from '@/components/AppBar.vue';
-import ScreenRoot from '@/components/ScreenRoot.vue';
+import ScreenRoot from '@/components/Screen/ScreenRoot.vue';
 import type { StackViewBaseEmitters, StackViewBaseProps } from '@/stores/stack-view-store.ts';
 import { isMobile } from '@/utils/device.ts';
 import AppButton from '@/components/Buttons/AppButton.vue';

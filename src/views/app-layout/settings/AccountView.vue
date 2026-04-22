@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ScreenRoot from '@/components/ScreenRoot.vue';
+import ScreenRoot from '@/components/Screen/ScreenRoot.vue';
 import AppBar from '@/components/AppBar.vue';
 import AppLink from '@/components/AppLink.vue';
 import { useRouter } from '@/router';
@@ -15,7 +15,7 @@ const router = useRouter();
     <div class="w-full h-full">
       <ul class="flex flex-col divide-y divide-gray-200">
         <app-link :to="{ name: 'settings.account.password' }">
-          <li class="px-5 py-5">Password</li>
+          <li class="px-5 py-5 bg-gray-100">Password</li>
         </app-link>
       </ul>
     </div>

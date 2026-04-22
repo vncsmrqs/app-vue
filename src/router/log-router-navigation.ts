@@ -10,7 +10,10 @@ export const logRouterNavigation = (routerName: string, router: Router) => {
     next();
   });
 
-  router.afterEach((to, from, _next) => {
+  router.afterEach((to, from, failure) => {
+    if (failure) {
+      return;
+    }
     console.log(`
   ${routerName}::END
   FROM: ${from.fullPath}

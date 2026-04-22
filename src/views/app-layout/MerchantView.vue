@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import AppLink from '@/components/AppLink.vue';
 import { v6 as uuid } from 'uuid';
-import ScreenRoot from '@/components/ScreenRoot.vue';
+import ScreenRoot from '@/components/Screen/ScreenRoot.vue';
 import AppBar from '@/components/AppBar.vue';
 import AppButton from '@/components/Buttons/AppButton.vue';
-import ScreenFooter from '@/components/ScreenFooter.vue';
+import ScreenFooter from '@/components/Screen/ScreenFooter.vue';
 
 const props = defineProps<{
   merchantId: string;

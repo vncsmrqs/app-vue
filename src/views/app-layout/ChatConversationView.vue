@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ScreenRoot from '@/components/ScreenRoot.vue';
+import ScreenRoot from '@/components/Screen/ScreenRoot.vue';
 import { onMounted, ref } from 'vue';
 import AppBar from '@/components/AppBar.vue';
 import { useRoute } from '@/router';
@@ -7,7 +7,7 @@ import { onBeforeRouteUpdate } from 'vue-router';
 import { useAppLink } from '@/composables/use-app-link.ts';
 import AppButton from '@/components/Buttons/AppButton.vue';
 import SendIcon from 'vue-material-design-icons/Send.vue';
-import ScreenFooter from '@/components/ScreenFooter.vue';
+import ScreenFooter from '@/components/Screen/ScreenFooter.vue';
 import AppLoadingAnimation from '@/components/AppLoadingAnimation.vue';
 
 const props = defineProps<{ chatId: string }>();

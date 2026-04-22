@@ -111,12 +111,12 @@ const routes: Readonly<RouteRecordRaw[]> = [
                 },
               },
               {
-                path: 'order',
-                name: 'order.order',
-                component: () =>
-                  import('../views/app-layout/stack-views/order/PaymentMethodView.vue'),
+                path: ':orderId',
+                name: 'order.detail',
+                props: true,
+                component: () => import('../views/app-layout/order/OrderDetailView.vue'),
                 meta: {
-                  type: 'STACK',
+                  type: 'ROOT',
                 },
               },
             ],

@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import AppBar from '@/components/AppBar.vue';
-import ScreenRoot from '@/components/ScreenRoot.vue';
+import ScreenRoot from '@/components/Screen/ScreenRoot.vue';
 import EmptyScreen from '@/components/EmptyScreen.vue';
 import { computed, onMounted, ref } from 'vue';
 import { v6 as uuid } from 'uuid';
 import ChatConversationLink from '@/components/Chat/ChatConversationLink.vue';
+import { useRouter } from '@/router';
+import ScreenListLayout from '@/components/Screen/ScreenListLayout.vue';
 
 const enabledRefresh = ref(false);
 const isLoading = ref(false);
 
+const router = useRouter();
+
 const chats = computed(() =>
   Array.from({ length: 30 }, (_, i) => i + 1).map((value) => ({
     id: uuid(),
-    name: `${value} - Vinicius Marques`,
+    name: `Mensagem ${value}`,
     message: 'Mensagem automática...',
   })),
 );
@@ -32,57 +36,40 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full h-full lg:mt-[-1px]">
-    <div class="w-full h-full flex divide-x divide-gray-200 lg:border border-gray-200">
-      <router-view v-slot="{ Component }">
-        <div
-          class="w-full lg:w-2/5 h-full flex-col"
-          :class="{
-            flex: !Component,
-            'hidden md:flex': !!Component,
-          }"
-        >
-          <div class="w-full flex flex-col overflow-hidden relative">
-            <app-bar :show-back-button="false">Mensagens</app-bar>
-            <screen-root
-              @refresh="() => refresh(true)"
-              :loading="isLoading"
-              :pullToRefresh="enabledRefresh"
-            >
-              <empty-screen
-                v-if="!chats.length"
-                title="Suas conversas aparecerão aqui"
-                subtitle="Faça um pedido para poder conversar com um estabelecimento"
-              />
-              <ul v-else class="divide-y divide-gray-100">
-                <li v-for="chat in chats" :key="chat.id">
-                  <chat-conversation-link
-                    :to="{ name: 'chat-list.conversation', params: { chatId: chat.id } }"
-                    :name="chat.name"
-                    :message="chat.message"
-                  />
-                </li>
-              </ul>
-            </screen-root>
-          </div>
-        </div>
-        <div
-          class="w-full lg:w-3/5 h-full"
-          :class="{
-            block: Component,
-            'hidden md:block': !Component,
-          }"
-        >
-          <component v-if="Component" :is="Component" :key="Component.props!.chatId" />
-          <empty-screen
-            v-else-if="chats.length"
-            title="Selecione uma conversa"
-            subtitle="Selecione uma conversa ao lado para visualizar as mensagens"
-          />
-        </div>
-      </router-view>
-    </div>
-  </div>
+  <screen-list-layout>
+    <template #default="{ hasChildren }">
+      <screen-root
+        @refresh="() => refresh(true)"
+        :loading="isLoading"
+        :pullToRefresh="enabledRefresh"
+      >
+        <template #header>
+          <app-bar :show-back-button="!hasChildren" @back="router.back()">Mensagens</app-bar>
+        </template>
+        <empty-screen
+          v-if="!chats.length"
+          title="Suas conversas aparecerão aqui"
+          subtitle="Faça um pedido para poder conversar com um estabelecimento"
+        />
+        <ul v-else class="divide-y divide-gray-100">
+          <li v-for="chat in chats" :key="chat.id">
+            <chat-conversation-link
+              :to="{ name: 'chat-list.conversation', params: { chatId: chat.id } }"
+              :name="chat.name"
+              :message="chat.message"
+            />
+          </li>
+        </ul>
+      </screen-root>
+    </template>
+    <template #empty>
+      <empty-screen
+        v-if="chats.length"
+        title="Selecione uma conversa"
+        subtitle="Selecione uma conversa ao lado para visualizar as mensagens"
+      />
+    </template>
+  </screen-list-layout>
 </template>
 
 <style scoped></style>

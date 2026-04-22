@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { StackViewBaseEmitters } from '@/stores/stack-view-store.ts';
-import ScreenRoot from '@/components/ScreenRoot.vue';
+import ScreenRoot from '@/components/Screen/ScreenRoot.vue';
 import { computed, ref, watch } from 'vue';
 import AccountIcon from 'vue-material-design-icons/Account.vue';
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue';
