@@ -60,57 +60,35 @@ self.addEventListener('message', async (event) => {
   }
 });
 
-self.addEventListener(
-  'notificationclick',
-  (event: NotificationEvent) => {
-    const importantPathList = ['/admin'];
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
 
-    event.notification.close();
+  const path = event.notification.data?.path || '/';
 
-    if (event.action === 'archive') {
-      // User selected the Archive routeAction.
-      // archiveEmail();
-    } else {
-      // User selected (e.g., clicked in) the main body of notification.
-      // clients.openWindow('/inbox');
-    }
+  event.waitUntil(
+    self.clients
+      .matchAll({
+        type: 'window',
+        includeUncontrolled: true,
+      })
+      .then(async (clientsArr) => {
+        for (const client of clientsArr) {
+          if (client.url.includes(path) && 'focus' in client) {
+            await client.focus();
 
-    event.waitUntil(
-      self.clients
-        .matchAll({
-          type: 'window',
-        })
-        .then(async (clientList) => {
-          if (event.notification.data?.path) {
-            for (const client of clientList) {
-              const clientUrl = new URL(client.url);
-
-              const isImportantPath = importantPathList.some((path) =>
-                clientUrl.pathname.startsWith(path),
-              );
-
-              if (
-                (!isImportantPath || clientUrl.pathname === event.notification.data.path) &&
-                'focus' in client
-              ) {
-                await client.focus();
-
-                return client.postMessage({ type: 'NAVIGATE', path: event.notification.data.path });
-
-                // return client.navigate(event.notification.data.path);
-              }
-            }
-
-            if (self.clients.openWindow) {
-              return self.clients.openWindow(event.notification.data?.path);
+            try {
+              client.postMessage({ type: 'NAVIGATE', path });
+              return;
+            } catch (_e) {
+              client.navigate(path);
+              return;
             }
           }
+        }
 
-          if (self.clients.openWindow) {
-            return self.clients.openWindow('/');
-          }
-        }),
-    );
-  },
-  false,
-);
+        if (self.clients.openWindow) {
+          return self.clients.openWindow(path);
+        }
+      }),
+  );
+});
