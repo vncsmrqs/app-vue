@@ -6,7 +6,6 @@ import {
 import { useRouter } from '@/router';
 import { PubSub } from '@/utils/pub-sub.ts';
 import { LOG_NAVIGATOR_ROUTER_NAVIGATION_EVENTS } from '@/config/app-config.ts';
-import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
 import lodash from 'lodash';
 
 const router = useRouter();
@@ -19,7 +18,7 @@ type BackwardRoute = {
   stateId?: string;
 };
 
-type NavigationCallbackPayload = {
+type AfterNavigationCallbackPayload = {
   to: RouteLocationNormalizedGeneric;
   from: RouteLocationNormalizedLoadedGeneric;
   action: NavigationAction;
@@ -30,12 +29,28 @@ type NavigationCallbackPayload = {
   lastState: HistoryState | null;
 };
 
-const pubSub = new PubSub<{
-  onAfterRouterNavigate: NavigationCallbackPayload;
+type BeforeNavigationCallbackPayload = {
+  to: RouteLocationNormalizedGeneric;
+  from: RouteLocationNormalizedLoadedGeneric;
+  action: NavigationAction;
+  backwardRouteList: BackwardRoute[];
+  currentPosition: number;
+  lastPosition: number;
+  currentState: HistoryState;
+  lastState: HistoryState | null;
+};
+
+const pubSubBeforeNavigation = new PubSub<{
+  onBeforeRouterNavigate: BeforeNavigationCallbackPayload;
+}>();
+
+const pubSubAfterNavigation = new PubSub<{
+  onAfterRouterNavigate: AfterNavigationCallbackPayload;
 }>();
 
 // Configurar limite de listeners para detectar memory leaks
-pubSub.setMaxListeners(10);
+pubSubAfterNavigation.setMaxListeners(10);
+pubSubBeforeNavigation.setMaxListeners(10);
 
 let backwardRouteList: BackwardRoute[] = [];
 
@@ -137,7 +152,7 @@ router.afterEach((to, from, failure) => {
 
   backwardRouteList = handleNavigationAction(from, navigationAction, backwardRouteList);
 
-  pubSub.publish('onAfterRouterNavigate', {
+  pubSubAfterNavigation.publish('onAfterRouterNavigate', {
     to,
     from,
     backwardRouteList: backwardRouteList,
@@ -150,29 +165,71 @@ router.afterEach((to, from, failure) => {
 
   defineLastState();
 
-  if (!PUSH_HISTORY_STATE) {
-    window.history.replaceState({}, '', to.fullPath);
-  }
-
   if (LOG_NAVIGATOR_ROUTER_NAVIGATION_EVENTS) {
-    console.log(`NAVIGATION METHOD::${navigationAction}`);
+    console.log(`AFTER NAVIGATION ACTION::${navigationAction}`);
   }
 });
 
-type NavigationCallback = (payload: NavigationCallbackPayload) => void;
+router.beforeEach((to, from, next) => {
+  const navigationAction = getNavigationAction(to, backwardRouteList);
+
+  if (LOG_NAVIGATOR_ROUTER_NAVIGATION_EVENTS) {
+    console.log(`BEFORE NAVIGATION ACTION::${navigationAction}`);
+  }
+
+  pubSubBeforeNavigation.publish('onBeforeRouterNavigate', {
+    to,
+    from,
+    backwardRouteList: backwardRouteList,
+    action: navigationAction,
+    currentPosition: currentPosition.value,
+    lastPosition: lastPosition.value,
+    currentState: currentState.value as HistoryState,
+    lastState: lastState.value,
+  });
+
+  next();
+});
+
+type AfterNavigationCallback = (payload: AfterNavigationCallbackPayload) => void;
+type BeforeNavigationCallback = (payload: BeforeNavigationCallbackPayload) => void;
 
 /**
  * Hook para se inscrever em eventos de navegação após rota
  * Garante cleanup automático ao desmontar o componente
  */
-export const onAfterRouterNavigate = (callback: NavigationCallback) => {
-  let subscription: ReturnType<typeof pubSub.subscribe> | null = null;
+export const onAfterRouterNavigate = (callback: AfterNavigationCallback) => {
+  let subscription: ReturnType<typeof pubSubAfterNavigation.subscribe> | null = null;
 
   onMounted(() => {
     if (subscription?.isActive()) {
       subscription?.unsubscribe();
     }
-    subscription = pubSub.subscribe('onAfterRouterNavigate', callback);
+    subscription = pubSubAfterNavigation.subscribe('onAfterRouterNavigate', callback);
+  });
+
+  onUnmounted(() => {
+    if (subscription?.isActive()) {
+      subscription?.unsubscribe();
+    }
+    subscription = null;
+  });
+
+  return () => {
+    if (subscription?.isActive()) {
+      subscription?.unsubscribe();
+    }
+  };
+};
+
+export const onBeforeRouterNavigate = (callback: BeforeNavigationCallback) => {
+  let subscription: ReturnType<typeof pubSubBeforeNavigation.subscribe> | null = null;
+
+  onMounted(() => {
+    if (subscription?.isActive()) {
+      subscription?.unsubscribe();
+    }
+    subscription = pubSubBeforeNavigation.subscribe('onBeforeRouterNavigate', callback);
   });
 
   onUnmounted(() => {

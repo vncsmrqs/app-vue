@@ -6,24 +6,21 @@ import AppLink from '@/components/AppLink.vue';
 import MenuIcon from 'vue-material-design-icons/Menu.vue';
 import AppButton from '@/components/Buttons/AppButton.vue';
 import MenuView from '@/views/app-layout/stack-views/MenuView.vue';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
-import { useRouter } from '@/router';
+import { ref } from 'vue';
 import CenterModalStackView from '@/components/Stack/CenterModalStackView.vue';
+import {
+  onAfterRouterNavigate,
+  onBeforeRouterNavigate,
+} from '@/composables/on-after-router-navigate.ts';
 
 const menuIsVisible = ref(false);
 
-const router = useRouter();
-
-let unsubscribeBeforeResolve: () => void = () => undefined;
-
-onMounted(() => {
-  unsubscribeBeforeResolve = router.beforeResolve(() => {
-    menuIsVisible.value = false;
-  });
+onBeforeRouterNavigate((before) => {
+  console.log('before', before);
 });
 
-onBeforeUnmount(() => {
-  unsubscribeBeforeResolve();
+onAfterRouterNavigate((after) => {
+  console.log('after', after);
 });
 </script>
 

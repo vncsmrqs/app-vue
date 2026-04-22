@@ -6,6 +6,8 @@ import { useAppStore } from '@/stores/app-store.ts';
 import { changeThemeColor, updateThemeColor } from '@/utils/common.ts';
 import UpdateApp from '@/components/UpdateApp.vue';
 import { useRouter } from '@/router';
+import { onAfterRouterNavigate } from '@/composables/on-after-router-navigate.ts';
+import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
 
 useAppStore();
 
@@ -32,6 +34,12 @@ onMounted(async () => {
 
 onUnmounted(() => {
   navigator.serviceWorker.removeEventListener('message', handleServiceWorkerMessage);
+});
+
+onAfterRouterNavigate(({ to }) => {
+  if (!PUSH_HISTORY_STATE) {
+    window.history.replaceState({}, '', to.fullPath);
+  }
 });
 </script>
 
