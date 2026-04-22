@@ -63,7 +63,7 @@ self.addEventListener('message', async (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  const path = event.notification.data?.path || '/';
+  const path = event.notification.data?.path || '/app/';
 
   event.waitUntil(
     self.clients
