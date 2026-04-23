@@ -5,6 +5,7 @@ import { useResize } from '@/composables/use-resize.ts';
 import device from '@/utils/device';
 import { debounce } from '@/utils/common';
 import { AppError } from '@/errors/app.error';
+import { useStackViewStore } from '@/stores/stack-view-store.ts';
 
 const RESIZE_TIMEOUT = 1000;
 const UPDATE_VIEW_MODE_TIMEOUT = 100;
@@ -30,15 +31,11 @@ export const useAppStore = defineStore('app', () => {
 
   const error = ref<AppError | null>(null);
 
-  const tabCount = ref(0);
+  const stackViewStore = useStackViewStore();
 
-  const incrementTabCount = () => {
-    tabCount.value += 1;
-  };
-
-  const decrementTabCount = () => {
-    tabCount.value -= 1;
-  };
+  const tabCount = computed(() => {
+    return stackViewStore.activeStackView ? 1 : 0;
+  });
 
   const { width, height } = useResize(() => document.body);
 
@@ -148,8 +145,6 @@ export const useAppStore = defineStore('app', () => {
     isResizing,
     showNavigationLoading,
     //Actions
-    incrementTabCount,
-    decrementTabCount,
     startNavigationLoading,
     endNavigationLoading,
   };
