@@ -63,32 +63,36 @@ self.addEventListener('message', async (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  const path = event.notification.data?.path || '/app/';
+  const path = event.notification.data?.path || '/app';
 
-  event.waitUntil(
-    self.clients
-      .matchAll({
-        type: 'window',
-        includeUncontrolled: true,
-      })
-      .then(async (clientList) => {
-        for (const client of clientList) {
-          if ('focus' in client) {
-            await client.focus();
-
-            try {
-              client.postMessage({ type: 'NAVIGATE', path });
-              return;
-            } catch (_e) {
-              client.navigate(path);
-              return;
-            }
-          }
-        }
-
-        if (self.clients.openWindow) {
-          return self.clients.openWindow(path);
-        }
-      }),
-  );
+  event.waitUntil(handleClick(path));
 });
+
+async function handleClick(path: string) {
+  const clientList = await self.clients.matchAll({
+    type: 'window',
+    includeUncontrolled: true,
+  });
+
+  for (const client of clientList) {
+    if ('focus' in client) {
+      await client.focus();
+
+      try {
+        client.postMessage({
+          type: 'NAVIGATE',
+          path,
+          ts: Date.now(),
+        });
+        return;
+      } catch (_e) {
+        client.navigate(path);
+        return;
+      }
+    }
+  }
+
+  if (self.clients.openWindow) {
+    return self.clients.openWindow(path);
+  }
+}
