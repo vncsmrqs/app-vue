@@ -8,6 +8,7 @@ import UpdateApp from '@/components/UpdateApp.vue';
 import { useRouter } from '@/router';
 import { onAfterRouterNavigate } from '@/router/on-after-router-navigate.ts';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
+import AppSplashScreen from '@/components/AppSplashScreen.vue';
 
 const appStore = useAppStore();
 
@@ -44,6 +45,12 @@ onAfterRouterNavigate(({ to }) => {
 </script>
 
 <template>
+  <teleport to="body">
+    <div id="stack-view-target" class="absolute" style="z-index: 9991"></div>
+    <div id="popper-target" class="absolute" style="z-index: 9992"></div>
+    <div id="toast-target" class="absolute" style="z-index: 9993"></div>
+    <div id="full-target" class="absolute" style="z-index: 9993"></div>
+  </teleport>
   <div
     class="w-full h-full"
     v-bind="{
@@ -58,13 +65,13 @@ onAfterRouterNavigate(({ to }) => {
   >
     <router-view />
   </div>
-  <teleport to="body">
-    <div id="stack-view-target" class="absolute" style="z-index: 9991"></div>
-    <div id="popper-target" class="absolute" style="z-index: 9992"></div>
-    <div id="toast-target" class="absolute" style="z-index: 9993"></div>
-  </teleport>
   <render-stack-view />
   <update-app />
+  <teleport to="#full-target">
+    <Transition name="fade-splash" mode="out-in">
+      <app-splash-screen v-show="appStore.isResizing || appStore.appLoading" />
+    </Transition>
+  </teleport>
 </template>
 
 <style scoped></style>

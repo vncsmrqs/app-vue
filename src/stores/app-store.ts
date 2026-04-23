@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 import { computed, ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth-store.ts';
-import { useResize } from '@/composables/use-resize.ts';
 import device from '@/utils/device';
 import { debounce } from '@/utils/common';
 import { AppError } from '@/errors/app.error';
 import { useStackViewStore } from '@/stores/stack-view-store.ts';
+import { useElementSize } from '@vueuse/core';
 
 const RESIZE_TIMEOUT = 1000;
 const UPDATE_VIEW_MODE_TIMEOUT = 100;
@@ -37,7 +37,7 @@ export const useAppStore = defineStore('app', () => {
     return stackViewStore.activeStackView ? 1 : 0;
   });
 
-  const { width, height } = useResize(() => document.body);
+  const { width, height } = useElementSize(() => document.body);
 
   const definedView = ref<ViewMode>(defineView(width.value));
   const isResizing = ref(false);
@@ -59,7 +59,7 @@ export const useAppStore = defineStore('app', () => {
     () => width.value,
     async (_) => {
       showResizeLoading();
-      await updateView();
+      updateView();
     },
     { immediate: true },
   );

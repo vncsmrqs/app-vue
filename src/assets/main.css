@@ -78,3 +78,21 @@ body {
 .fade-leave-to {
   opacity: 0;
 }
+
+.fade-splash-enter-active,
+.fade-splash-leave-active {
+  opacity: 1;
+}
+
+.fade-splash-enter-active {
+  transition: opacity 0.1s ease-in-out;
+}
+
+.fade-splash-leave-active {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.fade-splash-enter-from,
+.fade-splash-leave-to {
+  opacity: 0;
+}
