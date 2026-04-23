@@ -14,8 +14,10 @@ import { useRouter } from '@/router';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
 import BottomSheetStackView from '@/components/Stack/BottomSheetStackView.vue';
 import CenterModalStackView from '@/components/Stack/CenterModalStackView.vue';
+import { useAppStore } from '@/stores/app-store.ts';
 
 const router = useRouter();
+const appStore = useAppStore();
 const stackViewStore = useStackViewStore();
 const { navigate } = useAppNavigation();
 
@@ -160,6 +162,17 @@ const defineComponent = (stackView: StackViewProps) => {
     : stackView.component;
 };
 
+watch(
+  () => stackViewStore.activeStackView,
+  async (activeStackView) => {
+    if (activeStackView) {
+      appStore.incrementTabCount();
+      return;
+    }
+    appStore.decrementTabCount();
+  },
+);
+
 onMounted(() => {});
 </script>
 
@@ -174,7 +187,20 @@ onMounted(() => {});
         :show="stackView.state === 'OPENED'"
         :index="index"
         :transition-duration="stackViewStore.getTransitionTime(stackView)"
-        v-bind="stackView.props"
+        v-bind="{
+          ...stackView.props,
+          ...(stackViewStore.activeStackView?.routeFullPath !== stackView.routeFullPath
+            ? {
+                tabindex: -1,
+                'aria-hidden': true,
+                inert: true,
+              }
+            : {
+                tabindex: 0,
+                'aria-hidden': false,
+                inert: false,
+              }),
+        }"
         @close="
           async (animationTime: number) => {
             if (await stackView.canClose()) {

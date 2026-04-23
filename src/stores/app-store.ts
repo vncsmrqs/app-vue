@@ -30,6 +30,16 @@ export const useAppStore = defineStore('app', () => {
 
   const error = ref<AppError | null>(null);
 
+  const tabCount = ref(0);
+
+  const incrementTabCount = () => {
+    tabCount.value += 1;
+  };
+
+  const decrementTabCount = () => {
+    tabCount.value -= 1;
+  };
+
   const { width, height } = useResize(() => document.body);
 
   const definedView = ref<ViewMode>(defineView(width.value));
@@ -127,6 +137,7 @@ export const useAppStore = defineStore('app', () => {
 
   return {
     //State
+    tabCount,
     appLoading,
     appError,
     navigationCount,
@@ -137,6 +148,8 @@ export const useAppStore = defineStore('app', () => {
     isResizing,
     showNavigationLoading,
     //Actions
+    incrementTabCount,
+    decrementTabCount,
     startNavigationLoading,
     endNavigationLoading,
   };

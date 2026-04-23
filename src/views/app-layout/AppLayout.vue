@@ -40,13 +40,19 @@ onBeforeUnmount(() => {
     <div v-if="appStore.view !== 'mobile'" class="w-full bg-white border-b border-gray-200">
       <div class="lg:container px-2 lg:px-0 mx-auto min-h-14 flex items-center gap-4 relative">
         <app-link :to="{ name: 'home' }" v-slot="{ isActive }" class="font-medium">
-          <app-button :type="isActive ? 'primary' : 'secondary'" size="sm"> Início </app-button>
+          <app-button :type="isActive ? 'primary' : 'transparent-secondary'" size="sm">
+            Início
+          </app-button>
         </app-link>
         <app-link :to="{ name: 'search' }" v-slot="{ isActive }" class="font-medium">
-          <app-button :type="isActive ? 'primary' : 'secondary'" size="sm"> Busca </app-button>
+          <app-button :type="isActive ? 'primary' : 'transparent-secondary'" size="sm">
+            Busca
+          </app-button>
         </app-link>
         <app-link :to="{ name: 'orders' }" v-slot="{ isActive }" class="font-medium">
-          <app-button :type="isActive ? 'primary' : 'secondary'" size="sm"> Pedidos </app-button>
+          <app-button :type="isActive ? 'primary' : 'transparent-secondary'" size="sm">
+            Pedidos
+          </app-button>
         </app-link>
         <div class="flex-1"></div>
         <app-button @click="menuIsVisible = true" type="secondary" size="sm">

@@ -68,6 +68,10 @@ export const useStackViewStore = defineStore('stack-view', () => {
     }),
   );
 
+  const activeStackView = computed(() => {
+    return stackViewList.value.toReversed().find((stackView) => stackView.state === 'OPENED');
+  });
+
   const add = <C extends Component>(payload: AddStackViewParams<C>): StackViewProps => {
     const { addHook: onBeforeClose, execute: canClose } = createHook((): boolean | void => true);
 
@@ -212,6 +216,7 @@ export const useStackViewStore = defineStore('stack-view', () => {
 
   return {
     stackViews: stackViewList,
+    activeStackView,
     blockBodyScroll,
     add,
     remove,

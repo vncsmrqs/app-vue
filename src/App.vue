@@ -9,7 +9,7 @@ import { useRouter } from '@/router';
 import { onAfterRouterNavigate } from '@/router/on-after-router-navigate.ts';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
 
-useAppStore();
+const appStore = useAppStore();
 
 const router = useRouter();
 
@@ -44,7 +44,20 @@ onAfterRouterNavigate(({ to }) => {
 </script>
 
 <template>
-  <router-view />
+  <div
+    class="w-full h-full"
+    v-bind="{
+      ...(appStore.tabCount > 0
+        ? {
+            tabindex: -1,
+            'aria-hidden': true,
+            inert: true,
+          }
+        : {}),
+    }"
+  >
+    <router-view />
+  </div>
   <teleport to="body">
     <div id="stack-view-target" class="absolute" style="z-index: 9991"></div>
     <div id="popper-target" class="absolute" style="z-index: 9992"></div>
