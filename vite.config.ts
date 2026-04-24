@@ -3,7 +3,6 @@ import { fileURLToPath, URL } from 'node:url';
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 // import vueDevTools from 'vite-plugin-vue-devtools';
-import tailwindcss from '@tailwindcss/vite';
 import { ManifestOptions, VitePWA } from 'vite-plugin-pwa';
 import { appConfig } from './src/config/app-config';
 
@@ -23,7 +22,7 @@ export default defineConfig({
   plugins: [
     vue({}),
     // vueDevTools(),
-    tailwindcss(),
+    // tailwindcss(),
     VitePWA({
       registerType: appConfig.pwa.autoUpdate ? 'autoUpdate' : 'prompt',
       injectRegister: 'auto',

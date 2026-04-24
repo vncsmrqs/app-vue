@@ -86,8 +86,8 @@ export const useAppStore = defineStore('app', () => {
     height,
     isResizing,
     view: computed(() => definedView.value),
-    navigationLoadingProgress: computed(() => loadingProgress.progress),
-    showNavigationLoading: computed(() => loadingProgress.isLoading),
+    navigationLoadingProgress: computed(() => loadingProgress.progress.value),
+    showNavigationLoading: computed(() => loadingProgress.isLoading.value),
     //Actions
     startNavigationLoading: loadingProgress.start,
     endNavigationLoading: loadingProgress.end,

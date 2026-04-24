@@ -9,6 +9,7 @@ import { useRouter } from '@/router';
 import { onAfterRouterNavigate } from '@/router/on-after-router-navigate.ts';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
 import AppSplashScreen from '@/components/AppSplashScreen.vue';
+import AppProgressBar from '@/components/AppProgressBar.vue';
 
 const appStore = useAppStore();
 
@@ -31,6 +32,12 @@ onMounted(async () => {
     .addEventListener('change', () => updateThemeColor());
 
   navigator.serviceWorker.addEventListener('message', handleServiceWorkerMessage);
+
+  appStore.startNavigationLoading();
+
+  setTimeout(() => {
+    appStore.endNavigationLoading();
+  }, 5000);
 });
 
 onUnmounted(() => {
@@ -72,6 +79,10 @@ onAfterRouterNavigate(({ to }) => {
       <app-splash-screen v-show="appStore.isResizing || appStore.appLoading" />
     </Transition>
   </teleport>
+  <app-progress-bar
+    :show="appStore.showNavigationLoading"
+    :progress="appStore.navigationLoadingProgress"
+  />
 </template>
 
 <style scoped></style>

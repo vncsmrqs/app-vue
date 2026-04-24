@@ -105,8 +105,8 @@ provide('isInStackView', true);
   </Teleport>
 </template>
 
-<style scoped>
-@reference "@/assets/main.css";
+<style scoped lang="scss">
+@reference '../../assets/tailwind.css';
 
 .center-modal {
   @apply fixed bottom-0 left-0 w-dvw h-dvh pointer-events-none flex items-center justify-center;

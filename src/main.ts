@@ -1,4 +1,4 @@
-import './assets/main.css';
+import './assets/main.scss';
 import '@/utils/dayjs.ts';
 import { v6 as uuid } from 'uuid';
 
