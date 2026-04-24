@@ -8,7 +8,7 @@ export const loadSessionMiddleware: NavigationGuard = async (
 ): Promise<void> => {
   const authStore = useAuthStore();
   try {
-    if (!authStore.currentUser && !authStore.loadSessionError) {
+    if (!authStore.currentUser && !authStore.sessionError) {
       await authStore.loadSession();
     }
   } catch (_error: unknown) {

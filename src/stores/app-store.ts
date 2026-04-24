@@ -6,24 +6,27 @@ import { debounce } from '@/utils/common';
 import { AppError } from '@/errors/app.error';
 import { useStackViewStore } from '@/stores/stack-view-store.ts';
 import { useElementSize } from '@vueuse/core';
+import { useLoadingProgress } from '@/composables/use-loading-progress.ts';
 
 const RESIZE_TIMEOUT = 1000;
 const UPDATE_VIEW_MODE_TIMEOUT = 100;
 const MIN_DESKTOP_VIEW = 1280;
-const MIN_MOBILE_VIEW = 600;
+const MAX_MOBILE_VIEW = 768;
 
 export type ViewMode = 'mobile' | 'responsive' | 'desktop';
 
+const loadingProgress = useLoadingProgress();
+
 const defineView = (width: number): ViewMode => {
-  if (device.isMobile() || width < MIN_MOBILE_VIEW) {
+  if (device.isMobile() || width < MAX_MOBILE_VIEW) {
     return 'mobile';
   }
 
-  if (width < MIN_DESKTOP_VIEW) {
-    return 'responsive';
+  if (width >= MIN_DESKTOP_VIEW) {
+    return 'desktop';
   }
 
-  return 'desktop';
+  return 'responsive';
 };
 
 export const useAppStore = defineStore('app', () => {
@@ -66,86 +69,27 @@ export const useAppStore = defineStore('app', () => {
 
   const authStore = useAuthStore();
 
-  const navigationCount = ref(0);
-  let navigationLoadingInterval: NodeJS.Timeout | undefined;
-  let navigationLoadingTimeout: NodeJS.Timeout | undefined;
-  const navigationLoadingPercentage = ref<number>(0);
-
-  const showNavigationLoading = computed(() => navigationCount.value > 0);
-
   const appLoading = computed<boolean>(() => {
-    return loading.value || authStore.isLoadingSession;
+    return loading.value || authStore.isLoading;
   });
 
   const appError = computed<AppError | null>(() => {
-    return error.value || authStore.loadSessionError || authStore.unauthorizedRouteError;
+    return error.value || authStore.sessionError || authStore.unauthorizedRouteError;
   });
-
-  const startNavigationLoading = () => {
-    if (navigationCount.value + 1 >= 1) {
-      clearInterval(navigationLoadingTimeout);
-      navigationLoadingTimeout = setTimeout(() => {
-        navigationCount.value += 1;
-        clearInterval(navigationLoadingInterval);
-        navigationLoadingInterval = setInterval(() => {
-          if (navigationLoadingPercentage.value > 95) {
-            clearInterval(navigationLoadingInterval);
-            return;
-          }
-
-          if (navigationLoadingPercentage.value > 90) {
-            navigationLoadingPercentage.value += 0.1;
-            return;
-          }
-
-          if (navigationLoadingPercentage.value > 80) {
-            navigationLoadingPercentage.value += 0.5;
-            return;
-          }
-
-          if (navigationLoadingPercentage.value > 50) {
-            navigationLoadingPercentage.value += 1;
-            return;
-          }
-
-          navigationLoadingPercentage.value += 5;
-        }, 300);
-      }, 300);
-      return;
-    }
-    navigationCount.value += 1;
-  };
-
-  const endNavigationLoading = () => {
-    if (navigationCount.value - 1 < 1) {
-      navigationLoadingPercentage.value = 100;
-      clearInterval(navigationLoadingTimeout);
-      clearInterval(navigationLoadingInterval);
-      setTimeout(() => {
-        navigationCount.value = 0;
-        setTimeout(() => {
-          navigationLoadingPercentage.value = 0;
-        }, 100);
-      }, 300);
-      return;
-    }
-    navigationCount.value -= 1;
-  };
 
   return {
     //State
     tabCount,
     appLoading,
     appError,
-    navigationCount,
-    navigationLoadingPercentage,
     width,
     height,
-    view: computed(() => definedView.value),
     isResizing,
-    showNavigationLoading,
+    view: computed(() => definedView.value),
+    navigationLoadingProgress: computed(() => loadingProgress.progress),
+    showNavigationLoading: computed(() => loadingProgress.isLoading),
     //Actions
-    startNavigationLoading,
-    endNavigationLoading,
+    startNavigationLoading: loadingProgress.start,
+    endNavigationLoading: loadingProgress.end,
   };
 });
