@@ -9,7 +9,6 @@ import {
   CONTAINER_OPACITY_IS_ACTIVE,
   STACK_VIEW_VISIBILITY_TIMEOUT_MILLISECOND,
 } from '@/config/stack-view-config.ts';
-import { provide } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -164,12 +163,10 @@ watch(
   },
   { immediate: true },
 );
-
-provide('isInStackView', true);
 </script>
 
 <template>
-  <Teleport to="#stack-view-target">
+  <teleport to="#low-priority-target">
     <div
       ref="root-element"
       class="drawer touch-pan-x"
@@ -198,7 +195,7 @@ provide('isInStackView', true);
         <slot v-if="isRendering"></slot>
       </div>
     </div>
-  </Teleport>
+  </teleport>
 </template>
 
 <style scoped lang="scss">

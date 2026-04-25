@@ -18,6 +18,7 @@ import {
   LOG_VIRTUAL_ROUTER_NAVIGATION_EVENTS,
 } from '@/config/app-config.ts';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
+import { useAppStore } from '@/stores/app-store.ts';
 // import { isAuthenticatedMiddleware } from '@/router/middlwares/is-authenticated.middleware.ts';
 
 const history = PUSH_HISTORY_STATE
@@ -402,6 +403,16 @@ export const startRouterSync = () => {
     logRouterNavigation('VIRTUAL ROUTER', virtualRouter);
     logRouterErrors('VIRTUAL ROUTER', virtualRouter);
   }
+
+  const appStore = useAppStore();
+
+  navigatorRouter.beforeEach(() => {
+    appStore.startNavigationLoading();
+  });
+
+  navigatorRouter.afterEach(() => {
+    appStore.endNavigationLoading();
+  });
 
   navigatorRouter.beforeEach(middlewarePipeline);
 };

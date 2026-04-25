@@ -13,28 +13,23 @@ const emit = defineEmits<StackViewBaseEmitters>();
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col">
+  <screen-root :pullToRefresh="false">
     <app-bar @back="emit('close')">
       Sacola
       <template #append>
         <app-button type="transparent-secondary" size="sm" class="last:-mr-2">Limpar</app-button>
       </template>
     </app-bar>
-    <screen-root :pullToRefresh="false">
-      <empty-screen
-        title="Sua sacola está vazia"
-        subtitle="Adicione items para realizar um pedido"
-      />
-    </screen-root>
-    <screen-footer>
-      <app-link custom :to="{ name: 'order.delivery-mode' }" class="w-full" v-slot="{ navigate }">
-        <app-button type="primary" size="lg" class="w-full flex gap-2" @click="navigate">
-          Continuar
-          <ArrowRightIcon />
-        </app-button>
-      </app-link>
-    </screen-footer>
-  </div>
+    <empty-screen title="Sua sacola está vazia" subtitle="Adicione items para realizar um pedido" />
+  </screen-root>
+  <screen-footer>
+    <app-link custom :to="{ name: 'order.delivery-mode' }" class="w-full" v-slot="{ navigate }">
+      <app-button type="primary" size="lg" class="w-full flex gap-2" @click="navigate">
+        Continuar
+        <ArrowRightIcon />
+      </app-button>
+    </app-link>
+  </screen-footer>
 </template>
 
 <style scoped></style>

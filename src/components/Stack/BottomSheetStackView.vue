@@ -2,7 +2,6 @@
 import { computed, ref, useAttrs, useTemplateRef, watch } from 'vue';
 import { useElementSize, useSwipe } from '@vueuse/core';
 import { isMobileBrowser } from '@/utils/device.ts';
-import { provide } from 'vue';
 
 import {
   STACK_VIEW_BASE_TRANSITION_MILLISECOND,
@@ -27,7 +26,7 @@ const props = withDefaults(
     fullHeight: false,
     minHeight: 0,
     canClose: true,
-    teleportTo: '#stack-view-target',
+    teleportTo: '#low-priority-target',
   },
 );
 
@@ -40,8 +39,6 @@ defineOptions({
 });
 
 const attrs = useAttrs();
-
-provide('isInStackView', true);
 
 const rootElement = useTemplateRef('root-element');
 const containerElement = useTemplateRef('container-element');
@@ -218,7 +215,7 @@ watch(
 </script>
 
 <template>
-  <Teleport :to="props.teleportTo">
+  <teleport :to="props.teleportTo">
     <div
       ref="root-element"
       class="bottom-sheet touch-pan-y"
@@ -258,7 +255,7 @@ watch(
         <slot v-if="isRendering"></slot>
       </div>
     </div>
-  </Teleport>
+  </teleport>
 </template>
 
 <style scoped lang="scss">

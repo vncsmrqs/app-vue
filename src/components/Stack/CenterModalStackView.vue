@@ -5,7 +5,6 @@ import {
   STACK_VIEW_BASE_TRANSITION_MILLISECOND,
   STACK_VIEW_VISIBILITY_TIMEOUT_MILLISECOND,
 } from '@/config/stack-view-config.ts';
-import { provide } from 'vue';
 
 const props = withDefaults(
   defineProps<{
@@ -75,12 +74,10 @@ watch(
   },
   { immediate: true },
 );
-
-provide('isInStackView', true);
 </script>
 
 <template>
-  <Teleport to="#stack-view-target">
+  <teleport to="#low-priority-target">
     <div
       ref="root-element"
       class="center-modal touch-pan-y"
@@ -102,7 +99,7 @@ provide('isInStackView', true);
         <slot v-if="isRendering"></slot>
       </div>
     </div>
-  </Teleport>
+  </teleport>
 </template>
 
 <style scoped lang="scss">

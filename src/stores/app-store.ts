@@ -15,8 +15,6 @@ const MAX_MOBILE_VIEW = 768;
 
 export type ViewMode = 'mobile' | 'responsive' | 'desktop';
 
-const loadingProgress = useLoadingProgress();
-
 const defineView = (width: number): ViewMode => {
   if (device.isMobile() || width < MAX_MOBILE_VIEW) {
     return 'mobile';
@@ -30,7 +28,7 @@ const defineView = (width: number): ViewMode => {
 };
 
 export const useAppStore = defineStore('app', () => {
-  const loading = ref<boolean>(false);
+  const loadingProgress = useLoadingProgress();
 
   const error = ref<AppError | null>(null);
 
@@ -70,7 +68,7 @@ export const useAppStore = defineStore('app', () => {
   const authStore = useAuthStore();
 
   const appLoading = computed<boolean>(() => {
-    return loading.value || authStore.isLoading;
+    return authStore.isLoading;
   });
 
   const appError = computed<AppError | null>(() => {

@@ -9,9 +9,11 @@ const appStore = useAppStore();
 const props = withDefaults(
   defineProps<{
     showBackButton?: boolean;
+    type?: 'solid' | 'transparent';
   }>(),
   {
     showBackButton: true,
+    type: 'solid',
   },
 );
 
@@ -31,9 +33,13 @@ watch(
 </script>
 
 <template>
-  <header ref="root-element" class="relative">
-    <div class="">
-      <div class="flex h-14 items-center px-5 gap-2 bg-white shadow-xl/2 z-50">
+  <header
+    ref="root-element"
+    class="w-full"
+    :class="{ 'bg-white shadow-xl/2': props.type === 'solid' }"
+  >
+    <div class="relative">
+      <div class="flex h-14 items-center px-5 gap-2 z-50">
         <slot name="prepend">
           <back-button
             v-if="props.showBackButton && appStore.view === 'mobile'"

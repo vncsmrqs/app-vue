@@ -6,15 +6,13 @@ const props = defineProps<{
 </script>
 
 <template>
-  <Teleport to="body">
-    <div v-show="props.show" class="w-full h-1 bg-gray-100 fixed bottom-0" style="z-index: 999999">
-      <div
-        class="h-full bg-primary-gradient skeleton-box"
-        style="transition: width 0.5s"
-        :style="{ width: props.progress + '%' }"
-      ></div>
-    </div>
-  </Teleport>
+  <div v-show="props.show" class="w-full h-1 bg-gray-100 fixed top-0" style="z-index: 1">
+    <div
+      class="h-full bg-fuchsia-700 skeleton-box"
+      style="transition: width 0.5s"
+      :style="{ width: props.progress + '%' }"
+    ></div>
+  </div>
 </template>
 
 <style scoped>

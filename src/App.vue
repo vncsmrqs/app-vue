@@ -32,12 +32,6 @@ onMounted(async () => {
     .addEventListener('change', () => updateThemeColor());
 
   navigator.serviceWorker.addEventListener('message', handleServiceWorkerMessage);
-
-  appStore.startNavigationLoading();
-
-  setTimeout(() => {
-    appStore.endNavigationLoading();
-  }, 5000);
 });
 
 onUnmounted(() => {
@@ -53,36 +47,45 @@ onAfterRouterNavigate(({ to }) => {
 
 <template>
   <teleport to="body">
-    <div id="stack-view-target" class="absolute" style="z-index: 9991"></div>
-    <div id="popper-target" class="absolute" style="z-index: 9992"></div>
-    <div id="toast-target" class="absolute" style="z-index: 9993"></div>
-    <div id="full-target" class="absolute" style="z-index: 9993"></div>
+    <div id="low-priority-target" class="absolute" style="z-index: 9991"></div>
+    <div id="medium-priority-target" class="absolute" style="z-index: 9992"></div>
+    <div id="high-priority-target" class="absolute" style="z-index: 9993"></div>
   </teleport>
-  <div
-    class="w-full h-full"
-    v-bind="{
-      ...(appStore.tabCount > 0
-        ? {
-            tabindex: -1,
-            'aria-hidden': true,
-            inert: true,
-          }
-        : {}),
-    }"
-  >
-    <router-view />
-  </div>
-  <render-stack-view />
+  <template v-if="appStore.appError">
+    <div
+      class="w-full h-full flex flex-col justify-center items-center text-center gap-2 bg-red-100 text-red-500"
+    >
+      <div>Error</div>
+      <div>{{ appStore.appError }}</div>
+    </div>
+  </template>
+  <template v-else-if="!appStore.appLoading">
+    <div
+      class="w-full h-full"
+      v-bind="{
+        ...(appStore.tabCount > 0
+          ? {
+              tabindex: -1,
+              'aria-hidden': true,
+              inert: true,
+            }
+          : {}),
+      }"
+    >
+      <router-view />
+    </div>
+    <render-stack-view />
+  </template>
   <update-app />
-  <teleport to="#full-target">
-    <Transition name="fade-splash" mode="out-in">
-      <app-splash-screen v-show="appStore.isResizing || appStore.appLoading" />
-    </Transition>
+  <teleport to="#high-priority-target">
+    <transition name="fade-splash" mode="out-in">
+      <app-splash-screen v-show="appStore.isResizing" />
+    </transition>
+    <app-progress-bar
+      :show="appStore.showNavigationLoading"
+      :progress="appStore.navigationLoadingProgress"
+    />
   </teleport>
-  <app-progress-bar
-    :show="appStore.showNavigationLoading"
-    :progress="appStore.navigationLoadingProgress"
-  />
 </template>
 
 <style scoped></style>

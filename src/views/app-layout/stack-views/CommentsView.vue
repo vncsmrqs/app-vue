@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import type { StackViewBaseEmitters } from '@/stores/stack-view-store.ts';
+import type { StackViewBaseEmitters, StackViewProps } from '@/stores/stack-view-store.ts';
 import ScreenRoot from '@/components/Screen/ScreenRoot.vue';
-import { computed, ref, watch } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import AccountIcon from 'vue-material-design-icons/Account.vue';
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue';
+import AppBar from '@/components/AppBar.vue';
 
+const props = defineProps<StackViewProps>();
 const emit = defineEmits<StackViewBaseEmitters>();
+
+const isInStackView = inject('isInStackView');
 
 const headerHeight = ref(0);
 const footerHeight = ref(0);
@@ -23,7 +27,13 @@ watch(
 <template>
   <screen-root>
     <template #header>
-      <div class="sticky top-0 bg-white flex justify-center py-1 font-medium">Avaliações</div>
+      <div
+        v-if="isInStackView && props.mode === 'BOTTOM_SHEET'"
+        class="sticky top-0 bg-white flex justify-center py-1 font-medium"
+      >
+        Avaliações
+      </div>
+      <app-bar v-else @back="emit('close')">Avaliações</app-bar>
     </template>
     <div>
       <ul class="divide-y divide-gray-200">

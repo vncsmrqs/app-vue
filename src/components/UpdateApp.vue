@@ -68,7 +68,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <BottomSheetStackView :show="needRefresh" @close="close" teleport-to="#toast-target">
+  <BottomSheetStackView :show="needRefresh" @close="close" teleport-to="#medium-priority-target">
     <screen-footer>
       <div class="w-full flex flex-col sm:flex-row gap-2 items-center">
         <span class="w-full mb-2 sm:mb-0"> Uma nova versão do app está disponível </span>

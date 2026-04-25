@@ -4,7 +4,7 @@ import {
   type StackViewProps,
   useStackViewStore,
 } from '@/stores/stack-view-store.ts';
-import { type Component, defineAsyncComponent, onMounted, watch } from 'vue';
+import { type Component, defineAsyncComponent, onMounted, provide, watch } from 'vue';
 import DrawerStackView from '@/components/Stack/DrawerStackView.vue';
 import { type AsyncComponentLoader } from 'vue';
 import { onAfterRouterNavigate } from '@/router/on-after-router-navigate.ts';
@@ -161,6 +161,8 @@ const defineComponent = (stackView: StackViewProps) => {
 };
 
 onMounted(() => {});
+
+provide('isInStackView', true);
 </script>
 
 <template>
