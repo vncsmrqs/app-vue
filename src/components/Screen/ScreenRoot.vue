@@ -38,7 +38,7 @@ const { y: scrollTop } = useScroll(scrollableElement);
 
 const { isSwiping, coordsStart, coordsEnd, lengthY } = useSwipe(scrollableElement, {
   threshold: 10,
-  passive: false,
+  passive: true,
   onSwipeEnd: () => {
     if (!ignoreSwipe.value && thresholdPercentage.value >= 100) {
       emit('refresh');

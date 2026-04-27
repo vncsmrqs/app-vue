@@ -37,10 +37,10 @@ const rootElement = useTemplateRef('root-element');
 const { width } = useElementSize(rootElement);
 
 const { isSwiping, lengthX, coordsEnd, coordsStart } = useSwipe(rootElement, {
-  passive: false,
+  passive: true,
   threshold: 10,
   onSwipeStart: (e) => {
-    if (coordsStart.x <= MIN_SWIPE_X_START && STACK_VIEW_SWIPE_X_IS_ACTIVE) {
+    if (coordsStart.x <= MIN_SWIPE_X_START && STACK_VIEW_SWIPE_X_IS_ACTIVE && e.cancelable) {
       e.preventDefault();
       return;
     }

@@ -57,11 +57,11 @@ let visibilityTimeout: NodeJS.Timeout;
 let renderingTimeout: NodeJS.Timeout;
 
 const { isSwiping, coordsEnd, coordsStart } = useSwipe(swiperElement, {
-  passive: false,
+  passive: true,
   threshold: 10,
   onSwipeStart: (e) => {
     startContainerHeight.value = containerHeight.value;
-    if (STACK_VIEW_SWIPE_Y_IS_ACTIVE) {
+    if (STACK_VIEW_SWIPE_Y_IS_ACTIVE && e.cancelable) {
       e.preventDefault();
       return;
     }
@@ -218,7 +218,7 @@ watch(
   <teleport :to="props.teleportTo">
     <div
       ref="root-element"
-      class="bottom-sheet touch-pan-y"
+      class="bottom-sheet"
       :class="{
         opened: isVisible,
         closed: !isVisible,

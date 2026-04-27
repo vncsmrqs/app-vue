@@ -1,15 +1,13 @@
 <script setup lang="ts">
 import type { StackViewBaseEmitters, StackViewProps } from '@/stores/stack-view-store.ts';
 import ScreenRoot from '@/components/Screen/ScreenRoot.vue';
-import { computed, inject, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import AccountIcon from 'vue-material-design-icons/Account.vue';
 import HeartOutlineIcon from 'vue-material-design-icons/HeartOutline.vue';
 import AppBar from '@/components/AppBar.vue';
 
-const props = defineProps<StackViewProps>();
+const props = defineProps<{ stackView?: StackViewProps }>();
 const emit = defineEmits<StackViewBaseEmitters>();
-
-const isInStackView = inject('isInStackView');
 
 const headerHeight = ref(0);
 const footerHeight = ref(0);
@@ -28,7 +26,7 @@ watch(
   <screen-root>
     <template #header>
       <div
-        v-if="isInStackView && props.mode === 'BOTTOM_SHEET'"
+        v-if="props.stackView && props.stackView.mode === 'BOTTOM_SHEET'"
         class="sticky top-0 bg-white flex justify-center py-1 font-medium"
       >
         Avaliações
