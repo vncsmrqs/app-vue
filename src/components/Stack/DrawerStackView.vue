@@ -174,7 +174,6 @@ watch(
       :class="{
         opened: isVisible,
         closed: !isVisible,
-        'is-swiping': !!isSwiping,
       }"
       :tabindex="index"
     >

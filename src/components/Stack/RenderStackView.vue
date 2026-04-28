@@ -5,7 +5,6 @@ import {
   useStackViewStore,
 } from '@/stores/stack-view-store.ts';
 import { type Component, defineAsyncComponent, onMounted, provide, watch } from 'vue';
-import DrawerStackView from '@/components/Stack/DrawerStackView.vue';
 import { type AsyncComponentLoader } from 'vue';
 import { onAfterRouterNavigate } from '@/router/on-after-router-navigate.ts';
 import { useAppNavigation } from '@/composables/use-app-navigation.ts';
@@ -14,6 +13,7 @@ import { useRouter } from '@/router';
 import { PUSH_HISTORY_STATE } from '@/config/stack-view-config.ts';
 import BottomSheetStackView from '@/components/Stack/BottomSheetStackView.vue';
 import CenterModalStackView from '@/components/Stack/CenterModalStackView.vue';
+import RightStackDrawer from '@/components/Stack/RightStackDrawer.vue';
 
 const router = useRouter();
 const stackViewStore = useStackViewStore();
@@ -145,13 +145,13 @@ const closeStackView = async (
 
 const getViewComponent = (stackView: StackViewProps): Component => {
   const componentMap: Record<StackViewMode, Component | undefined> = {
-    DRAWER: DrawerStackView,
+    DRAWER: RightStackDrawer,
     BOTTOM_SHEET: !isMobile() ? CenterModalStackView : BottomSheetStackView,
     MODAL: CenterModalStackView,
     FULLSCREEN: undefined,
   };
 
-  return componentMap?.[stackView.mode] ?? DrawerStackView;
+  return componentMap?.[stackView.mode] ?? RightStackDrawer;
 };
 
 const defineComponent = (stackView: StackViewProps) => {
